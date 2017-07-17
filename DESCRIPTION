@@ -10,5 +10,7 @@ License: MIT
 Encoding: UTF-8
 LazyData: true
 Depends: R (>= 3.0.2), Rcpp (>= 0.12.11), methods
-Imports: rstan (>= 2.16.2), rstantools (>= 1.2.1)
+Imports: rstan (>= 2.16.2), rstantools (>= 1.2.1),
+    tidyr
 LinkingTo: StanHeaders (>= 2.16.0.1), rstan (>= 2.16.2), BH (>= 1.62.0.1), Rcpp (>= 0.12.11), RcppEigen (>= 0.3.3.3.0)
+Suggests: testthat

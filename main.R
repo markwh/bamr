@@ -16,12 +16,16 @@ library(rstantools)
 library(todoList)
 use_todo()
 
+# Package dependencies
+# use_package("tidyr")
+use_package("reshape2")
+
 # document
 devtools::document()
 
 # test
+# devtools::use_testthat()
 devtools::test()
-
 
 # Vignettes
 # devtools::use_vignette("discharge") # discharge estimation
@@ -29,7 +33,7 @@ devtools::test()
 
 # Datasets ----------------------------------------------------------------
 # dir.create("data")
-# use_data(Mississippi, overwrite = TRUE)
+use_data(Po, Po_w, Po_s, Po_dA, overwrite = TRUE) # See inst/notebook20170717.Rmd
 
 # internal, for functions
 # use_data(scTable, olsonTbl, tzTable, no3Flow,

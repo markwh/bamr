@@ -1,0 +1,5 @@
+"itemText","timeCreated","status","timeCompleted","isCompleted","itemID","comment"
+"Create data prep functions",2017-07-17 17:21:14,"incomplete",NA,FALSE,1,""
+"Put in a dataset from Pepsi",2017-07-17 17:24:06,"completed",2017-07-17 17:35:09,TRUE,2,"Po data"
+"Deal with missing data imputation",2017-07-17 17:43:32,"incomplete",NA,FALSE,3,""
+"Add data objects for Po representing intended matrix inputs",2017-07-17 17:53:49,"completed",2017-07-17 17:59:03,TRUE,4,""

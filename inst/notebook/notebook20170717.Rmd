@@ -3,48 +3,7 @@ title: "2017-07-17 Notebook"
 output: html_notebook
 ---
 
-First day at work (again)!
-
-1. Submit WRR paper (waiting for Mike)
-2. User-friendlify BAM
-3. Missouri network project (wait for Colin to get this going)
-4. BAM expansion - brainstorm
-    - See reports/improvingBamIdeas.Rmd
-
-
-### 2. User-friendlify BAM
-
-Interaction methods
-
-- R package
-    - Data formatting and checks
-    - plotting data
-    - ploting priors
-    - running STAN
-    - plotting output
-        - See bayesplot package
-- Python library
-    - Same as R, probably
-    - ???
-    
-Todo:
-
-- Learn about including C++ code
-- Break up into functions
-- Document, clean up line-by-line
-- Vignettes
-
-
-#### 2.1 Data requirements for BAM / STAN
-
-- Observations
-    - W (all)
-    - S (Manning-inclusive)
-    - H (only if calculating dA; Manning-inclusive)
-    - dA -- calculate this myself? (Manning-inclusive)
-- Prior parameters
-    - 
-    
+Picking up from notebook of same name in SWOT project.
     
 ### Moving to a new project / package
 
@@ -58,5 +17,33 @@ I think it's time to switch to package-mode and focus on getting this to work wi
 ```{r, eval = FALSE}
 devtools::install_github("stan-dev/rstantools")
 library(rstantools)
+```
+
+### Getting a dataset from Pepsi
+
+```{r}
+library(dplyr)
+library(tidyr)
+load("../SWOT/cache/Pepsi.RData")
+
+Po <- Pepsi %>% 
+  filter(name == "Po") %>% 
+  transmute(xs, time, dA, H, S, W, QWBM, Q, A0 = Ao)
+
+Po_w <- Po %>% 
+  select(xs, time, W) %>% 
+  spread(key = xs, value = W, convert = TRUE) %>% 
+  as.matrix()
+
+Po_s <- Po %>% 
+  select(xs, time, S) %>% 
+  spread(key = xs, value = S, convert = TRUE) %>% 
+  as.matrix()
+
+Po_dA <- Po %>% 
+  select(xs, time, dA) %>% 
+  spread(key = xs, value = dA, convert = TRUE) %>% 
+  as.matrix()
+
 ```
 
