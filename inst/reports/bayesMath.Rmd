@@ -1,0 +1,185 @@
+---
+title: "Bayes Math"
+output: word_document
+---
+
+## Bayesian discharge estimation
+
+Equations:
+
+- Manning: 
+
+$$
+\begin{aligned}
+\log Q_M &= \frac{5}{3} \log(A_0 + dA) - \log n - \frac{2}{3} \log w + \frac{1}{2} \log S \\
+&= g_{QM}(A_0, dA, n, w, S)
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+\log (A_0 + dA) &= \frac{3}{5} \log Q_M + \frac{3}{5} \log n + \frac{2}{5} \log w - \frac{3}{10} \log S \\
+&= g_{AM}(Q_M, n, w, S)
+\end{aligned}
+$$
+
+
+$$
+\begin{aligned}
+\log n &= \frac{5}{3} \log(A_0 + dA) - \log Q_M - \frac{2}{3} \log w + \frac{1}{2} \log S \\
+&= g_{nM}(Q_M, A_0, dA, w, S)
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+\log w &= \frac{5}{2} \log(A_0 + dA) - \frac{3}{2} \log n - \frac{3}{2} \log Q_M + \frac{3}{4} \log S \\
+&= g_{wM}(Q_M, A_0, dA, n, S)
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+\log S &=  2 \log Q_M - \frac{10}{3} \log (A_0 + dA) + 2 \log n + \frac{4}{3} \log w \\
+&= g_{SM}(Q_M, A_0, dA, n, w)
+\end{aligned}
+$$
+
+$$
+dA(w) = \int_{h_0}^h w(h') dh'
+$$
+
+$$
+4 \log W - 3 \log S = 10 \log(A_0 + dA) - 6 \log n - 6 \log Q_M
+$$
+
+Note that this means that SE for the lhs is 6 times SE for Manning's flow estimation.
+
+If A is known (can be used for lower bound on Q):
+
+$$
+4 \log W - 3 \log S - 10 \log A  =  - 6 \log n - 6 \log Q_M
+$$
+
+Or (assume depth > 1m)
+
+$$
+4 \log W - 3 \log S - 10 \log (dA + Wo)  =  - 6 \log n - 6 \log Q_M
+$$
+
+
+- AMHG:
+
+$$
+\begin{aligned}
+\log Q_G &= \frac{1}{b} ( \log{w} - \log w_c ) + \log Q_c \\
+&= g_{QG}(b, w, w_c, Q_c)
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+\log Q_c &= \frac{1}{b} ( \log{w_c} - \log w ) + \log Q_G \\
+&= g_{Qc}(b, w, w_c, Q)
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+\log w &= b ( \log{Q} - \log Q_c ) + \log w_c \\
+&= g_{wG}(b, Q, w_c, Q_c)
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+\log w_c &= b ( \log{Q_c} - \log Q ) + \log w \\
+&= g_{wc}(b, w, Q, Q_c)
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+b &= (\log w_c - \log w) /( \log{Q_c} - \log Q ) \\
+&= g_{b}(w, w_c, Q, Q_c)
+\end{aligned}
+$$
+
+
+Unknowns:
+
+| Variable | Symbol | number |
+| -------- | ------ | ------ |
+| flow | $Q_t$ | $n_t$
+| Manning flow | $Q_{M,t}$ | $n_t$
+| AMHG flow | $Q_{G,t}$ | $n_t$
+| min-flow area | $A_{0,i}$ | $n_x$
+| manning coefficient | $n$ | 1
+| width AHG exponent | $b_i$ | $n_x$
+| AMHG common flow | $Q_c$ | 1
+| AMHG common width | $w_c$ | 1
+
+Knowns:
+
+| Variable | Symbol | number |
+| -------- | ------ | ------ |
+| area change | $dA_{it}$ | $n_x \cdot n_t$
+| slope | $S_{it}$ | $n_x \cdot n_t$
+| width | $w_{it}$ | $n_x \cdot n_t$
+
+## Probability
+
+- $\log Q_t \sim N(\frac{\sum_i\log Q_{M, it} + \sum_i\log Q_{G, it}}{2 * nx}, \sigma^2_{Q})$
+- $\log Q_{it, M} \sim N(g_{QM}(A_{0i}, dA_{it}, n, w_{it}, S_{it}), \sigma^2_{QM})$
+- $\log Q_{it, G} \sim N(g_{QG}(b_i, w_{it}, w_c, Q_c), \sigma^2_{QG})$
+- $\log (A_{0, i} + dA_{it}) \sim N(g_{AM}(Q_{M, it}, n, w_{it}, S_{it}), \sigma^2_A)$
+- $\log n \sim N(g_{nM}(Q, A_0, dA, w, S), \sigma^2_n)$
+- $\log S \sim N(g_{SM}(Q, A_0, dA, n, w), \sigma^2_S)$
+- $\log w \sim N(g_{wG}(b, Q, w_c, Q_c), \sigma^2_w)$
+- $b \sim N(g_{wG}(b, Q, w_c, Q_c), \sigma^2_w)$
+
+
+
+## Ao prior
+
+Following Durand: 
+
+$$ 
+\begin{aligned}
+\hat{Ao} &= exp(\bar{logQ} + \log n + \frac{2}{3} \bar{logW} - \frac{1}{2} \bar{logS})^{\frac{3}{5}} - \bar{dA} \\
+&= exp(\frac{3}{5} \bar{logQ} + \frac{3}{5} \log n + \frac{2}{5} \bar{logW} - \frac{3}{10} \bar{logS}) - dA
+\end{aligned}
+$$
+
+so variance on $Ao$ is $var(exp(\frac{3}{5} \bar{logQ} + \frac{3}{5} \log n + \frac{2}{5} \bar{logW} - \frac{3}{10} \bar{logS}))$, which is variance of a lognormal.
+
+$$
+,\dotsc,
+,\dotsc,
+$$
+
+text
+text
+text
+text
+text
+text
+text
+text
+text
+text
+text
+text
+text
+text
+text
+text
+text
+text
+text
+text
+text
+text
+text
+text
+text

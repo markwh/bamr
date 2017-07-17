@@ -1,0 +1,14 @@
+---
+title: "BAM improvement ideas"
+author: "Mark Hagemann"
+date: "July 17, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+- Manning at reach scale, AMHG at x-section scale
+- rewrite Manning using mean A instead of A0
+- Add measurement uncertainty

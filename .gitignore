@@ -1,0 +1,16 @@
+.RData
+.Ruserdata
+exec/*.rda
+.Rproj.user
+.Rhistory
+src/Modules*
+src/bamr.so
+src/init.o
+src/include
+man/*.Rd
+!man/bamr-internal.Rd
+vignettes/*.R
+!vignettes/*.Rmd
+vignettes/*.html
+vignettes/*_files
+.DS_Store

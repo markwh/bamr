@@ -1,0 +1,62 @@
+---
+title: "2017-07-17 Notebook"
+output: html_notebook
+---
+
+First day at work (again)!
+
+1. Submit WRR paper (waiting for Mike)
+2. User-friendlify BAM
+3. Missouri network project (wait for Colin to get this going)
+4. BAM expansion - brainstorm
+    - See reports/improvingBamIdeas.Rmd
+
+
+### 2. User-friendlify BAM
+
+Interaction methods
+
+- R package
+    - Data formatting and checks
+    - plotting data
+    - ploting priors
+    - running STAN
+    - plotting output
+        - See bayesplot package
+- Python library
+    - Same as R, probably
+    - ???
+    
+Todo:
+
+- Learn about including C++ code
+- Break up into functions
+- Document, clean up line-by-line
+- Vignettes
+
+
+#### 2.1 Data requirements for BAM / STAN
+
+- Observations
+    - W (all)
+    - S (Manning-inclusive)
+    - H (only if calculating dA; Manning-inclusive)
+    - dA -- calculate this myself? (Manning-inclusive)
+- Prior parameters
+    - 
+    
+    
+### Moving to a new project / package
+
+I think it's time to switch to package-mode and focus on getting this to work with a single river's data, rather than staying in the Pepsi challenge workflow. Then come back here and repeat Pepsi using the package.
+
+- Start with RStanTools
+- Look at some other packages and see how they implemented it.
+    - [rstanarm](https://github.com/stan-dev/rstanarm) appears to be a good one.
+- Follow [these guidelines](https://cran.r-project.org/web/packages/rstantools/vignettes/developer-guidelines.html)
+
+```{r, eval = FALSE}
+devtools::install_github("stan-dev/rstantools")
+library(rstantools)
+```
+

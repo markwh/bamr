@@ -1,0 +1,31 @@
+
+
+Constraints:
+
+- W < Q < 30000 or f(W)
+- 1 < Ao < min(width) * 50 
+- 0.01 < b < 0.8
+- 0.01 < n < 0.15
+    - Try 10^(norm(mean = -1.412, 0.3))
+- wc = mode(mean(w))
+- 0.2 QWBM < Qc < 0.8 QWBM (or use )
+    - Look up WBM data
+
+Distributions:
+
+- define A
+- sigma_n: make this small (0.05?)
+- sigma_w: make this small (0.05?)
+- b: get from Park (1977), Ferguson (1986)
+    - Try beta(1.5, 1.5)
+
+Dingman Channel:
+
+- approximate r using dH/dW
+
+
+performance requirements:
+
+- precision on slope, width from SWOT
+- SWOT science requirements document
+

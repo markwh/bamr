@@ -1,0 +1,40 @@
+---
+title: "Desired workflow"
+author: "Mark Hagemann"
+date: "July 17, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
+```
+
+To eventually be put into a vignette?
+
+Overall steps:
+
+1. Assemble data (by user)
+    - Visualize data
+2. Check user-assembled data
+3. Preprocess data for desired BAM variant
+4. Set priors
+    - Use defaults
+4. Selection of settings (n chains, chain length, etc.)
+4. Estimate parameters
+
+```{r}
+bamdat <- bam_data(w, h, s) # Creates an object that Stan can use
+
+plot(bamdat)
+
+bamest <- bam_estimate(data)
+
+mypriors <- bam_priors(cvQ = 1)
+mylimits <- bam_limits(Q = c(0, 10000))
+
+bamest2 <- bam_estimate(data, priors = mypriors, limits = mylimits)
+
+plot(bamest$Q)
+plot(bamest$loglik)
+```
+
