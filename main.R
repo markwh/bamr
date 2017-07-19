@@ -38,7 +38,7 @@ devtools::test()
 
 # Datasets ----------------------------------------------------------------
 # dir.create("data")
-use_data(Po, Po_w, Po_s, Po_dA, overwrite = TRUE) # See inst/notebook20170717.Rmd
+use_data(Po, Po_w, Po_s, Po_dA, Po_QWBM, overwrite = TRUE) # See inst/notebook20170717.Rmd
 
 # internal, for functions
 # use_data(scTable, olsonTbl, tzTable, no3Flow,

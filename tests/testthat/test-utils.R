@@ -7,6 +7,6 @@ test_that("cv2sigma produces correct output", {
   expect_is(cv2sigma(smallcv), "numeric")
   expect_is(cv2sigma(largecv), "numeric")
   
-  expect_equal(cv2sigma(smallcv), smallcv)
-  expect_lt(cv2sigma(largecv), largecv)
+  expect_equal(cv2sigma(smallcv), smallcv, tolerance = 0.001)
+  expect_true(all(cv2sigma(largecv) < largecv))
 })

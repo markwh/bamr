@@ -7,12 +7,19 @@ Author: Who wrote it
 Maintainer: Who to complain to <yourfault@somewhere.net>
 Description: More about what it does (maybe more than one line)
 License: What license is it under?
-Depends: R (>= 3.0.2), Rcpp (>= 0.12.11), methods
-Imports: rstan (>= 2.16.2), rstantools (>= 1.2.1),
+Depends:
+    R (>= 3.0.2),
+    Rcpp (>= 0.12.11),
+    methods
+Imports:
+    rstan (>= 2.16.2),
+    rstantools (>= 1.2.1),
     reshape2,
     assertthat,
     ggplot2,
     settings,
     Rcpp,
     methods
-LinkingTo: StanHeaders (>= 2.16.0.1), rstan (>= 2.16.2), BH (>= 1.62.0.1), Rcpp (>= 0.12.11), RcppEigen (>= 0.3.3.3.0)
+LinkingTo: StanHeaders (>= 2.16.0.1), rstan (>= 2.16.2), BH (>= 1.62.0.1), Rcpp
+    (>= 0.12.11), RcppEigen (>= 0.3.3.3.0)
+RoxygenNote: 5.0.1

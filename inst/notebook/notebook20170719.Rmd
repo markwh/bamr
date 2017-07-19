@@ -1,0 +1,8 @@
+---
+title: "2017-07-19 Notebook"
+output: html_notebook
+---
+
+My attempts to build bamr have been unsuccessful. Now trying without code in zzz.R. I think this means that I am only able to use R (and not Stan) functionality here. At least now I can evaluate my tests. 
+
+

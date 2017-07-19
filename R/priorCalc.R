@@ -28,7 +28,7 @@ estimate_A0 <- function(bamdata) {
   logA0hat <- -1.782 + 1.438 * lwbar - 2.268 * lwsd
   A0hat <- exp(logA0hat)
   
-  assertthat::are_equal(length(A0hat), bamdata_nx)
+  assertthat::are_equal(length(A0hat), bamdata$nx)
   
   A0hat
 }

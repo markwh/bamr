@@ -14,10 +14,10 @@ cv2sigma <- function (cv) {
 # functions for getting Q bounds.
 
 #' Minimum across xs of max across time of width
-minmax <- function(logW)
-  min(apply(logW_df, 2, max))
+minmax <- function(x)
+  min(apply(x, 1, max))
 
 #' Maximum across xs of min across time of width
-maxmin <- function(logW) {
-  max(apply(logW_df, 2, min))
+maxmin <- function(x) {
+  max(apply(x, 1, min))
 }
