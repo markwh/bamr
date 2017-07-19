@@ -19,6 +19,11 @@ use_todo()
 # Package dependencies
 # use_package("tidyr")
 use_package("reshape2")
+use_package("assertthat")
+use_package("ggplot2")
+use_package("settings")
+use_package("Rcpp")
+use_package("methods")
 
 # document
 devtools::document()

@@ -1,1 +1,5 @@
 exportPattern("^[[:alpha:]]+")
+
+import(Rcpp)
+import(methods)
+import(rstantools)

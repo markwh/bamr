@@ -142,7 +142,7 @@ $(document).ready(function () {
 </style>
 <script>
 $(document).ready(function () {
-  window.initializeSourceEmbed("notebook20170717.Rmd");
+  window.initializeSourceEmbed("notebook20170718.Rmd");
   window.initializeCodeFolding("show" === "show");
 });
 </script>
@@ -172,47 +172,63 @@ $(document).ready(function () {
 
 
 <!-- rnb-text-begin -->
-<p>Picking up from notebook of same name in SWOT project.</p>
-<div id="moving-to-a-new-project-package" class="section level3">
-<h3>Moving to a new project / package</h3>
-<p>I think it’s time to switch to package-mode and focus on getting this to work with a single river’s data, rather than staying in the Pepsi challenge workflow. Then come back here and repeat Pepsi using the package.</p>
+<p>Implementing data prep functions for bamr. I need the following:</p>
 <ul>
-<li>Start with RStanTools</li>
-<li>Look at some other packages and see how they implemented it.
+<li><code>bam_data</code>, to format W, S, dA. Produce bamdata object that bam_estimate will use.
 <ul>
-<li><a href="https://github.com/stan-dev/rstanarm">rstanarm</a> appears to be a good one.</li>
+<li>returns an object of class bamdata</li>
+<li>Has plot() methods</li>
 </ul></li>
-<li>Follow <a href="https://cran.r-project.org/web/packages/rstantools/vignettes/developer-guidelines.html">these guidelines</a></li>
+<li><code>bam_piors</code>, to set any priors I may want to change
+<ul>
+<li>returns an object of class bampriors</li>
+<li>has plot() methods</li>
+</ul></li>
+<li><code>bam_limits</code>, to set any parameter bounds I may want to change
+<ul>
+<li>returns an object of class bamlimits</li>
+<li>I don’t see how plotting would be useful, but print() should look nice.</li>
+</ul></li>
+</ul>
+<p>I need to figure out how to store defaults. Possible ways are:</p>
+<ul>
+<li>Use an internal dataset, a list.
+<ul>
+<li>pros: mutable, able to create multiple instances per session.</li>
+<li>cons: unclear whether internal datasets are meant to be used this way.</li>
+</ul></li>
+<li>Use options().
+<ul>
+<li>pros: mutable, a common place to store default values needed by a package, easy for user to change defaults</li>
+<li>cons:
+<ul>
+<li>Can’t have more than one set of values per session. Since these are just defaults, not necessarily important.</li>
+<li>May end up with an absurd number of options.</li>
+</ul></li>
+<li><strong>If I go this way:</strong> use <strong>settings</strong> package (see vignette)</li>
+</ul></li>
+<li>Use reference class object
+<ul>
+<li>pros: mutable, good capabilities</li>
+<li>cons: still foreign to many R users</li>
+</ul></li>
+</ul>
+<p>In any case, I’ll need to figure out how to make expressions be defaults. E.g. the default for logWc_hat should be mean(logW)</p>
+<ul>
+<li>For this, just use quote() and eval(), as stipulated in Hadley’s book (under NSE)</li>
+</ul>
+<p><strong>Attempt 1</strong>:</p>
+<ul>
+<li>Set defaults as options
+<ul>
+<li>Doing this in</li>
+</ul></li>
+<li>Make generating function that takes bamdata argument, returns list of defaults</li>
+<li>Modify defaults in higher-level function after calling default generator</li>
 </ul>
 <!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbImRldnRvb2xzOjppbnN0YWxsX2dpdGh1YihcInN0YW4tZGV2L3JzdGFudG9vbHNcIikiLCJsaWJyYXJ5KHJzdGFudG9vbHMpIl19 -->
-<pre class="r"><code>devtools::install_github(&quot;stan-dev/rstantools&quot;)
-library(rstantools)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-</div>
-<div id="getting-a-dataset-from-pepsi" class="section level3">
-<h3>Getting a dataset from Pepsi</h3>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuUG9fZEEgPC0gUG8gJT4lIFxuICBzZWxlY3QoeHMsIHRpbWUsIGRBKSAlPiUgXG4gIHNwcmVhZChrZXkgPSB4cywgdmFsdWUgPSBXLCBjb252ZXJ0ID0gVFJVRSlcblxuYGBgIn0= -->
-<pre class="r"><code>Po_dA &lt;- Po %&gt;% 
-  select(xs, time, dA) %&gt;% 
-  spread(key = xs, value = W, convert = TRUE)
-</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiRXJyb3I6IFZhbHVlIGNvbHVtbiAnVycgZG9lcyBub3QgZXhpc3QgaW4gaW5wdXQuXG4ifQ== -->
-<pre><code>Error: Value column 'W' does not exist in input.</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>That’s good for now. Calling it a day I think.</p>
-<!-- rnb-text-end -->
-</div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiMjAxNy0wNy0xNyBOb3RlYm9vayIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKUGlja2luZyB1cCBmcm9tIG5vdGVib29rIG9mIHNhbWUgbmFtZSBpbiBTV09UIHByb2plY3QuCiAgICAKIyMjIE1vdmluZyB0byBhIG5ldyBwcm9qZWN0IC8gcGFja2FnZQoKSSB0aGluayBpdCdzIHRpbWUgdG8gc3dpdGNoIHRvIHBhY2thZ2UtbW9kZSBhbmQgZm9jdXMgb24gZ2V0dGluZyB0aGlzIHRvIHdvcmsgd2l0aCBhIHNpbmdsZSByaXZlcidzIGRhdGEsIHJhdGhlciB0aGFuIHN0YXlpbmcgaW4gdGhlIFBlcHNpIGNoYWxsZW5nZSB3b3JrZmxvdy4gVGhlbiBjb21lIGJhY2sgaGVyZSBhbmQgcmVwZWF0IFBlcHNpIHVzaW5nIHRoZSBwYWNrYWdlLgoKLSBTdGFydCB3aXRoIFJTdGFuVG9vbHMKLSBMb29rIGF0IHNvbWUgb3RoZXIgcGFja2FnZXMgYW5kIHNlZSBob3cgdGhleSBpbXBsZW1lbnRlZCBpdC4KICAgIC0gW3JzdGFuYXJtXShodHRwczovL2dpdGh1Yi5jb20vc3Rhbi1kZXYvcnN0YW5hcm0pIGFwcGVhcnMgdG8gYmUgYSBnb29kIG9uZS4KLSBGb2xsb3cgW3RoZXNlIGd1aWRlbGluZXNdKGh0dHBzOi8vY3Jhbi5yLXByb2plY3Qub3JnL3dlYi9wYWNrYWdlcy9yc3RhbnRvb2xzL3ZpZ25ldHRlcy9kZXZlbG9wZXItZ3VpZGVsaW5lcy5odG1sKQoKYGBge3IsIGV2YWwgPSBGQUxTRX0KZGV2dG9vbHM6Omluc3RhbGxfZ2l0aHViKCJzdGFuLWRldi9yc3RhbnRvb2xzIikKbGlicmFyeShyc3RhbnRvb2xzKQpgYGAKCiMjIyBHZXR0aW5nIGEgZGF0YXNldCBmcm9tIFBlcHNpCgpgYGB7cn0KbGlicmFyeShkcGx5cikKbGlicmFyeSh0aWR5cikKbG9hZCgiLi4vU1dPVC9jYWNoZS9QZXBzaS5SRGF0YSIpCgpQbyA8LSBQZXBzaSAlPiUgCiAgZmlsdGVyKG5hbWUgPT0gIlBvIikgJT4lIAogIHRyYW5zbXV0ZSh4cywgdGltZSwgZEEsIEgsIFMsIFcsIFFXQk0sIFEsIEEwID0gQW8pCgpQb193IDwtIFBvICU+JSAKICBzZWxlY3QoeHMsIHRpbWUsIFcpICU+JSAKICBzcHJlYWQoa2V5ID0geHMsIHZhbHVlID0gVywgY29udmVydCA9IFRSVUUpICU+JSAKICBhcy5tYXRyaXgoKQoKUG9fcyA8LSBQbyAlPiUgCiAgc2VsZWN0KHhzLCB0aW1lLCBTKSAlPiUgCiAgc3ByZWFkKGtleSA9IHhzLCB2YWx1ZSA9IFMsIGNvbnZlcnQgPSBUUlVFKSAlPiUgCiAgYXMubWF0cml4KCkKClBvX2RBIDwtIFBvICU+JSAKICBzZWxlY3QoeHMsIHRpbWUsIGRBKSAlPiUgCiAgc3ByZWFkKGtleSA9IHhzLCB2YWx1ZSA9IGRBLCBjb252ZXJ0ID0gVFJVRSkgJT4lIAogIGFzLm1hdHJpeCgpCgpgYGAKClRoYXQncyBnb29kIGZvciBub3cuIENhbGxpbmcgaXQgYSBkYXkgSSB0aGluay4KCg==</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiMjAxNy0wNy0xNyBOb3RlYm9vayIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKSW1wbGVtZW50aW5nIGRhdGEgcHJlcCBmdW5jdGlvbnMgZm9yIGJhbXIuIEkgbmVlZCB0aGUgZm9sbG93aW5nOgoKLSBgYmFtX2RhdGFgLCB0byBmb3JtYXQgVywgUywgZEEuIFByb2R1Y2UgYmFtZGF0YSBvYmplY3QgdGhhdCBiYW1fZXN0aW1hdGUgd2lsbCB1c2UuIAogICAgLSByZXR1cm5zIGFuIG9iamVjdCBvZiBjbGFzcyBiYW1kYXRhCiAgICAtIEhhcyBwbG90KCkgbWV0aG9kcwotIGBiYW1fcGlvcnNgLCB0byBzZXQgYW55IHByaW9ycyBJIG1heSB3YW50IHRvIGNoYW5nZQogICAgLSByZXR1cm5zIGFuIG9iamVjdCBvZiBjbGFzcyBiYW1wcmlvcnMKICAgIC0gaGFzIHBsb3QoKSBtZXRob2RzCi0gYGJhbV9saW1pdHNgLCB0byBzZXQgYW55IHBhcmFtZXRlciBib3VuZHMgSSBtYXkgd2FudCB0byBjaGFuZ2UKICAgIC0gcmV0dXJucyBhbiBvYmplY3Qgb2YgY2xhc3MgYmFtbGltaXRzCiAgICAtIEkgZG9uJ3Qgc2VlIGhvdyBwbG90dGluZyB3b3VsZCBiZSB1c2VmdWwsIGJ1dCBwcmludCgpIHNob3VsZCBsb29rIG5pY2UuCgpJIG5lZWQgdG8gZmlndXJlIG91dCBob3cgdG8gc3RvcmUgZGVmYXVsdHMuIFBvc3NpYmxlIHdheXMgYXJlOgoKLSBVc2UgYW4gaW50ZXJuYWwgZGF0YXNldCwgYSBsaXN0LiAKICAgIC0gcHJvczogbXV0YWJsZSwgYWJsZSB0byBjcmVhdGUgbXVsdGlwbGUgaW5zdGFuY2VzIHBlciBzZXNzaW9uLgogICAgLSBjb25zOiB1bmNsZWFyIHdoZXRoZXIgaW50ZXJuYWwgZGF0YXNldHMgYXJlIG1lYW50IHRvIGJlIHVzZWQgdGhpcyB3YXkuCi0gVXNlIG9wdGlvbnMoKS4gCiAgICAtIHByb3M6IG11dGFibGUsIGEgY29tbW9uIHBsYWNlIHRvIHN0b3JlIGRlZmF1bHQgdmFsdWVzIG5lZWRlZCBieSBhIHBhY2thZ2UsIGVhc3kgZm9yIHVzZXIgdG8gY2hhbmdlIGRlZmF1bHRzCiAgICAtIGNvbnM6IAogICAgICAgIC0gQ2FuJ3QgaGF2ZSBtb3JlIHRoYW4gb25lIHNldCBvZiB2YWx1ZXMgcGVyIHNlc3Npb24uIFNpbmNlIHRoZXNlIGFyZSBqdXN0IGRlZmF1bHRzLCBub3QgbmVjZXNzYXJpbHkgaW1wb3J0YW50LiAKICAgICAgICAtIE1heSBlbmQgdXAgd2l0aCBhbiBhYnN1cmQgbnVtYmVyIG9mIG9wdGlvbnMuIAogICAgICAtICoqSWYgSSBnbyB0aGlzIHdheToqKiB1c2UgKipzZXR0aW5ncyoqIHBhY2thZ2UgKHNlZSB2aWduZXR0ZSkKLSBVc2UgcmVmZXJlbmNlIGNsYXNzIG9iamVjdAogICAgLSBwcm9zOiBtdXRhYmxlLCBnb29kIGNhcGFiaWxpdGllcwogICAgLSBjb25zOiBzdGlsbCBmb3JlaWduIHRvIG1hbnkgUiB1c2VycwogICAgCkluIGFueSBjYXNlLCBJJ2xsIG5lZWQgdG8gZmlndXJlIG91dCBob3cgdG8gbWFrZSBleHByZXNzaW9ucyBiZSBkZWZhdWx0cy4gRS5nLiB0aGUgZGVmYXVsdCBmb3IgbG9nV2NfaGF0IHNob3VsZCBiZSBtZWFuKGxvZ1cpCgotIEZvciB0aGlzLCBqdXN0IHVzZSBxdW90ZSgpIGFuZCBldmFsKCksIGFzIHN0aXB1bGF0ZWQgaW4gSGFkbGV5J3MgYm9vayAodW5kZXIgTlNFKQoKKipBdHRlbXB0IDEqKjogCgotIFNldCBkZWZhdWx0cyBhcyBvcHRpb25zCiAgICAtIERvaW5nIHRoaXMgaW4gCi0gTWFrZSBnZW5lcmF0aW5nIGZ1bmN0aW9uIHRoYXQgdGFrZXMgYmFtZGF0YSBhcmd1bWVudCwgcmV0dXJucyBsaXN0IG9mIGRlZmF1bHRzCi0gTW9kaWZ5IGRlZmF1bHRzIGluIGhpZ2hlci1sZXZlbCBmdW5jdGlvbiBhZnRlciBjYWxsaW5nIGRlZmF1bHQgZ2VuZXJhdG9yCgo=</div>
 
 
 
