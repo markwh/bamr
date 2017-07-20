@@ -7,12 +7,9 @@
   # loadModule("stan_fit4amhg_mod")
   # loadModule("stan_fit4man_amhg_mod")
   
-  # for (m in 1:3) {
-  #   print ("count ")
-  #   print(modules[m])
-  #   loadModule(modules[m], what = TRUE)
-  #   print(modules[m])
-  # }
+  for (m in modules) {
+    Rcpp::loadModule(m, what = TRUE)
+  }
   
   
 }
