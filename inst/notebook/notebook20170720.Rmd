@@ -1,0 +1,12 @@
+---
+title: "2017-07-20 Notebook"
+output: html_notebook
+---
+
+Today we're off to the races on development. 
+
+- Make a function to make BAM estimates
+- Make plotting functions for data prep
+- Make postprocessing functions
+- Write tests
+

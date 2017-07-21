@@ -10,6 +10,4 @@
   for (m in modules) {
     Rcpp::loadModule(m, what = TRUE)
   }
-  
-  
 }

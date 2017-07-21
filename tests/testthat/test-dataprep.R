@@ -17,10 +17,32 @@ test_that("data preparation produces correct output", {
   expect_equal(ncol(bdpo$logW), bdpo$nx)
   expect_equal(length(bdpo$logQ_hat), bdpo$nt)
   
-  expect_is(bam_priors(bamdata = bdpo), "list")
+  expect_is(bam_priors(bamdata = bdpo), "bampriors")
   
   expect_is(compose_bam_inputs(bdpo, bam_priors(bdpo)), "list")
 
+})
+
+test_that("different BAM variants yield proper behavior", {
+  data("Po_dA")
+  data("Po_w")
+  data("Po_s")
+  data("Po_QWBM")
+  
+  expect_is(bda <- bam_data(w = Po_w, Qhat = Po_QWBM), "bamdata")
+  expect_is(bdm <- bam_data(w = Po_w, s = Po_s, dA = Po_dA, Qhat = Po_QWBM),
+            "bamdata")
+  
+  expect_error(bam_priors(bda))
+  expect_error(bam_priors(bda, variant = "manning"))
+  expect_is(bpa <- bam_priors(bda, variant = "amhg"), "bampriors")
+  expect_is(bpm <- bam_priors(bdm, variant = "manning"), "bampriors")
+  expect_is(bpam <- bam_priors(bdm, variant = "manning_amhg"), "bampriors")
+  
+  expect_lt(length(bpm), length(bpam))
+  expect_lt(length(bpa), length(bpam))
+  
+  expect_is(plot(bda), "gg")
 })
 
 

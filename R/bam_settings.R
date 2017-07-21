@@ -2,6 +2,22 @@
 #' Options manager for BAM defaults
 #' 
 bam_settings <- settings::options_manager(
+  # BAM variant parameter sets
+  manning_params = c("lowerbound_logQ", "upperbound_logQ", "lowerbound_Ao", 
+    "upperbound_Ao", "lowerbound_logn", "upperbound_logn", 
+    "sigma_man", "logAo_hat", "logn_hat", "logQ_sd", "logAo_sd", "logn_sd"),
+  
+  amhg_params = c("lowerbound_logQ", "upperbound_logQ", "lowerbound_logQc", 
+     "upperbound_logQc", "lowerbound_logWc", "upperbound_logWc", 
+     "lowerbound_b", "upperbound_b", "sigma_amhg", "logQc_hat", "logWc_hat", 
+     "b_hat", "logQ_sd", "logQc_sd", "logWc_sd", "b_sd"),
+  
+  manning_amhg_params = c("lowerbound_logQ", "upperbound_logQ", "lowerbound_Ao", 
+     "upperbound_Ao", "lowerbound_logn", "upperbound_logn", "lowerbound_logQc", 
+     "upperbound_logQc", "lowerbound_logWc", "upperbound_logWc", 
+     "lowerbound_b", "upperbound_b", "sigma_man", "sigma_amhg", "logQc_hat", 
+     "logWc_hat", "b_hat", "logAo_hat", "logn_hat", "logQ_sd", "logQc_sd", 
+     "logWc_sd", "b_sd", "logAo_sd", "logn_sd"),
   
   # Bounds on parameters
   lowerbound_logQ = "maxmin(bamdata$logW) + log(0.5) + log(0.5)",

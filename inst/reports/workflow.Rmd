@@ -32,7 +32,7 @@ bamest <- bam_estimate(data)
 mypriors <- bam_priors(cvQc = 0.5)
 # mylimits <- bam_limits(Q = c(0, 10000)) # <---- now including these in bam_priors
 
-bamest2 <- bam_estimate(data, priors = mypriors, limits = mylimits)
+bamest2 <- bam_estimate(data, priors = mypriors)
 
 plot(bamest$Q)
 plot(bamest$loglik)
