@@ -126,7 +126,12 @@ bam_priors <- function(bamdata,
 
 compose_bam_inputs <- function(bamdata, priors = bam_priors(bamdata)) {
   
-  out <- c(bamdata, priors)
+  inps <- c(bamdata, priors)
+  # Quick-and-dirty fix for STAN wanting sideways matrices
+  mats <- vapply(inps, is.matrix, logical(1))
+  inps[mats] <- lapply(inps[mats], t)
+  
+  out <- inps
   out
   
 }
