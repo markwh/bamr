@@ -1,12 +1,14 @@
 Package: bamr
 Type: Package
-Title: What the package does (short line)
-Version: 1.0
-Date: 2017-07-18
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
-License: What license is it under?
+Title: Bayesian AMHG and Manning discharge estimation using SWOT-like river observations 
+Version: 0.0.0.9002
+Authors@R: person("Mark", "Hagemann", email = "mark.hagemann@gmail.com", 
+    role = c("aut", "cre"))
+Description: Provides a high(er) level interface to Bayesian AMHG and Manning 
+    (BAM) discharge estimation, pre-compiled from Stan models
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
 Depends:
     R (>= 3.0.2),
     Rcpp (>= 0.12.11),
