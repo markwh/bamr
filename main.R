@@ -24,6 +24,7 @@ use_package("ggplot2")
 use_package("settings")
 use_package("Rcpp")
 use_package("methods")
+use_package("bayesplot")
 
 # document
 devtools::document()

@@ -27,7 +27,7 @@ data {
   
   
   // Hyperparameters
-  real logQ_hat;
+  vector[nt] logQ_hat;
   real logAo_hat[nx];
   real logn_hat;
   

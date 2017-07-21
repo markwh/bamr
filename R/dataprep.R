@@ -66,8 +66,7 @@ bam_check_args <- function(datalist) {
         all(vapply(matlist, ncol, 0L) == nc)))
     stop("All data must have same dimensions.\n")
   if (!length(logQ_hat) == nr)
-    stop("Qhat must have length equal to number of rows of matrix data.\n")
-
+    logQ_hat <- rep(logQ_hat, length.out = nr)
   
   out <- c(matlist, list(logQ_hat = logQ_hat))
   out

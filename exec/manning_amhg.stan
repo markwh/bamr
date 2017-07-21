@@ -35,7 +35,7 @@ data {
 
 
   // Hyperparameters
-  real logQ_hat; // prior mean on logQ
+  vector[nt] logQ_hat; // prior mean on logQ
   real logQc_hat; // prior mean on logQc
   real logWc_hat;
   real b_hat[nx]; // ADD CHECK ON THIS FOR DATA PREP
