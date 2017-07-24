@@ -10,9 +10,9 @@
 #' Produces a bamdata object that can be passed to bam_estimate function
 #' 
 #' @useDynLib bamr, .registration = TRUE
-#' @param w Matrix (or data frame) of widths: time as rows, space as columns
-#' @param s Matrix of slopes: time as rows, space as columns
-#' @param dA Matrix of area above base area: time as rows, space as columns
+#' @param w Matrix (or data frame) of widths: time as columns, space as rows
+#' @param s Matrix of slopes: time as columns, space as rows
+#' @param dA Matrix of area above base area: time as columns, space as rows
 #' @param Qhat Vector of Q estimates. Needed to create prior on Q. 
 #' @export
 
@@ -34,8 +34,8 @@ bam_data <- function(w,
   datalist <- bam_check_args(datalist)
   datalist <- bam_check_nas(datalist, missing = missing)
 
-  nx <- ncol(datalist$logW)
-  nt <- nrow(datalist$logW)
+  nx <- nrow(datalist$logW)
+  nt <- ncol(datalist$logW)
   
   out <- structure(c(datalist,
                         nx = nx, 
@@ -65,8 +65,8 @@ bam_check_args <- function(datalist) {
   if (!(all(vapply(matlist, nrow, 0L) == nr) &&
         all(vapply(matlist, ncol, 0L) == nc)))
     stop("All data must have same dimensions.\n")
-  if (!length(logQ_hat) == nr)
-    logQ_hat <- rep(logQ_hat, length.out = nr)
+  if (!length(logQ_hat) == nc)
+    logQ_hat <- rep(logQ_hat, length.out = nc)
   
   out <- c(matlist, list(logQ_hat = logQ_hat))
   out
@@ -77,12 +77,12 @@ bam_check_nas <- function(datalist, missing) {
   if (missing == "omit") {
     nonas <- lapply(datalist[mats], function(x) !is.na(x))
     namat <- !Reduce(`*`, nonas, init = nonas[[1]])
-    nainds <- which(namat, arr.ind = TRUE)[, 1]
+    nainds <- which(namat, arr.ind = TRUE)[, 2]
     
     if (length(nainds) > 0) {
-      message(sprintf("Omitting %s missing rows", length(nainds)))
-      omitRows <- function(mat, which) mat[-nainds, ]
-      datalist[mats] <- lapply(datalist[mats], omitRows, which = nainds)
+      message(sprintf("Omitting %s times with missing observations", length(nainds)))
+      omitCols <- function(mat, which) mat[, -nainds]
+      datalist[mats] <- lapply(datalist[mats], omitCols, which = nainds)
     }
   } else {
     stop("Missing value treatment other than 'omit' currently not implemented.\n")
@@ -126,9 +126,9 @@ bam_priors <- function(bamdata,
 compose_bam_inputs <- function(bamdata, priors = bam_priors(bamdata)) {
   
   inps <- c(bamdata, priors)
-  # Quick-and-dirty fix for STAN wanting sideways matrices
-  mats <- vapply(inps, is.matrix, logical(1))
-  inps[mats] <- lapply(inps[mats], t)
+  # # Quick-and-dirty fix for STAN wanting sideways matrices
+  # mats <- vapply(inps, is.matrix, logical(1))
+  # inps[mats] <- lapply(inps[mats], t)
   
   out <- inps
   out

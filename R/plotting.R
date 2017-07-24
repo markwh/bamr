@@ -8,14 +8,14 @@ plot.bamdata <- function(bamdata, piece = c("w", "s", "dA")) {
   piece <- match.arg(piece, several.ok = TRUE)
   
   if (is.null(bamdata$logS) || is.null(bamdata$dA)) {
-    bamdata$logS <- bamdata$dA <- matrix(nr = bamdata$nt, nc = bamdata$nx)
+    bamdata$logS <- bamdata$dA <- matrix(nr = bamdata$nx, nc = bamdata$nt)
     piece = "w"
   }
   
-  w_df <- as.data.frame(exp(bamdata$logW))
-  s_df <- as.data.frame(exp(bamdata$logS))
-  dA_df <- as.data.frame(bamdata$dA)
-  
+  w_df <- as.data.frame(exp(t(bamdata$logW)))
+  s_df <- as.data.frame(exp(t(bamdata$logS)))
+  dA_df <- as.data.frame(t(bamdata$dA))
+  # browser()
   w_df$time <- s_df$time <- dA_df$time <- 1:bamdata$nt
   # browser()
   sw <- suppressWarnings
@@ -34,5 +34,23 @@ plot.bamdata <- function(bamdata, piece = c("w", "s", "dA")) {
     scale_color_gradient() +
     facet_wrap(~variable, scales = "free_y")
   
+  out
+}
+
+#' Plot flow time series from BAM inference
+#' 
+#' @param fit A bamfit object, as returned from \code{bam_estimate()}
+#' @param qobs An optional vector giving observed flow for comparison
+#' @export
+
+bam_hydrograph <- function(fit, qobs = NULL) {
+  
+  nchains <- length(fit@stan_args)
+  qpred <- lapply(1:nchains, function(x) getQstats(fit, x)) %>% 
+    setNames(paste0("chain", 1:nchains)) %>% 
+    bind_rows(.id = "series")
+  
+  out <- ggplot(qpred, aes(x = time, y = flow, color = stat)) +
+    geom_line(aes(linetype = series))
   out
 }

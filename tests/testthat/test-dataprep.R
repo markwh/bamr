@@ -13,8 +13,8 @@ test_that("data preparation produces correct output", {
   expect_is(bdpo$dA, "matrix")
   expect_is(bdpo$logQ_hat, "numeric")
   
-  expect_equal(nrow(bdpo$logW), bdpo$nt)
-  expect_equal(ncol(bdpo$logW), bdpo$nx)
+  expect_equal(nrow(bdpo$logW), bdpo$nx)
+  expect_equal(ncol(bdpo$logW), bdpo$nt)
   expect_equal(length(bdpo$logQ_hat), bdpo$nt)
   
   expect_is(bam_priors(bamdata = bdpo), "bampriors")
@@ -72,8 +72,8 @@ test_that("NA values are removed or replaced", {
   expect_equal(sum(is.na(bdpo$logS)), 0)
   expect_equal(sum(is.na(bdpo$dA)), 0)
   
-  expect_equal(nrow(bdpo$logW), bdpo$nt)
-  expect_equal(ncol(bdpo$logS), bdpo$nx)
+  expect_equal(nrow(bdpo$logW), bdpo$nx)
+  expect_equal(ncol(bdpo$logS), bdpo$nt)
 })
 
 
