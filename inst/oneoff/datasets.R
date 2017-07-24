@@ -35,3 +35,12 @@ Po_QWBM <- Po %>%
   summarize(QWBM = median(QWBM)) %>% 
   `[[`("QWBM")
 
+### Minimal testing datasets
+
+xs_sub <- 1:2
+t_sub <- 101:105
+
+Po_w_sm <- Po_w[xs_sub, t_sub]
+Po_s_sm <- Po_s[xs_sub, t_sub]
+Po_dA_sm <- Po_dA[xs_sub, t_sub]
+Po_QWBM_sm <- Po_QWBM[t_sub]
