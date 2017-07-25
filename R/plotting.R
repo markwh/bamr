@@ -41,6 +41,7 @@ plot.bamdata <- function(bamdata, piece = c("w", "s", "dA")) {
 #' 
 #' @param fit A stanfit object, as returned from \code{bam_estimate()}
 #' @param qobs An optional vector giving observed flow for comparison
+#' @importFrom dplyr "%>%"
 #' @export
 
 bam_hydrograph <- function(fit, qobs = NULL) {
@@ -48,7 +49,7 @@ bam_hydrograph <- function(fit, qobs = NULL) {
   nchains <- length(fit@stan_args)
   qpred <- lapply(1:nchains, function(x) getQstats(fit, x)) %>% 
     setNames(paste0("chain", 1:nchains)) %>% 
-    bind_rows(.id = "series")
+    dplyr::bind_rows(.id = "series")
   
   out <- ggplot(qpred, aes(x = time, y = flow, color = stat)) +
     geom_line(aes(linetype = series))
