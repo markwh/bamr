@@ -1,0 +1,153 @@
+---
+title: "2017-07-24 Notebook"
+output: html_notebook
+---
+
+Thinking about framing BAM in an ANOVA setting. There are two versions of this:
+
+Manning:
+
+$$
+4 \log W_{it} - 3 \log S_{it}  = 10 \log (\delta A_{it} + A_{0, i}) - 6 \log N - 6 \log Q_t
+$$
+
+The goal is to get this into a form familiar to ANOVA: 
+
+$$
+y_{it} = \mu + \alpha_i + \beta_t + \gamma_{it} + \epsilon_{it}
+$$
+Already, we're close. Some key assumptions and features of the ANOVA model must be adhered to. Namely: 
+
+- $\alpha_i$, $\beta_t$, and $\gamma_{it}$ all have mean zero (sum-to-zero constrained). If not, they are not *identifiable*. If we treat $A_0$ as the *median* area and $\delta A_{it}$ as the distance from the median area, then we have the nice feature that $E[\log(A_0)] = E[\log(A)]$ under the reasonable assumption that $\log(A)$ is symmetrically distributed.
+
+$$
+4 \log W_{it} - 3 \log S_{it}  = 10 \log (A_{0, i} + \delta A_{it}) - 6 \log N - 6 (\mu_q + \delta q_t)
+$$
+
+Next we can use a Taylor series to (somewhat) split out $A_{0,i}$ from $\delta A_{it}$:
+
+$$
+\log(A_{0, i} + \delta A_{it}) =  log(A_{0, i}) + \sum_{j = 1}^\infty (-1)^{j - 1} \frac{\delta A_{it}^j}{A_{0, i}^j}
+$$
+
+The first term on the RHS is indexed in $i$ only, and the second term is indexed in both $i$ and $t$. However, if the first term is known, then the second term is also known, and vice versa, since $\delta A_{it}$ is a measured variable. However, the first term does not sum to zero over the index $i$, although the second term *does* sum to zero over the double index $it$, under the assumption that $E[\log(A_{0,i})] = E[\log(A_{it})]$. Thus, using lowercase variables to represent log-transformed uppercase variables, we can write:
+
+$$
+y_{it} = 4 w_{it} - 3 s_{it}  = 10 (\mu_{a_0} + \delta a_{0,i}) + \gamma_{it} - 6 n - 6 (\mu_q + \delta q_t)
+$$
+
+Here we have an ANOVA, where:
+
+- $\mu = 10 \mu_{a_0} - 6n - 6 \mu_q$
+- $\alpha_i = 10 \delta a_{0, i}$
+- $\beta_t = -6 \delta q_t$
+- $\gamma_{it} = \sum_{j = 1}^\infty (-1)^{j - 1} \frac{\delta A_{it}^j}{A_{0, i}^j}$
+
+This hints at exactly what can be estimated via remote-sensed data in a BAM framework. Namely, we can estimate:
+
+- $A_{0,i}$, to a proportionality
+    - ***but*** can be estimated from $\gamma_{it}$, given it can be approximated linearly (more on that later)
+- $Q_{t}$, to a proporionality
+
+Two things are not clear to me at this point. 
+
+1. How well (if at all) can $\gamma_{it}$ be estimated, if there is an additional error term, $\epsilon_{it}$ present?
+2. Assuming $\gamma_{it}$ *can* be estimated, is it possible to back out $A_{0, i}$ 
+    - Under linear approximation of $\log(A)$? (I'm fairly certain it can)
+    - Under quadratic, cubic, etc. approximation of $\log(A)$?
+
+### Getting $A_{0, i}$ from linear approximation of $\log A$
+
+Given an estimate of $\gamma_{it}$, $\hat{\gamma_{it}}$, estimate $\log A_{0, i}$ as follows:
+
+$$
+\begin{aligned}
+\gamma_{it} &= \sum_{j = 1}^\infty (-1)^{j - 1} \frac{\delta A_{it}^j}{A_{0, i}^j} \\
+& \approx  \frac{\delta A_{it}}{A_{0, i}} \\
+
+\implies \hat{A}_{0,i} &= \frac{\delta A_{it}}{\hat{\gamma}_{it}} \\
+\end{aligned}
+$$
+
+If for each cross-section, I restrict the above calculation to use only values of $\delta A_{it}$ near the median (say, nothing greater than $2 * median(\delta A_{it}) - \min(\delta A_{it})$, then the linear approximation *should* be reasonable (but **I will need to check this further**).
+
+### Changing topics: Computing resources
+
+I'm curious as to how I might get some more computing power from my laptop. Specifically, can I ssh into a docker instance on my UMass computer?
+
+Trying to go through VPN on my chromebook. Spoke w/ OIT, they're not sure if I can. But otherwise I can go through ssl: https://sslvpn.umass.edu/dana-na/auth/url_default/welcome.cgi
+
+- DONE. Via vpn in Chromebook bottom menu bar. Although for some reason this uses my old Spire password. Now to figure out a better alternative to Chrome remote desktop. 
+    - ~~Using TeamViewer. Need to install on both chromebook and work computer.~~
+    - Chrome remote desktop seems to work just fine after restarting UMass computer.
+    
+### Changing topics: Picking up on task list from 7/20-7/21.
+
+- Make postprocessing functions
+- Write tests
+- Set up travis
+
+Picking up where I left off on Friday, with `bayesplot` functions:
+
+```{r, eval = FALSE}
+load("cache/est1.RData")
+posterior <- as.array(est1)
+
+dim(posterior)
+dimnames(posterior)[["parameters"]]
+mcmc_intervals(posterior, pars = paste0("b[", 1:15, "]"))
+mcmc_intervals(posterior, pars = c("logQc", "logWc"))
+
+
+```
+
+Adding functions from previous work in SWOT R project.
+
+```{r}
+qstats <- getQstats(est1)
+
+head(qstats)
+
+bam_hydrograph(est1)
+```
+
+### Making minimal test datasets
+
+```{r}
+library(dplyr)
+library(tidyr)
+
+data("Po_dA", "Po_w", "Po_s", "Po_QWBM")
+dim(Po_dA)
+
+xs_sub <- 1:2
+t_sub <- 101:105
+
+Po_w_sm <- Po_w[xs_sub, t_sub]
+Po_s_sm <- Po_s[xs_sub, t_sub]
+Po_dA_sm <- Po_dA[xs_sub, t_sub]
+Po_QWBM_sm <- Po_QWBM[t_sub]
+```
+
+Good. Added to inst/oneoff/datasets.R.
+
+Now I can use this to see what pars I can prune from stanfit object.
+
+```{r}
+bdm <- bam_data(w = Po_w_sm, s = Po_s_sm, dA = Po_dA_sm, Qhat = Po_QWBM_sm)
+plot(bdm)
+est1 <- bam_estimate(bdm, "amhg", cores = 2)
+est2 <- bam_estimate(bdm, "manning")
+pars <- as.array(est1)
+
+dimnames(pars)
+```
+
+Some issue here with fitting. Trying a fix from [here](http://discourse.mc-stan.org/t/new-cppobject-xp-constructor-in-2-16-and-how-to-configure-travisci/1192/2). And recompiling.
+
+- It worked!
+
+### Thinking about project management
+
+Git and github branch model: maybe something like described [here](http://nvie.com/posts/a-successful-git-branching-model/)
+

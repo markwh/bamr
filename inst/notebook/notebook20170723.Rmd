@@ -1,0 +1,6 @@
+---
+title: "2017-07-23 Notebook"
+output: html_notebook
+---
+
+I've been working on some ideas looking at the structure of the BAM models, and tryign to get at exactly what can be estimated, and how well. I came across a stan forum discussion about exactly what "identifiability" might mean in the context of Bayesian inference. A lot of the discussion goes over my head, but I think it is apropos and provides some useful linked resources. [Link.](http://andrewgelman.com/2014/02/12/think-identifiability-bayesian-inference/)

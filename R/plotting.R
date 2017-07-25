@@ -30,7 +30,7 @@ plot.bamdata <- function(bamdata, piece = c("w", "s", "dA")) {
   plotdata <- data_long[data_long[["variable"]] %in% piece, ]
   
   out <- ggplot(plotdata, aes(x = time, y = value)) +
-    geom_line(aes(color = xs)) +
+    geom_line(aes(color = xs, group = xs)) +
     scale_color_gradient() +
     facet_wrap(~variable, scales = "free_y")
   
@@ -39,7 +39,7 @@ plot.bamdata <- function(bamdata, piece = c("w", "s", "dA")) {
 
 #' Plot flow time series from BAM inference
 #' 
-#' @param fit A bamfit object, as returned from \code{bam_estimate()}
+#' @param fit A stanfit object, as returned from \code{bam_estimate()}
 #' @param qobs An optional vector giving observed flow for comparison
 #' @export
 

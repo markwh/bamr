@@ -5,6 +5,8 @@
 library(devtools)
 library(testthat)
 library(rstantools)
+library(bayesplot)
+library(dplyr)
 
 # Adheres to best-practices laid out here:
 # https://cran.r-project.org/web/packages/rstantools/vignettes/developer-guidelines.html
@@ -25,6 +27,8 @@ use_package("settings")
 use_package("Rcpp")
 use_package("methods")
 use_package("bayesplot")
+use_package("parallel")
+use_package("tidyr")
 
 # document
 devtools::document()
@@ -39,7 +43,9 @@ devtools::test()
 
 # Datasets ----------------------------------------------------------------
 # dir.create("data")
-use_data(Po, Po_w, Po_s, Po_dA, Po_QWBM, overwrite = TRUE) # See inst/oneoff/datasets.R
+use_data(Po, Po_w, Po_s, Po_dA, Po_QWBM, 
+         Po_w_sm, Po_s_sm, Po_dA_sm, Po_QWBM_sm,
+         overwrite = TRUE) # See inst/oneoff/datasets.R
 
 # internal, for functions
 # use_data(scTable, olsonTbl, tzTable, no3Flow,

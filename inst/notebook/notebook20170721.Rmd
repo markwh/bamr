@@ -1,0 +1,33 @@
+---
+title: "2017-07-20 Notebook"
+output: html_notebook
+---
+
+Still going with package devel. Having trouble installing from github.
+
+- Make postprocessing functions
+- Write tests
+- See why not installing from github.
+
+### Checking out bayesplot package.
+
+```{r}
+library(bayesplot)
+ls("package:bayesplot")
+```
+
+Several sets of plotting functions, as laid out in the vignettes.
+
+- `ppc_` functions, for posterior prediction checks
+- `mcmc_` functions for parameter estimates from MCMC draws, as well as diagnostics
+
+The most immediately useful for me are the parameter draws, as laid out in the [MCMC vignette](https://cran.r-project.org/web/packages/bayesplot/vignettes/MCMC.html). I'll now try some.
+
+```{r}
+posterior <- as.array(est1)
+
+dim(posterior)
+dimnames(posterior)[["parameters"]]
+mcmc_intervals(posterior, pars = paste0("b[", 1:10, "]"))
+```
+
