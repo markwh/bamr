@@ -3,28 +3,28 @@
 #' 
 bam_settings <- settings::options_manager(
   # BAM variant parameter sets
-  manning_params = c("lowerbound_logQ", "upperbound_logQ", "lowerbound_Ao", 
-    "upperbound_Ao", "lowerbound_logn", "upperbound_logn", 
-    "sigma_man", "logAo_hat", "logn_hat", "logQ_sd", "logAo_sd", "logn_sd"),
+  manning_params = c("lowerbound_logQ", "upperbound_logQ", "lowerbound_A0", 
+    "upperbound_A0", "lowerbound_logn", "upperbound_logn", 
+    "sigma_man", "logA0_hat", "logn_hat", "logQ_sd", "logA0_sd", "logn_sd"),
   
   amhg_params = c("lowerbound_logQ", "upperbound_logQ", "lowerbound_logQc", 
      "upperbound_logQc", "lowerbound_logWc", "upperbound_logWc", 
      "lowerbound_b", "upperbound_b", "sigma_amhg", "logQc_hat", "logWc_hat", 
      "b_hat", "logQ_sd", "logQc_sd", "logWc_sd", "b_sd"),
   
-  manning_amhg_params = c("lowerbound_logQ", "upperbound_logQ", "lowerbound_Ao", 
-     "upperbound_Ao", "lowerbound_logn", "upperbound_logn", "lowerbound_logQc", 
+  manning_amhg_params = c("lowerbound_logQ", "upperbound_logQ", "lowerbound_A0", 
+     "upperbound_A0", "lowerbound_logn", "upperbound_logn", "lowerbound_logQc", 
      "upperbound_logQc", "lowerbound_logWc", "upperbound_logWc", 
      "lowerbound_b", "upperbound_b", "sigma_man", "sigma_amhg", "logQc_hat", 
-     "logWc_hat", "b_hat", "logAo_hat", "logn_hat", "logQ_sd", "logQc_sd", 
-     "logWc_sd", "b_sd", "logAo_sd", "logn_sd"),
+     "logWc_hat", "b_hat", "logA0_hat", "logn_hat", "logQ_sd", "logQc_sd", 
+     "logWc_sd", "b_sd", "logA0_sd", "logn_sd"),
   
   # Bounds on parameters
   lowerbound_logQ = "maxmin(bamdata$logW) + log(0.5) + log(0.5)",
   upperbound_logQ = "minmax(bamdata$logW) + log(40) + log(5)",
   
-  lowerbound_Ao = 30,
-  upperbound_Ao = 1e6,
+  lowerbound_A0 = 30,
+  upperbound_A0 = 1e6,
   lowerbound_logn = -4.6,
   upperbound_logn = -1.5,
   
@@ -46,13 +46,13 @@ bam_settings <- settings::options_manager(
   logQc_hat = "mean(bamdata$logQ_hat)",
   logWc_hat = "mean(bamdata$logW)",
   b_hat = "estimate_b(bamdata)",
-  logAo_hat = "estimate_A0(bamdata)",
+  logA0_hat = "estimate_A0(bamdata)",
   logn_hat = -3.5,
   
   logQ_sd = sqrt(log(1^2 + 1)), # CV of Q equals 1
   logQc_sd = sqrt(log(1^2 + 1)), # CV of Q equals 1; UPDATE THIS
   logWc_sd = sqrt(log(0.01)^2 + 1),
   b_sd = 0.05, # UPDATE THIS
-  logAo_sd = 0.1,
+  logA0_sd = 0.1,
   logn_sd = 1
 )

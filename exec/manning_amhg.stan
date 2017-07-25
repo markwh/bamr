@@ -16,8 +16,8 @@ data {
   real lowerbound_logQ;
   real upperbound_logQ;  
   
-  real lowerbound_Ao; // These must be scalars, unfortunately. 
-  real upperbound_Ao;
+  real lowerbound_A0; // These must be scalars, unfortunately. 
+  real upperbound_A0;
   real lowerbound_logn;
   real upperbound_logn;
   
@@ -39,14 +39,14 @@ data {
   real logQc_hat; // prior mean on logQc
   real logWc_hat;
   real b_hat[nx]; // ADD CHECK ON THIS FOR DATA PREP
-  real logAo_hat[nx];
+  real logA0_hat[nx];
   real logn_hat;
 
   real<lower=0> logQ_sd;
   real<lower=0> logQc_sd;
   real<lower=0> logWc_sd;
   real<lower=0> b_sd;
-  real<lower=0> logAo_sd;
+  real<lower=0> logA0_sd;
   real<lower=0> logn_sd;
 }
 
@@ -69,7 +69,7 @@ parameters {
   vector<lower=lowerbound_logQ,upper=upperbound_logQ>[nt] logQ;
 
   real<lower=lowerbound_logn,upper=upperbound_logn> logn;
-  real<lower=lowerbound_Ao,upper=upperbound_Ao> Ao[nx];
+  real<lower=lowerbound_A0,upper=upperbound_A0> A0[nx];
   
   real<lower=lowerbound_logWc,upper=upperbound_logWc> logWc;
   real<lower=lowerbound_logQc,upper=upperbound_logQc> logQc;
@@ -86,7 +86,7 @@ transformed parameters {
   
   for (i in 1:nx) {
     for (t in 1:nt) {
-      logA_man[i, t] = log(Ao[i] + dA_pos[i, t]);
+      logA_man[i, t] = log(A0[i] + dA_pos[i, t]);
     }
     man_rhs[i] = 10. * logA_man[i] - 6. * logn - 6. * logQ;
     amhg_rhs[i] = b[i] * (logQ - logQc) + logWc;
@@ -100,7 +100,7 @@ model {
   // Priors
   logQ ~ normal(logQ_hat, logQ_sd);
 
-  Ao ~ lognormal(logAo_hat, logAo_sd); // THINK ABOUT THIS MORE.
+  A0 ~ lognormal(logA0_hat, logA0_sd); // THINK ABOUT THIS MORE.
   logn ~ normal(logn_hat, logn_sd);
 
   b ~ normal(b_hat, b_sd);
