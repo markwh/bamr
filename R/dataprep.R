@@ -104,7 +104,7 @@ bam_check_nas <- function(datalist, missing) {
 #' @export
 
 bam_priors <- function(bamdata, 
-                       variant = c("manning", "amhg", "manning_amhg"), 
+                       variant = c("manning_amhg", "manning", "amhg"), 
                        ...) {
   variant <- match.arg(variant)
   if (variant != "amhg" && (is.null(bamdata$logS) || is.null(bamdata$dA)))
