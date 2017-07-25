@@ -1,0 +1,46 @@
+---
+title: "2017-07-25 Notebook"
+output: html_notebook
+---
+
+I have lots of unresolved things from yesterday's notebook. But first item is to prune unneeded params from stanfit object. 
+
+```{r}
+data(Po_sm)
+attach(Po_sm)
+Po_data_sm <- bam_data(w = Po_w_sm, s = Po_s_sm, dA = Po_dA_sm, Qhat = Po_QWBM_sm)
+
+Po_est <- bam_estimate(bamdata = Po_data_sm,
+                       variant = "manning_amhg")
+
+dimnames(as.array(Po_est))
+```
+
+params I don't need: 
+
+- man_rhs[i,t] (for i in 1:nx, t in 1:nt)
+- amhg_rhs[i,t] (same)
+- logA_man[i,t] (same)
+
+Try again.
+
+```{r}
+Po_est2 <- bam_estimate(bamdata = Po_data_sm,
+                       variant = "manning_amhg", 
+                       pars = c("man_rhs", "amhg_rhs", "logA_man"),
+                       include = FALSE)
+dimnames(as.array(Po_est2))
+```
+
+Good. Do I need to modify this for different variants?
+
+```{r}
+Po_est3 <- bam_estimate(bamdata = Po_data_sm,
+                       variant = "amhg", 
+                       pars = c("man_rhs", "amhg_rhs", "logA_man"),
+                       include = FALSE)
+dimnames(as.array(Po_est3))
+```
+
+Nope? Great! Now modify bam_estimate code. Done. 
+

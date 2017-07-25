@@ -12,6 +12,11 @@
 #' @param chains A positive integer specifying the number of Markov chains. 
 #'   The default is 3.
 #' @param iter Number of iterations per chain (including warmup). Defaults to 1000. 
+#' @param pars (passed to rstan::sampling) A vector of character strings specifying 
+#'   parameters of interest. For bam_estimate, the default is Stan transformed  
+#'   variables, "man_rhs", "amhg_rhs", and "logA_man".
+#' @param include Defaults to FALSE, which omits parameters specified in 
+#'   \code{pars}. If set to TRUE, only the \code{pars} parameters will be returned.
 #' @param ... Other arguments passed to rstan::sampling() for customizing the 
 #'   Monte Carlo sampler
 #' @import rstan
@@ -23,6 +28,8 @@ bam_estimate <- function(bamdata,
                          cores = parallel::detectCores(),
                          chains = 3L,
                          iter = 1000L,
+                         pars = c("man_rhs", "amhg_rhs", "logA_man"),
+                         include = FALSE,
                          ...) {
   variant <- match.arg(variant)
   stopifnot(is(bamdata, "bamdata"))
@@ -34,7 +41,9 @@ bam_estimate <- function(bamdata,
   
   stanfit <- stanmodels[[variant]]
   
-  out <- sampling(stanfit, data = baminputs, ...)
+  out <- sampling(stanfit, data = baminputs, 
+                  pars = pars, chains = chains,
+                  iter = iter, include = include, ...)
   
   out
 }
