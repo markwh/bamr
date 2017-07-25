@@ -33,7 +33,6 @@ after_script:
   - echo ${NOT_CRAN}
 
 after_success:
-  - travis_wait 40 tar -C .. -xf $PKG_TARBALL
   - Rscript -e 'library(covr); codecov()'
 
 after_failure:

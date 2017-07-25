@@ -33,8 +33,9 @@ use_package("tidyr")
 # document
 devtools::document()
 
-# test
-# devtools::use_testthat()
+# tests
+devtools::use_testthat()
+devtools::use_coverage(type = "codecov")
 devtools::test()
 
 # Vignettes

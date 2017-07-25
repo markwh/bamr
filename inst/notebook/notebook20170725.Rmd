@@ -56,3 +56,12 @@ vignette(package = "covr")
 vignette("how_it_works")
 ```
 
+...So I guess I just run `codecov()`? 
+
+```{r}
+codecov()
+```
+
+But the integration comes from Travis, like [here](https://github.com/codecov/example-r/blob/master/README.md)
+
+OK, so I need to pass a `token=` argument, the value of which I get from my codecov profile.
