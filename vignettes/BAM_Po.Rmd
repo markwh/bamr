@@ -1,0 +1,88 @@
+---
+title: "BAM_Po"
+author: "Mark Hagemann"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{BAM_Po}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+The bamr package facilitates Bayesian AMHG + Manning discharge estimation using stream slope, width, and partial cross-section area. It includes functions to preprocess and visualize data, perform Bayesian inference using Hamiltonian Monte Carlo (via models pre-written in the Stan language), and analyze the results. 
+
+## Example dataset from Po River
+
+The `Po` dataset contains all data required to perform BAM estimation of discharge. To attach the requisite items it contains, run:
+
+```{r}
+data(Po)
+attach(Po)
+```
+
+This will put the following objects in your global environment:
+
+- Po_w: a matrix of widths (cross-sections as rows, days as columns)
+- Po_s: a matrix of widths (cross-sections as rows, days as columns)
+- Po_dA: a matrix of widths (cross-sections as rows, days as columns)
+- Po_QWBM: a vector of water-balance-model discharge estimates for the days represented in the other matrices. This is required as a prior parameter for BAM. In this case, the estimates are all the same, representing the average water-balance-model discharge for the Po, and could be supplied as a single number rather than a vector. But it is also possible to specify time-varying prior estimates.
+
+
+## 1. Preprocessing Data
+
+The `bam_data` function takes width, slope, partial area, and best-guess flow as arguments.
+
+```{r}
+Po_data <- bam_data(w = Po_w, s = Po_s, dA = Po_dA, Qhat = Po_QWBM)
+```
+
+This returns an object of class "bamdata" that will be used to create prior parameters via `bam_priors` and perform Bayesian inference via `bam_estimate`.
+
+It is a good idea to plot the data; this can be done by simply calling
+
+```{r}
+plot(Po_data)
+```
+
+As the `plot` function returns a ggplot object, it can be modified, for example to make the y-axis be log scale:
+
+```{r}
+library(ggplot2)
+plot(Po_data) + scale_y_log10()
+```
+
+
+## 2. Specifying prior parameters
+
+
+
+
+## Figures
+
+The figure sizes have been customised so that you can easily put two images side-by-side. 
+
+```{r, fig.show='hold'}
+plot(1:10)
+plot(10:1)
+```
+
+You can enable figure captions by `fig_caption: yes` in YAML:
+
+    output:
+      rmarkdown::html_vignette:
+        fig_caption: yes
+
+Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
+
+## More Examples
+
+You can write math expressions, e.g. $Y = X\beta + \epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
+
+```{r, echo=FALSE, results='asis'}
+knitr::kable(head(mtcars, 10))
+```
+
+Also a quote using `>`:
+
+> "He who gives up [code] safety for [code] speed deserves neither."
+([via](https://twitter.com/hadleywickham/status/504368538874703872))

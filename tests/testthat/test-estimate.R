@@ -1,10 +1,8 @@
 context("BAM estimation")
 
 test_that("BAM estimates return expected values", {
-  data("Po_dA_sm")
-  data("Po_w_sm")
-  data("Po_s_sm")
-  data("Po_QWBM_sm")
+  data("Po_sm")
+  attach(Po_sm)
   
   
   expect_is(bda <- bam_data(w = Po_w_sm, Qhat = Po_QWBM_sm), "bamdata")

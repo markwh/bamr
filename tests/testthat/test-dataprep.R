@@ -1,10 +1,8 @@
 context("data preparation")
 
 test_that("data preparation produces correct output", {
-  data("Po_dA")
-  data("Po_w")
-  data("Po_s")
-  data("Po_QWBM")
+  data("Po")
+  attach(Po)
   
   bdpo <- bam_data(w = Po_w, s = Po_s, dA = Po_dA, Qhat = Po_QWBM)
   expect_is(bdpo, "bamdata")
@@ -24,10 +22,8 @@ test_that("data preparation produces correct output", {
 })
 
 test_that("different BAM variants yield proper behavior", {
-  data("Po_dA")
-  data("Po_w")
-  data("Po_s")
-  data("Po_QWBM")
+  data("Po")
+  attach(Po)
   
   expect_is(bda <- bam_data(w = Po_w, Qhat = Po_QWBM), "bamdata")
   expect_is(bdm <- bam_data(w = Po_w, s = Po_s, dA = Po_dA, Qhat = Po_QWBM),
@@ -47,10 +43,8 @@ test_that("different BAM variants yield proper behavior", {
 
 
 test_that("NA values are removed or replaced", {
-  data("Po_dA")
-  data("Po_w")
-  data("Po_s")
-  data("Po_QWBM")
+  data("Po")
+  attach(Po)
   
   
   randna <- function(mat, n) {
@@ -78,10 +72,8 @@ test_that("NA values are removed or replaced", {
 
 
 test_that("Parameter estimation yields sensible values", {
-  data("Po_dA")
-  data("Po_w")
-  data("Po_s")
-  data("Po_QWBM")
+  data("Po")
+  attach(Po)
   
   bdpo <- bam_data(w = Po_w, s = Po_s, dA = Po_dA, Qhat = Po_QWBM)
   prpo <- bam_priors(bdpo)

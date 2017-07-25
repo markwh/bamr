@@ -38,14 +38,12 @@ devtools::document()
 devtools::test()
 
 # Vignettes
-# devtools::use_vignette("discharge") # discharge estimation
+devtools::use_vignette("BAM_Po") # BAM discharge estimation on Po river
 
 
 # Datasets ----------------------------------------------------------------
 # dir.create("data")
-use_data(Po, Po_w, Po_s, Po_dA, Po_QWBM, 
-         Po_w_sm, Po_s_sm, Po_dA_sm, Po_QWBM_sm,
-         overwrite = TRUE) # See inst/oneoff/datasets.R
+use_data(Po, Po_sm, overwrite = TRUE) # See inst/oneoff/datasets.R
 
 # internal, for functions
 # use_data(scTable, olsonTbl, tzTable, no3Flow,

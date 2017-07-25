@@ -11,12 +11,11 @@
   }
 
 
-
-    .Last <- function() {
-      
-
-  if (requireNamespace("todoList", quietly = TRUE))
-      todo$write.csv(file = "./todo.csv")
+.Last <- function() {
+  if (requireNamespace("todoList", quietly = TRUE) &&
+      exists("todo") &&
+      is(todo, "TodoList"))
+         todo$write.csv(file = "./todo.csv")
 
     }
 

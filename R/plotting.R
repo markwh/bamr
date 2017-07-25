@@ -32,7 +32,7 @@ plot.bamdata <- function(bamdata, piece = c("w", "s", "dA")) {
   out <- ggplot(plotdata, aes(x = time, y = value)) +
     geom_line(aes(color = xs, group = xs)) +
     scale_color_gradient() +
-    facet_wrap(~variable, scales = "free_y")
+    facet_wrap(~variable, scales = "free_y", ncol = 1)
   
   out
 }
