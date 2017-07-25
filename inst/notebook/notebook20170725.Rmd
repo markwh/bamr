@@ -44,3 +44,15 @@ dimnames(as.array(Po_est3))
 
 Nope? Great! Now modify bam_estimate code. Done. 
 
+### Integrations--Travis-CI, covr, etc.
+
+Currently building on Travis server. (update: passed!)
+
+Meanwhile I'll try using covr.
+
+```{r}
+library(covr)
+vignette(package = "covr")
+vignette("how_it_works")
+```
+

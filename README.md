@@ -1,5 +1,8 @@
 # BAMR - Bayesian AMHG + Manning estimation using R
 
+[![Build Status](https://travis-ci.org/markwh/bamr.svg?branch=master)](https://travis-ci.org/markwh/bamr)
+
+
 This package is currently under development. But it *can* be used. To install, run the following:
 
 ```
