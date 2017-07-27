@@ -29,6 +29,7 @@ use_package("methods")
 use_package("bayesplot")
 use_package("parallel")
 use_package("tidyr")
+use_package("truncnorm")
 
 # document
 devtools::document()

@@ -20,3 +20,4 @@
 "make devel and feature branches",2017-07-24 23:09:38,"incomplete",NA,FALSE,19,""
 "Check reproduction of SWOT results",2017-07-25 11:50:14,"incomplete",NA,FALSE,20,""
 "use covr for test coverage",2017-07-25 15:38:44,"completed",2017-07-25 16:33:34,TRUE,21,""
+"migrate notebook SWOT project, add as symbolic link to current project",2017-07-25 16:42:04,"completed",2017-07-25 16:50:38,TRUE,22,""

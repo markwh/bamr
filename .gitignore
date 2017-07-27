@@ -16,3 +16,4 @@ vignettes/*_files
 .DS_Store
 cache
 inst/doc
+inst/notebook

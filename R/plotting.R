@@ -12,9 +12,12 @@ plot.bamdata <- function(bamdata, piece = c("w", "s", "dA")) {
     piece = "w"
   }
   
-  w_df <- as.data.frame(exp(t(bamdata$logW)))
-  s_df <- as.data.frame(exp(t(bamdata$logS)))
-  dA_df <- as.data.frame(t(bamdata$dA))
+  w_df <- as.data.frame(exp(t(bamdata$logW))) %>% 
+    setNames(1:nx)
+  s_df <- as.data.frame(exp(t(bamdata$logS))) %>% 
+    setNames(1:nx)
+  dA_df <- as.data.frame(t(bamdata$dA)) %>% 
+    setNames(1:nx)
   # browser()
   w_df$time <- s_df$time <- dA_df$time <- 1:bamdata$nt
   # browser()
