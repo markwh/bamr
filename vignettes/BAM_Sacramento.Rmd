@@ -1,31 +1,31 @@
 ---
-title: "BAM_Po"
+title: "BAM_Sacramento"
 author: "Mark Hagemann"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{BAM_Po}
+  %\VignetteIndexEntry{BAM_Sacramento}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
 The bamr package facilitates Bayesian AMHG + Manning discharge estimation using stream slope, width, and partial cross-section area. It includes functions to preprocess and visualize data, perform Bayesian inference using Hamiltonian Monte Carlo (via models pre-written in the Stan language), and analyze the results. 
 
-## Example dataset from Po River
+## Example dataset from Sacramento River
 
-The `Po` dataset contains all data required to perform BAM estimation of discharge. To attach the requisite items it contains, run:
+The `Sacramento` dataset contains all data required to perform BAM estimation of discharge. To attach the requisite items it contains, run:
 
 ```{r}
-data(Po)
-attach(Po)
+data(Sacramento)
+attach(Sacramento)
 ```
 
 This will put the following objects in your global environment:
 
-- Po_w: a matrix of widths (cross-sections as rows, days as columns)
-- Po_s: a matrix of widths (cross-sections as rows, days as columns)
-- Po_dA: a matrix of widths (cross-sections as rows, days as columns)
-- Po_QWBM: a vector of water-balance-model discharge estimates for the days represented in the other matrices. This is required as a prior parameter for BAM. In this case, the estimates are all the same, representing the average water-balance-model discharge for the Po, and could be supplied as a single number rather than a vector. But it is also possible to specify time-varying prior estimates.
+- Sac_w: a matrix of widths (cross-sections as rows, days as columns)
+- Sac_s: a matrix of slopes (cross-sections as rows, days as columns)
+- Sac_dA: a matrix of partial areas (cross-sections as rows, days as columns)
+- Sac_QWBM: a vector of water-balance-model discharge estimates for the days represented in the other matrices. This is required as a prior parameter for BAM. In this case, the estimates are all the same, representing the average water-balance-model discharge for the Sacramento, and could be supplied as a single number rather than a vector. But it is also possible to specify time-varying prior estimates.
 
 
 ## 1. Preprocessing Data
@@ -33,7 +33,7 @@ This will put the following objects in your global environment:
 The `bam_data` function takes width, slope, partial area, and best-guess flow as arguments.
 
 ```{r}
-Po_data <- bam_data(w = Po_w, s = Po_s, dA = Po_dA, Qhat = Po_QWBM)
+Sac_data <- bam_data(w = Sac_w, s = Sac_s, dA = Sac_dA, Qhat = Sac_QWBM)
 ```
 
 This returns an object of class "bamdata" that will be used to create prior parameters via `bam_priors` and perform Bayesian inference via `bam_estimate`.
@@ -41,14 +41,14 @@ This returns an object of class "bamdata" that will be used to create prior para
 It is a good idea to plot the data; this can be done by simply calling
 
 ```{r}
-plot(Po_data)
+plot(Sac_data)
 ```
 
 As the `plot` function returns a ggplot object, it can be modified, for example to make the y-axis be log scale:
 
 ```{r}
 library(ggplot2)
-plot(Po_data) + scale_y_log10()
+plot(Sac_data) + scale_y_log10()
 ```
 
 
@@ -57,9 +57,9 @@ plot(Po_data) + scale_y_log10()
 The AMHG-only BAM variant relies on width data only, and so it is possible to specify a `bamdata` object containing width-only data. (An *a priori* discharge estimate is still required.)
 
 ```{r}
-Po_amhg <- bam_data(w = Po_w, Qhat = Po_QWBM)
+Sac_amhg <- bam_data(w = Sac_w, Qhat = Sac_QWBM)
 
-plot(Po_amhg)
+plot(Sac_amhg)
 ```
 
 
@@ -77,7 +77,7 @@ bam_settings("logQc_hat")
 These settings are used to generate a set of BAM prior parameters for a particular analysis, using the `bam_priors` function:
 
 ```{r}
-Po_priors <- bam_priors(bamdata = Po_data)
+Sac_priors <- bam_priors(bamdata = Sac_data)
 ```
 
 `bam_priors` has an additional argument, `variant`, which can be changed to select the BAM variant. This can be either `manning_amhg` (the default, which includes all parameters), `manning`, or `amhg`. 
@@ -85,13 +85,13 @@ Po_priors <- bam_priors(bamdata = Po_data)
 If you wish to use a different prior, you can specify it. For example:
 
 ```{r}
-Po_priors_mod1 <- bam_priors(bamdata = Po_data, lowerbound_A0 = 20)
+Sac_priors_mod1 <- bam_priors(bamdata = Sac_data, lowerbound_A0 = 20)
 ```
 
 Data-dependent priors can also be specified using quoted expression. These must reference an object called "bamdata". For example:
 
 ```{r}
-Po_priors_mod2 <- bam_priors(bamdata = Po_data, 
+Sac_priors_mod2 <- bam_priors(bamdata = Sac_data, 
                              logQc_hat = "median(bamdata$logQ_hat)")
 ```
 
@@ -100,25 +100,25 @@ Po_priors_mod2 <- bam_priors(bamdata = Po_data,
 
 Once data and priors have been established, we are ready to make BAM estimates using `bam_estimate`. Although this has been optimized as much as possible, it is still computationally intensive and may take on the order of several minutes to run. 
 
-In order to demonstrate the inference step, we will use a small dataset, `Po_sm`, that is a subset of the days and cross-sections in `Po`. 
+In order to demonstrate the inference step, we will use a small dataset, `Sacramento_sm`, that is a subset of the days and cross-sections in `Sacramento`. 
 
-```{r, eval = FALSE}
-data(Po_sm)
-attach(Po_sm)
-Po_data_sm <- bam_data(w = Po_w_sm, s = Po_s_sm, dA = Po_dA_sm, Qhat = Po_QWBM_sm)
-plot(Po_data_sm)
+```{r}
+data(Sacramento_sm)
+attach(Sacramento_sm)
+Sac_data_sm <- bam_data(w = Sac_w_sm, s = Sac_s_sm, dA = Sac_dA_sm, Qhat = Sac_QWBM_sm)
+plot(Sac_data_sm)
 ```
 
 ```{r}
-Po_est <- bam_estimate(bamdata = Po_data_sm,
+Sac_est <- bam_estimate(bamdata = Sac_data_sm,
                        variant = "manning")
 ```
 
 Note that in this example I haven't touched the `bam_priors` function. The default behavior for `bam_estimate` is to use `bampriors = bam_priors(bamdata)`, which uses the default priors as discussed above. An estimate using different priors could be performed using 
 
-```{r, eval = FALSE}
-bam_estimate(bamdata = Po_data_sm, 
-             bampriors = bam_priors(bamdata = Po_data_sm, lowerbound_logQ = 3),
+```{r}
+bam_estimate(bamdata = Sac_data_sm, 
+             bampriors = bam_priors(bamdata = Sac_data_sm, lowerbound_logQ = 3),
              variant = "manning")
 ```
 
@@ -129,7 +129,7 @@ or some such.
 Once a BAM estimate has been computed, a hydrograph can be generated using `bam_hydrograph`. 
 
 ```{r}
-bam_hydrograph(fit = Po_est)
+bam_hydrograph(fit = Sac_est)
 ```
 
 

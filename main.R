@@ -39,12 +39,12 @@ devtools::use_coverage(type = "codecov")
 devtools::test()
 
 # Vignettes
-devtools::use_vignette("BAM_Po") # BAM discharge estimation on Po river
+devtools::use_vignette("BAM_Sacramento") # BAM discharge estimation on Po river
 
 
 # Datasets ----------------------------------------------------------------
 # dir.create("data")
-use_data(Po, Po_sm, overwrite = TRUE) # See inst/oneoff/datasets.R
+use_data(Sacramento, Sacramento_sm, overwrite = TRUE) # See inst/oneoff/datasets.R
 
 # internal, for functions
 # use_data(scTable, olsonTbl, tzTable, no3Flow,

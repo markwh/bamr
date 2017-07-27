@@ -1,10 +1,10 @@
 context("data preparation")
 
 test_that("data preparation produces correct output", {
-  data("Po")
-  attach(Po)
+  data("Sacramento")
+  attach(Sacramento)
   
-  bdpo <- bam_data(w = Po_w, s = Po_s, dA = Po_dA, Qhat = Po_QWBM)
+  bdpo <- bam_data(w = Sac_w, s = Sac_s, dA = Sac_dA, Qhat = Sac_QWBM)
   expect_is(bdpo, "bamdata")
   expect_is(bdpo$logW, "matrix")
   expect_is(bdpo$logS, "matrix")
@@ -22,11 +22,11 @@ test_that("data preparation produces correct output", {
 })
 
 test_that("different BAM variants yield proper behavior", {
-  data("Po")
-  attach(Po)
+  data("Sacramento")
+  attach(Sacramento)
   
-  expect_is(bda <- bam_data(w = Po_w, Qhat = Po_QWBM), "bamdata")
-  expect_is(bdm <- bam_data(w = Po_w, s = Po_s, dA = Po_dA, Qhat = Po_QWBM),
+  expect_is(bda <- bam_data(w = Sac_w, Qhat = Sac_QWBM), "bamdata")
+  expect_is(bdm <- bam_data(w = Sac_w, s = Sac_s, dA = Sac_dA, Qhat = Sac_QWBM),
             "bamdata")
   
   expect_error(bam_priors(bda))
@@ -43,8 +43,8 @@ test_that("different BAM variants yield proper behavior", {
 
 
 test_that("NA values are removed or replaced", {
-  data("Po")
-  attach(Po)
+  data("Sacramento")
+  attach(Sacramento)
   
   
   randna <- function(mat, n) {
@@ -56,10 +56,10 @@ test_that("NA values are removed or replaced", {
     mat
   }
   
-  expect_message(bdpo <- bam_data(w = randna(Po_w, 3), 
-                   s = randna(Po_s, 4), 
-                   dA = randna(Po_dA, 5),
-                   Qhat = Po_QWBM))
+  expect_message(bdpo <- bam_data(w = randna(Sac_w, 3), 
+                   s = randna(Sac_s, 4), 
+                   dA = randna(Sac_dA, 5),
+                   Qhat = Sac_QWBM))
   
   expect_equal(sum(is.na(bdpo$logW)), 0)
   expect_equal(sum(is.na(bdpo$logS)), 0)
@@ -71,10 +71,10 @@ test_that("NA values are removed or replaced", {
 
 
 test_that("Parameter estimation yields sensible values", {
-  data("Po")
-  attach(Po)
+  data("Sacramento")
+  attach(Sacramento)
   
-  bdpo <- bam_data(w = Po_w, s = Po_s, dA = Po_dA, Qhat = Po_QWBM)
+  bdpo <- bam_data(w = Sac_w, s = Sac_s, dA = Sac_dA, Qhat = Sac_QWBM)
   prpo <- bam_priors(bdpo)
   
   
