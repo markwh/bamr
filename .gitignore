@@ -7,8 +7,6 @@ src/Modules*
 src/bamr.so
 src/init.o
 src/include
-man/*.Rd
-!man/bamr-internal.Rd
 vignettes/*.R
 !vignettes/*.Rmd
 vignettes/*.html
