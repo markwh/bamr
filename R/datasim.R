@@ -53,19 +53,21 @@ bam_simulate <- function(fit) {
                    byrow = FALSE)
   diags <- lapply(split(sigmat, f = 1:nx), diag)
   
+  # Manually constructed correlation matrix, based on hydroSWOT, Pepsi
+  # Order is logQ, logA, logS, logW
   corhat <- matrix(c(1, .92, .5, .75,
                      .92, 1, .5, .8,
                      .5, .5,  1, .1,
                      .75, .8, .1, 1), 
                    nrow = 4)
   
-  covhats <- lapply(diags, function(x) x %*% corhat %*% x)
-  
-  isPosDef <- function(x) all(eigen(x)$values > 0)
-  
-  pds <- vapply(covhats, isPosDef, logical(1))
-  if (!all(pds))
-    stop("Not all simulated covariance matrices are positive definite.")
+  # covhats <- lapply(diags, function(x) x %*% corhat %*% x)
+  # 
+  # isPosDef <- function(x) all(eigen(x)$values > 0)
+  # 
+  # pds <- vapply(covhats, isPosDef, logical(1))
+  # if (!all(pds))
+  #   stop("Not all simulated covariance matrices are positive definite.")
   
   # Idea is to simulate correlation and variance separately, then combine
   # into covariance matrix.
