@@ -30,6 +30,8 @@ use_package("bayesplot")
 use_package("parallel")
 use_package("tidyr")
 use_package("truncnorm")
+use_package("magic")
+use_package("mvtnorm")
 
 # document
 devtools::document()
