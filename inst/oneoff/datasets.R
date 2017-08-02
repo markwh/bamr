@@ -8,7 +8,7 @@ Po_pepsi <- Pepsi %>%
   filter(name == "Po") %>% 
   transmute(xs, time, dA, H, S, W, QWBM, Q, A0 = Ao)
 
-Po_w <- Po_pepsi%>% 
+Po_w <- Po_pepsi %>% 
   select(xs, time, W) %>% 
   spread(key = xs, value = W, convert = TRUE) %>% 
   select(-time) %>% 

@@ -42,7 +42,7 @@ bam_estimate <- function(bamdata,
   stanfit <- stanmodels[[variant]]
   
   out <- sampling(stanfit, data = baminputs, 
-                  pars = pars, chains = chains,
+                  pars = pars, cores = cores, chains = chains,
                   iter = iter, include = include, ...)
   
   out
