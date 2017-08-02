@@ -11,10 +11,13 @@ plot.bamdata <- function(bamdata, piece = c("w", "s", "dA")) {
     bamdata$logS <- bamdata$dA <- matrix(nr = bamdata$nx, nc = bamdata$nt)
     piece = "w"
   }
-  
-  w_df <- as.data.frame(exp(t(bamdata$logW)))
-  s_df <- as.data.frame(exp(t(bamdata$logS)))
-  dA_df <- as.data.frame(t(bamdata$dA))
+  nx <- bamdata$nx
+  w_df <- as.data.frame(exp(t(bamdata$logW))) %>% 
+    setNames(1:nx)
+  s_df <- as.data.frame(exp(t(bamdata$logS))) %>% 
+    setNames(1:nx)
+  dA_df <- as.data.frame(t(bamdata$dA)) %>% 
+    setNames(1:nx)
   # browser()
   w_df$time <- s_df$time <- dA_df$time <- 1:bamdata$nt
   # browser()
@@ -54,4 +57,18 @@ bam_hydrograph <- function(fit, qobs = NULL) {
   out <- ggplot(qpred, aes(x = time, y = flow, color = stat)) +
     geom_line(aes(linetype = series))
   out
+}
+
+#' Plot a dataset that is formatted in space-down, time-across format
+#' 
+plot_DAWG <- function(dawgmat) {
+  dawgdf <- as.data.frame(t(dawgmat)) %>% 
+    setNames(1:nrow(dawgmat)) %>% 
+    mutate(time = 1:ncol(dawgmat)) %>% 
+    melt(id.vars = "time", variable.name = "xs") %>% 
+    mutate(xs = as.numeric(xs))
+  
+  ggplot(dawgdf, aes(x = time, y = xs, group = xs)) +
+    geom_line(aes(color = xs, group = xs)) +
+    scale_color_gradient()
 }

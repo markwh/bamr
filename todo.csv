@@ -3,7 +3,7 @@
 "Put in a dataset from Pepsi",2017-07-17 17:24:06,"completed",2017-07-17 17:35:09,TRUE,2,""
 "Deal with missing data imputation",2017-07-17 17:43:32,"incomplete",NA,FALSE,3,""
 "Add data objects for Po representing intended matrix inputs",2017-07-17 17:53:49,"completed",2017-07-17 17:59:03,TRUE,4,""
-"Import default priors and other param values as internal dataset",2017-07-18 09:11:29,"completed",2017-07-25 10:39:32,TRUE,5,"I went a different route--using settings package and bam_settings fucntion"
+"Import default priors and other param values as internal dataset",2017-07-18 09:11:29,"completed",2017-07-25 10:39:32,TRUE,5,""
 "document exported datasets",2017-07-18 09:21:38,"completed",2017-07-25 10:38:55,TRUE,6,""
 "get default AMHG error variance from Caitline's work",2017-07-18 10:08:17,"incomplete",NA,FALSE,7,""
 "modify data prep depending on which BAM variant is used",2017-07-20 10:41:31,"completed",2017-07-20 20:07:34,TRUE,8,""
@@ -20,3 +20,4 @@
 "make devel and feature branches",2017-07-24 23:09:38,"incomplete",NA,FALSE,19,""
 "Check reproduction of SWOT results",2017-07-25 11:50:14,"incomplete",NA,FALSE,20,""
 "use covr for test coverage",2017-07-25 15:38:44,"completed",2017-07-25 16:33:34,TRUE,21,""
+"migrate notebook SWOT project, add as symbolic link to current project",2017-07-25 16:42:04,"completed",2017-07-25 16:50:38,TRUE,22,""
