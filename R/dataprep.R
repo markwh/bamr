@@ -14,12 +14,19 @@
 #' @param s Matrix of slopes: time as columns, space as rows
 #' @param dA Matrix of area above base area: time as columns, space as rows
 #' @param Qhat Vector of Q estimates. Needed to create prior on Q. 
+#' @param max_xs Maximum number of cross-sections to allow in data. Used to reduce 
+#'   sampling time. Defaults to 30.
+#' @param seed RNG seed to use for sampling cross-sections, if nx > max_xs. 
+#' @param missing How to treat missing values in data? Currently the only option is
+#'   "omit", which omits times with missing observations. 
 #' @export
 
 bam_data <- function(w, 
                      s = NULL, 
                      dA = NULL, 
                      Qhat, 
+                     max_xs = 30L,
+                     seed = NULL,
                      missing = c("omit", "impute")) {
 
   missing <- match.arg(missing)
@@ -41,6 +48,10 @@ bam_data <- function(w,
                         nx = nx, 
                         nt = nt), 
                    class = c("bamdata"))
+  
+  if (nx > max_xs)
+    out <- sample_xs(out, n = max_xs, seed = seed)
+  
   out
 }
 
@@ -135,3 +146,30 @@ compose_bam_inputs <- function(bamdata, priors = bam_priors(bamdata)) {
   
 }
 
+
+#' Take a random sample of a bamdata object's cross-sections.
+#' 
+#' @param bamdata a bamdata object, as returned by \code{bam_data()}
+#' @param n Number of cross-sections to 
+#' @export
+sample_xs <- function(bamdata, n, seed = NULL) {
+  
+  stopifnot(is(bamdata, "bamdata"))
+  
+  if (n >= bamdata$nx)
+    return(bamdata)
+  
+  if (!is.null(seed))
+    set.seed(seed)
+  keepxs <- sort(sample(1:bamdata$nx, size = n, replace = FALSE))
+  
+  bamdata$xs <- n
+  bamdata$logW <- bamdata$logW[keepxs, ]
+  
+  if (!is.null(bamdata$logS)) {
+    bamdata$logS <- bamdata$logS[keepxs, ]
+    bamdata$dA <- bamdata$dA[keepxs, ]
+  }
+  
+  bamdata
+}

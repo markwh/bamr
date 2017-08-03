@@ -76,6 +76,29 @@ test_that("Parameter estimation yields sensible values", {
   
   bdpo <- bam_data(w = Sac_w, s = Sac_s, dA = Sac_dA, Qhat = Sac_QWBM)
   prpo <- bam_priors(bdpo)
+})
+
+test_that("subsetting of cross-sections works", {
+  data("Sacramento")
+  attach(Sacramento)
   
+  bdsac <- bam_data(w = Sac_w, s = Sac_s, dA = Sac_dA, Qhat = Sac_QWBM)
   
+  nn <- 2
+  bdsm <- sample_xs(bdsac, n = nn, seed = 8888)
+  
+  expect_is(bdsm, "bamdata")
+  expect_lt(nrow(bdsm$logW), nrow(bdsac$logW))
+  expect_lt(nrow(bdsm$logS), nrow(bdsac$logS))
+  expect_lt(nrow(bdsm$dA), nrow(bdsac$dA))
+  
+  expect_true(identical(bdsm, sample_xs(bdsac, n = nn, seed = 8888)))
+  expect_false(identical(bdsm, sample_xs(bdsac, n = nn, seed = 8889)))
+  
+  expect_true(identical(bdsac, sample_xs(bdsac, n = bdsac$nx, seed = 8888)))
+  expect_true(identical(bdsac, sample_xs(bdsac, n = bdsac$nx + 10, seed = 8888)))
+  
+  expect_true(identical(bam_data(w = Sac_w, s = Sac_s, dA = Sac_dA, Qhat = Sac_QWBM,
+                                 max_xs = 2, seed = 8888), 
+                        sample_xs(bdsac, n = 2, seed = 8888)))
 })
