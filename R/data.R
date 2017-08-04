@@ -10,7 +10,7 @@
 #'   \item{Sac_s}{A matrix of slopes (unitless)}
 #'   \item{Sac_dA}{A matrix of partial cross-sectional area (m^2)}
 #'   \item{Sac_QWBM}{A vector of discharge estimates from a water-balance model (m^3/s)}   
-#'   
+#'   \item{Sac_Qobs}{A vector of observed discharge (for use in validation)}
 #' }
 "Sacramento"
 
@@ -25,6 +25,6 @@
 #'   \item{Sac_s_sm}{A matrix of slopes (unitless)}
 #'   \item{Sac_dA_sm}{A matrix of partial cross-sectional area (m^2)}
 #'   \item{Sac_QWBM_sm}{A vector of discharge estimates from a water-balance model (m^3/s)}   
-#'   
+#'   \item{Sac_Qobs_sm}{A vector of observed discharge (for use in validation)}   
 #' }
 "Sacramento_sm"

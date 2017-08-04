@@ -12,9 +12,8 @@
 bam_valdata <- function(fit, qobs) {
   stopifnot(is(fit, "stanfit"))
   stopifnot(is.numeric(qobs))
-  qpred <- getQstats(fit = fit, chain = "all") %>% 
-    dplyr::filter(stat == "mean") %>% 
-    dplyr::transmute(time, qpred = flow)
+  qpred <- bam_qpred(fit = fit, chain = "all") %>% 
+    dplyr::transmute(time, qpred = mean)
   stopifnot(length(qobs) == nrow(qpred))
   out <- cbind(qpred, qobs = qobs)
   out

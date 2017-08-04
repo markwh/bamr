@@ -10,7 +10,7 @@
   \item{Sac_s_sm}{A matrix of slopes (unitless)}
   \item{Sac_dA_sm}{A matrix of partial cross-sectional area (m^2)}
   \item{Sac_QWBM_sm}{A vector of discharge estimates from a water-balance model (m^3/s)}   
-  
+  \item{Sac_Qobs_sm}{A vector of observed discharge (for use in validation)}   
 }}
 \usage{
 Sacramento_sm

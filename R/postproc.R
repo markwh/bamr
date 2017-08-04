@@ -1,6 +1,6 @@
 # Functions to aid in post-processing BAM results
 
-#' Flow estimate statistics, including mean and bounds of Bayesian credible interval.
+#' Flow posterior mean and Bayesian credible interval.
 #' 
 #' @param fit A stanfit object, as returned from \code{bam_estimate()}
 #' @param chain Either an integer specifying which chain(s) to extract statistics from,
@@ -9,10 +9,13 @@
 #'   credible interval. Default is 0.95.
 #' @export 
 
-getQstats <- function(fit, chain = "all", conf.level = 0.95) {
+bam_qpred <- function(fit, chain = "all", conf.level = 0.95) {
   
   qpost <- rstan::extract(fit, "logQ", permuted = FALSE) %>% 
     reshape2::melt()
+  
+  if (conf.level <= 0 || conf.level >= 1)
+    stop("conf.level must be on the interval (0,1).\n")
   
   alpha <- 1 - conf.level
   
@@ -33,8 +36,7 @@ getQstats <- function(fit, chain = "all", conf.level = 0.95) {
     dplyr::mutate(time = gsub("^logQ\\[", "", time),
            time = gsub("\\]$", "", time),
            time = as.numeric(time)) %>% 
-    dplyr::arrange(time) %>% 
-    tidyr::gather(key = stat, value = flow, -time)
+    dplyr::arrange(time)
   
   qstats
 }

@@ -49,9 +49,10 @@ plot.bamdata <- function(bamdata, piece = c("w", "s", "dA")) {
 bam_hydrograph <- function(fit, qobs = NULL) {
   
   nchains <- length(fit@stan_args)
-  qpred <- lapply(1:nchains, function(x) getQstats(fit, x)) %>% 
+  qpred <- lapply(1:nchains, function(x) bam_qpred(fit, x)) %>% 
     setNames(paste0("chain", 1:nchains)) %>% 
-    dplyr::bind_rows(.id = "series")
+    dplyr::bind_rows(.id = "series") %>% 
+    tidyr::gather(key = stat, value = flow, -time, -series)
   
   out <- ggplot(qpred, aes(x = time, y = flow, color = stat)) +
     geom_line(aes(linetype = series))
