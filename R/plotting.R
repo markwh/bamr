@@ -46,7 +46,6 @@ plot.bamdata <- function(bamdata, piece = c("w", "s", "dA")) {
 #' @param qobs An optional vector giving observed flow for comparison
 #' @importFrom dplyr "%>%"
 #' @export
-
 bam_hydrograph <- function(fit, qobs = NULL) {
   
   nchains <- length(fit@stan_args)

@@ -75,10 +75,16 @@ Sac_QWBM <- Sac_pepsi%>%
   summarize(QWBM = median(QWBM)) %>% 
   `[[`("QWBM")
 
+Sac_Qobs <- Sac_pepsi %>% 
+  group_by(time) %>% 
+  summarize(Qobs = median(Q)) %>% 
+  `[[`("Qobs")
+
 Sacramento <- list(Sac_w = Sac_w,
            Sac_s = Sac_s,
            Sac_dA = Sac_dA,
-           Sac_QWBM = Sac_QWBM)
+           Sac_QWBM = Sac_QWBM,
+           Sac_Qobs = Sac_Qobs)
 
 ### Minimal testing datasets -------
 
@@ -102,8 +108,10 @@ Sac_w_sm <- Sac_w[xs_sub, t_sub]
 Sac_s_sm <- Sac_s[xs_sub, t_sub]
 Sac_dA_sm <- Sac_dA[xs_sub, t_sub]
 Sac_QWBM_sm <- Sac_QWBM[t_sub]
+Sac_Qobs_sm <- Sac_Qobs[t_sub]
 
 Sacramento_sm <- list(Sac_w_sm = Sac_w_sm,
               Sac_s_sm = Sac_s_sm,
               Sac_dA_sm = Sac_dA_sm,
-              Sac_QWBM_sm = Sac_QWBM_sm)
+              Sac_QWBM_sm = Sac_QWBM_sm,
+              Sac_Qobs_sm = Sac_Qobs_sm)

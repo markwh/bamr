@@ -22,6 +22,7 @@ Overall steps:
 4. Selection of settings (n chains, chain length, etc.)
 4. Estimate parameters
 
+
 ```{r}
 bamdat <- bam_data(w, h, s) # Creates an object that Stan can use
 
@@ -37,4 +38,19 @@ bamest2 <- bam_estimate(data, priors = mypriors)
 plot(bamest$Q)
 plot(bamest$loglik)
 ```
+
+5. Diagnose convergence
+6. Plot output
+7. Validate
+
+```{r}
+bam_convergence(bamest) #use bayesplot package to diagnose convergence metrics
+bam_validate(bamest, qobs) # returns a list. Or an object with a plot() method.
+
+```
+
+
+
+
+
 
