@@ -46,7 +46,7 @@ bam_settings <- settings::options_manager(
   logQc_hat = "mean(bamdata$logQ_hat)",
   logWc_hat = "mean(bamdata$logW)",
   b_hat = "estimate_b(bamdata)",
-  logA0_hat = "estimate_A0(bamdata)",
+  logA0_hat = "estimate_logA0(bamdata)",
   logn_hat = -3.5,
   
   logQ_sd = sqrt(log(1^2 + 1)), # CV of Q equals 1

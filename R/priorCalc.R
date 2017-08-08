@@ -15,20 +15,17 @@ estimate_b <- function(bamdata) {
   b_hat
 }
 
-#' Estimate AHG b exponent using bam data
+#' Estimate base cross-sectional area using bam data
 #' 
 #' @param bamdata a bamdata object, created with bam_data()
 #' @export
-estimate_A0 <- function(bamdata) {
+estimate_logA0 <- function(bamdata) {
   if (!is(bamdata, "bamdata"))
     stop("bamdata must be a bamdata object, as created with bam_data function")
   lwbar <- apply(bamdata$logW, 1, mean)
   lwsd <- apply(bamdata$logW, 1, sd)
   
   logA0hat <- -1.782 + 1.438 * lwbar - 2.268 * lwsd
-  A0hat <- exp(logA0hat)
-  
-  assertthat::are_equal(length(A0hat), bamdata$nx)
-  
-  A0hat
+
+  logA0hat
 }
