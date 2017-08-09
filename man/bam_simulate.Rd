@@ -4,7 +4,7 @@
 \alias{bam_simulate}
 \title{Simulate SWOT data from a specified BAM model.}
 \usage{
-bam_simulate(logQ_hat, nx, nt)
+bam_simulate(mu_logQ_hat, nx, nt)
 }
 \description{
 Simulate SWOT data from a specified BAM model.
