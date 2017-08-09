@@ -92,7 +92,7 @@ Data-dependent priors can also be specified using quoted expression. These must 
 
 ```{r}
 Sac_priors_mod2 <- bam_priors(bamdata = Sac_data, 
-                             logQc_hat = "median(bamdata$logQ_hat)")
+                             logQc_hat = "median(bamdata$mu_logQ_hat)")
 ```
 
 

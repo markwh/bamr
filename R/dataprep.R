@@ -36,8 +36,12 @@ bam_data <- function(w,
   datalist <- list(logW = log(w),
                 logS = logS,
                 dA = dA,
-                logQ_hat = log(Qhat))
+                mu_logQ_hat = log(Qhat))
   
+  median_dA <- matrix(apply(datalist$dA, 1, median, na.rm = TRUE), 
+                      nrow = nrow(datalist$dA), ncol = ncol(datalist$dA), 
+                      byrow = FALSE)
+  datalist$dA <- datalist$dA - median_dA
   datalist <- bam_check_args(datalist)
   datalist <- bam_check_nas(datalist, missing = missing)
 
@@ -57,14 +61,14 @@ bam_data <- function(w,
 
 bam_check_args <- function(datalist) {
   
-  logQ_hat <- datalist$logQ_hat
-  matlist <- datalist[names(datalist) != "logQ_hat"]
+  mu_logQ_hat <- datalist$mu_logQ_hat
+  matlist <- datalist[names(datalist) != "mu_logQ_hat"]
   
   # Remove NULLs
   matlist <- matlist[!vapply(matlist, is.null, logical(1))]
   
   # Check types
-  if (!(is(logQ_hat, "numeric") && is(logQ_hat, "vector")))
+  if (!(is(mu_logQ_hat, "numeric") && is(mu_logQ_hat, "vector")))
     stop("Qhat must be a numeric vector.\n")
   if (!all(vapply(matlist, is, logical(1), "matrix")))
     stop("All data must be a supplied as a matrix.\n")
@@ -76,10 +80,12 @@ bam_check_args <- function(datalist) {
   if (!(all(vapply(matlist, nrow, 0L) == nr) &&
         all(vapply(matlist, ncol, 0L) == nc)))
     stop("All data must have same dimensions.\n")
-  if (!length(logQ_hat) == nc)
-    logQ_hat <- rep(logQ_hat, length.out = nc)
+  # if (!length(mu_logQ_hat) == nc)
+    # mu_logQ_hat <- rep(mu_logQ_hat, length.out = nc)
+  if (length(mu_logQ_hat) > 1)
+    stop("Qhat must have length 1")
   
-  out <- c(matlist, list(logQ_hat = logQ_hat))
+  out <- c(matlist, list(mu_logQ_hat = mu_logQ_hat))
   out
 }
 

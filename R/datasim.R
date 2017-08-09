@@ -5,12 +5,12 @@
 #' @importFrom magic adiag
 #' @importFrom reshape2 melt
 
-bam_simulate <- function(logQ_hat, nx, nt) {
+bam_simulate <- function(mu_logQ_hat, nx, nt) {
   
   # Flow
   sigma_logQ <- rtruncnorm(1, a = 0, b = Inf,
                            mean = 1.03, sd = 0.4146)
-  mu_logQ <- rnorm(1, logQ_hat, cv2sigma(1)) # How far off might logQ_hat be?
+  mu_logQ <- rnorm(1, mu_logQ_hat, cv2sigma(1)) # How far off might mu_logQ_hat be?
   
   # Manning parameters
   mu_logA <- rnorm(nx, 1.209 + 0.753 * mu_logQ + 0.285 * sigma_logQ,
@@ -26,7 +26,7 @@ bam_simulate <- function(logQ_hat, nx, nt) {
   mu_logS <- (4 *mu_logW - mu_manning) / 3
   
   # TODO: IMPLEMENT AMHG DEPENDENCE
-  # logQc <- rnorm(1, logQ_hat, logQc_sd)
+  # logQc <- rnorm(1, mu_logQ_hat, logQc_sd)
   # logWc <- rnorm(1, 2.099 + 0.454 * mu_logQ, 0.502)
   
   sigma_logW <- rtruncnorm(nx, 0, Inf, 
@@ -105,7 +105,7 @@ bam_simulate <- function(logQ_hat, nx, nt) {
   logn <- logn # generated stochastically above; mu_logS depends on it.
   b <- qaswcov_rand[1 + (1:nx * 3), 1] / qaswcov_rand[1,1] # from regression coef math
   
-  bamdata <- bam_data(w = w, s = s, dA = dA, Qhat = exp(logQ_hat))
+  bamdata <- bam_data(w = w, s = s, dA = dA, Qhat = exp(mu_logQ_hat))
   params <- list(A0 = A0,
                  logn = logn,
                  n = exp(logn))
