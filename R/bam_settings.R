@@ -25,6 +25,8 @@ bam_settings <- settings::options_manager(
   
   lowerbound_A0 = 30,
   upperbound_A0 = 1e6,
+  lowerbound_logA0 = log(30),
+  upperbound_logA0 = log(1e6),
   lowerbound_logn = -4.6,
   upperbound_logn = -1.5,
   

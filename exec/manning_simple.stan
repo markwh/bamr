@@ -15,8 +15,8 @@ data {
   real<lower=0>lowerbound_logQ;
   real<lower=0>upperbound_logQ;
   
-  real lowerbound_A0; // These must be scalars, unfortunately. 
-  real upperbound_A0;
+  real lowerbound_logA0; // These must be scalars, unfortunately. 
+  real upperbound_logA0;
   real lowerbound_logn;
   real upperbound_logn;
   
@@ -50,7 +50,7 @@ parameters {
   real<lower=lowerbound_logQ,upper=upperbound_logQ> mu_logQ;
   vector<lower=lowerbound_logQ,upper=upperbound_logQ>[nt] logQ;
   real<lower=lowerbound_logn,upper=upperbound_logn> logn;
-  real<lower=lowerbound_A0,upper=upperbound_A0> A0[nx];
+  real<lower=lowerbound_logA0,upper=upperbound_logA0> logA0[nx];
 }
 
 transformed parameters {
@@ -61,10 +61,10 @@ transformed parameters {
   vector[nt] beta; // time main effect (equal to -6 deltaQ_t)
   // vector[nt] gamma[nx]; // interaction effect (equal to partial Taylor expansion of log sum)
   
-  mu = -6. * logn + 10. * mean(A0) - 6. * mu_logQ;
+  mu = -6. * logn + 10. * mean(logA0) - 6. * mu_logQ;
   beta = -6. * (logQ - mu_logQ);
   for (i in 1:nx) {
-    alpha[i] = 10 * (A0[i] - mean(A0));
+    alpha[i] = 10 * (logA0[i] - mean(logA0));
     
     // for (t in 1:nt) {
       // logA_man[i, t] = log(A0[i] + dA[i, t]);
@@ -79,7 +79,7 @@ model {
   // Priors
   mu_logQ ~ normal(mu_logQ_hat, mu_logQ_sd);
   logQ ~ normal(mu_logQ, sigma_logQ);
-  A0 ~ lognormal(logA0_hat, logA0_sd);
+  logA0 ~ normal(logA0_hat, logA0_sd);
   logn ~ normal(logn_hat, logn_sd); // has median of 0.03, 95% CI of (0.006, 0.156)
   
   // Likelihood
