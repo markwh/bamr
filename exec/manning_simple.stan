@@ -8,7 +8,7 @@ data {
   // *Actual* data
   vector[nt] logW[nx]; // measured widths
   vector[nt] logS[nx]; // measured slopes
-  // vector[nt] dA[nx]; // measured area difference from base area
+  vector[nt] dA[nx]; // measured area difference from base area
 
 
   // Hard bounds on parameters
@@ -59,17 +59,17 @@ transformed parameters {
   real mu; // global mean
   real alpha[nx]; // cross-section main effect (equal to 10 deltaA_i)
   vector[nt] beta; // time main effect (equal to -6 deltaQ_t)
-  // vector[nt] gamma[nx]; // interaction effect (equal to partial Taylor expansion of log sum)
-  
+  real A0[nx];
+  vector[nt] gamma[nx]; // interaction effect (equal to partial Taylor expansion of log sum)
+  A0 = exp(logA0);
   mu = -6. * logn + 10. * mean(logA0) - 6. * mu_logQ;
   beta = -6. * (logQ - mu_logQ);
   for (i in 1:nx) {
     alpha[i] = 10 * (logA0[i] - mean(logA0));
-    
-    // for (t in 1:nt) {
+    for (t in 1:nt) {
       // logA_man[i, t] = log(A0[i] + dA[i, t]);
-      // gamma[i, t] = 
-    // }
+      gamma[i, t] = - dA[i, t] / A0[i];
+    }
     // man_rhs[i] = 10. * logA_man[i] - 6. * logn - 6. * logQ;
   }
 }
@@ -84,8 +84,8 @@ model {
   
   // Likelihood
   for (i in 1:nx) {
-    // y[i] ~ normal(mu + alpha[i] + beta + gamma[i], sigma_man);
-    y[i] ~ normal(mu + alpha[i] + beta, sigma_man); // no interaction term
+    y[i] ~ normal(mu + alpha[i] + beta + gamma[i], sigma_man);
+    // y[i] ~ normal(mu + alpha[i] + beta, sigma_man); // no interaction term
     // man_lhs[i] ~ normal(man_rhs[i], sigma_man); //cv2sigma(0.05));
   }
 }
