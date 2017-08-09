@@ -68,7 +68,7 @@ transformed parameters {
     alpha[i] = 10 * (logA0[i] - mean(logA0));
     for (t in 1:nt) {
       // logA_man[i, t] = log(A0[i] + dA[i, t]);
-      gamma[i, t] = - dA[i, t] / A0[i];
+      gamma[i, t] = - dA[i, t] / A0[i] + 0.5 * (dA[i, t] / A0[i])^2;
     }
     // man_rhs[i] = 10. * logA_man[i] - 6. * logn - 6. * logQ;
   }
