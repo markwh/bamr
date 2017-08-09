@@ -9,7 +9,6 @@
 #' 
 #' Produces a bamdata object that can be passed to bam_estimate function
 #' 
-#' @useDynLib bamr, .registration = TRUE
 #' @param w Matrix (or data frame) of widths: time as columns, space as rows
 #' @param s Matrix of slopes: time as columns, space as rows
 #' @param dA Matrix of area above base area: time as columns, space as rows
@@ -112,7 +111,6 @@ bam_check_nas <- function(datalist, missing) {
 #' 
 #' Produces a bampriors object that can be passed to bam_estimate function
 #' 
-#' @useDynLib bamr, .registration = TRUE
 #' @param w Matrix (or data frame) of widths: time as rows, space as columns
 #' @param s Matrix of slopes: time as rows, space as columns
 #' @param dA Matrix of area above base area: time as rows, space as columns
