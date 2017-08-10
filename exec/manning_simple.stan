@@ -57,25 +57,24 @@ transformed parameters {
   // vector[nt] man_rhs[nx]; // RHS for Manning likelihood
   // vector[nt] logA_man[nx]; // log area for Manning's equation
   real mu; // global mean
-  real alpha[nx]; // cross-section main effect (equal to 10 deltaA_i)
+  // real alpha[nx]; // cross-section main effect (equal to 10 deltaA_i)
   vector[nt] beta; // time main effect (equal to -6 deltaQ_t)
   real A0[nx];
-  vector[nt] gamma[nx]; // interaction effect (equal to partial Taylor expansion of log sum)
+  // vector[nt] gamma[nx]; // interaction effect (equal to partial Taylor expansion of log sum)
   A0 = exp(logA0);
-  mu = -6. * logn + 10. * mean(logA0) - 6. * mu_logQ;
+  mu = -6. * logn - 6. * mu_logQ;
   beta = -6. * (logQ - mu_logQ);
-  for (i in 1:nx) {
-    alpha[i] = 10 * (logA0[i] - mean(logA0));
-    for (t in 1:nt) {
-      // logA_man[i, t] = log(A0[i] + dA[i, t]);
-      gamma[i, t] = - dA[i, t] / A0[i] + 0.5 * (dA[i, t] / A0[i])^2;
-    }
+  // for (i in 1:nx) {
+    // alpha[i] = 10 * (logA0[i] - mean(logA0));
+    // for (t in 1:nt) {
+      // gamma[i, t] = log(A0[i] + dA[i, t]);
+      // gamma[i, t] = - dA[i, t] / A0[i] + 0.5 * (dA[i, t] / A0[i])^2;
+    // }
     // man_rhs[i] = 10. * logA_man[i] - 6. * logn - 6. * logQ;
-  }
+  // }
 }
 
 model {
-  
   // Priors
   mu_logQ ~ normal(mu_logQ_hat, mu_logQ_sd);
   logQ ~ normal(mu_logQ, sigma_logQ);
@@ -84,7 +83,7 @@ model {
   
   // Likelihood
   for (i in 1:nx) {
-    y[i] ~ normal(mu + alpha[i] + beta + gamma[i], sigma_man);
+    y[i] ~ normal(mu + beta + 10. * log(A0[i] + dA[i]), sigma_man);
     // y[i] ~ normal(mu + alpha[i] + beta, sigma_man); // no interaction term
     // man_lhs[i] ~ normal(man_rhs[i], sigma_man); //cv2sigma(0.05));
   }
