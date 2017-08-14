@@ -25,3 +25,4 @@
 "add observed flow to included example datasets",2017-08-04 11:23:49,"completed",2017-08-04 12:16:05,TRUE,24,""
 "get logQ_sd, sigma_logQ from hydroSWOT",2017-08-09 11:17:12,"incomplete",NA,FALSE,25,""
 "make sample datasets have length-1 QWBM",2017-08-09 12:13:47,"incomplete",NA,FALSE,26,""
+"Do `future` and `batchtools` demos once HPC access is granted",2017-08-11 15:22:56,"incomplete",NA,FALSE,27,""

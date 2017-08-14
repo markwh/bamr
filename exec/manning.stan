@@ -5,7 +5,6 @@ data {
   int<lower=0> nx; // number of cross-sections
   int<lower=0> nt; // number of observation times
   
-  
   // *Actual* data
   vector[nt] logW[nx]; // measured widths
   vector[nt] logS[nx]; // measured slopes
@@ -16,8 +15,8 @@ data {
   real<lower=0>lowerbound_logQ;
   real<lower=0>upperbound_logQ;
   
-  real lowerbound_A0; // These must be scalars, unfortunately. 
-  real upperbound_A0;
+  real lowerbound_logA0; // These must be scalars, unfortunately. 
+  real upperbound_logA0;
   real lowerbound_logn;
   real upperbound_logn;
   
@@ -27,11 +26,12 @@ data {
   
   
   // Hyperparameters
-  vector[nt] logQ_hat;
+  real mu_logQ_hat;
   real logA0_hat[nx];
   real logn_hat;
   
-  real<lower=0> logQ_sd;
+  real<lower=0> mu_logQ_sd; // SD for mu_logQ parameter
+  real<lower=0> sigma_logQ; // SD for logQ. 
   real<lower=0> logA0_sd;
   real<lower=0> logn_sd;
 }
