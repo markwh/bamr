@@ -51,32 +51,80 @@ plot.bamval <- function(bamval) {
     geom_abline(aes(intercept = 0, slope = 1))
 }
 
-# stats on prediction, actual series --------------------------------------
 
+#' Relative root-mean-square error
+#' 
+#' @param pred vector of predictions
+#' @param meas vector of measurements
+#' @export
 RRMSE <- function(pred, meas) 
   sqrt(mean((pred - meas)^2 / meas^2))
 
+#' Mean relativ residual
+#' 
+#' @param pred vector of predictions
+#' @param meas vector of measurements
+#' @export
 MRR <- function(pred, meas)
   mean((meas - pred) / meas)
 
+#' Standard deviation of relative residual
+#' 
+#' @param pred vector of predictions
+#' @param meas vector of measurements
+#' @export
 SDRR <- function(pred, meas)
   sd((meas - pred) / meas)
 
+#' Nash-Sutcliffe efficiency
+#' 
+#' @param pred vector of predictions
+#' @param meas vector of measurements
+#' @importFrom stats var
+#' @export
 NSE <- function(pred, meas)
   1 - var(meas - pred) / var(meas)
 
+#' Normalized root-mean-square error
+#' 
+#' @param pred vector of predictions
+#' @param meas vector of measurements
+#' @export
 NRMSE <- function(pred, meas)
   sqrt(mean((meas - pred)^2)) / mean(meas)
 
+#' Relative bias
+#' 
+#' @param pred vector of predictions
+#' @param meas vector of measurements
+#' @export
 rBIAS <- function(pred, meas)
   mean(pred - meas) / mean(meas)
 
+#' Coefficient of variation
+#' 
+#' @param pred vector of predictions
+#' @param meas vector of measurements
+#' @importFrom stats sd
+#' @export
+#' 
 CoV <- function(pred, meas)
   sd(pred - meas) / mean(meas)
 
+#' E_j general efficiency statistic from Criss and Winston (2008)
+#' 
+#' @param pred vector of predictions
+#' @param meas vector of measurements
+#' @param j j parameter from general efficiency statistic.
+#' @export
 Ej <- function(pred, meas, j = 1, bench = mean(meas))
   1 - mean(abs(meas - pred)) / mean(abs(pred - bench))
 
+#' NSE, computed on log-transformed residuals
+#' 
+#' @param pred vector of predictions
+#' @param meas vector of measurements
+#' @export
 logNSE <- function(pred, meas)
   1 - var(log(meas / pred)) / var(log(meas / mean(meas)))
 

@@ -7,6 +7,7 @@
 #'   or "all" (the default), in which case they are extracted from all chains.
 #' @param conf.level A numeric value on (0, 1) specifying the size of the Bayesian 
 #'   credible interval. Default is 0.95.
+#' @importFrom stats quantile
 #' @export 
 
 bam_qpred <- function(fit, chain = "all", conf.level = 0.95) {

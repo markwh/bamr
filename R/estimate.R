@@ -25,7 +25,7 @@
 bam_estimate <- function(bamdata, 
                          variant = c("manning", "amhg", "manning_amhg"), 
                          bampriors = NULL, 
-                         cores = parallel::detectCores(),
+                         cores = getOption("mc.cores", default = parallel::detectCores()),
                          chains = 3L,
                          iter = 1000L,
                          pars = c("man_rhs", "amhg_rhs", "logA_man"),

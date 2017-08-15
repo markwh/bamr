@@ -1,0 +1,183 @@
+---
+title: "Introduction to bamr package"
+author: "Mark Hagemann"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{BAM_Sacramento}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(fig.width = 7)
+options("mc.cores" = 2)
+
+```
+
+
+The `bamr` package facilitates Bayesian AMHG + Manning discharge estimation using stream slope, width, and partial cross-section area. It includes functions to preprocess and visualize data, perform Bayesian inference using Hamiltonian Monte Carlo (via models pre-written in the Stan language), and analyze the results. 
+
+This document illustrates its primary functionality by example. More information for individual functions can be found in the help pages, e.g. `?bam_data`
+
+## Installing and loading `bamr`
+
+`bamr` is under active development, but a working version is available on Github. To install and load it requires the `devtools` package. To get all of this and load `bamr` simply run:
+
+```{r, eval = FALSE}
+if (!require("devtools")) {
+  install.packages("devtools")
+}
+devtools::install_github("markwh/bamr")
+library("bamr")
+```
+
+```{r, echo = FALSE}
+library("bamr")
+```
+
+
+## Example dataset from Sacramento River
+
+The `Sacramento` dataset included in `bamr` contains all data required to perform BAM estimation of discharge. (This is the Downstream Sacramento from Durand et al., 2016.) To attach the items it contains, run:
+
+```{r}
+data(Sacramento)
+attach(Sacramento)
+```
+
+This will put the following objects in your global environment:
+
+- Sac_w: a matrix of widths (cross-sections as rows, days as columns)
+- Sac_s: a matrix of slopes (cross-sections as rows, days as columns)
+- Sac_dA: a matrix of partial areas (cross-sections as rows, days as columns)
+- Sac_QWBM: a vector of water-balance-model discharge estimates for the days represented in the other matrices. This is required as a prior parameter for BAM. In this case, the estimates are all the same, representing the average water-balance-model discharge for the Sacramento, and could be supplied as a single number rather than a vector. But it is also possible to specify time-varying prior estimates.
+
+
+## 1. Preprocessing Data
+
+The `bam_data` function takes width, slope, partial area, and best-guess flow as arguments.
+
+```{r}
+Sac_data <- bam_data(w = Sac_w, s = Sac_s, dA = Sac_dA, Qhat = Sac_QWBM)
+```
+
+This returns an object of class "bamdata" that will be used to create prior parameters via `bam_priors()` and perform Bayesian inference via `bam_estimate()`.
+
+It is a good idea to plot the data; this can be done by simply calling
+
+```{r}
+plot(Sac_data)
+```
+
+As this `plot` method for `bamdata` returns a ggplot object, it can be modified, for example to make the y-axis be log scale:
+
+```{r}
+library(ggplot2)
+plot(Sac_data) + scale_y_log10()
+```
+
+
+### Width-only datasets
+
+The AMHG-only BAM variant relies on width data only, and so it is possible to specify a `bamdata` object containing width-only data. (An *a priori* discharge estimate is still required.)
+
+```{r}
+Sac_amhg <- bam_data(w = Sac_w, Qhat = Sac_QWBM)
+
+plot(Sac_amhg)
+```
+
+
+## 2. Specifying prior parameters
+
+**bamr** uses a set of default prior parameters, which can be displayed by calling `bam_settings()`
+
+Individual settings can also be queried by passing their name(s) to `bam_settings()`, e.g.
+
+```{r}
+bam_settings("lowerbound_A0", "upperbound_A0")
+bam_settings("logQc_hat", "upperbound_logQ")
+```
+
+(The `minmax` function used in the "upperbound_logQ" parameter takes the minimum in space of the maximum in time for each cross-section.)
+
+These settings are used to generate a set of BAM prior parameters for a particular analysis, using the `bam_priors` function:
+
+```{r}
+Sac_priors <- bam_priors(bamdata = Sac_data)
+```
+
+`bam_priors` has an additional optional argument, `variant`, which can be changed to select the BAM variant. This can be either `manning_amhg` (the default, which includes all parameters), `manning`, or `amhg`. 
+
+If you wish to use a different prior, you can specify it. For example:
+
+```{r}
+Sac_priors_mod1 <- bam_priors(bamdata = Sac_data, lowerbound_A0 = 20)
+```
+
+Data-dependent priors can also be specified using quoted expressions. These must reference an object called "bamdata". For example:
+
+```{r}
+Sac_priors_mod2 <- bam_priors(bamdata = Sac_data, 
+                             logQc_hat = "median(bamdata$logQ_hat)")
+```
+
+
+## 3. Estimation via Bayesian inference
+
+Once data and priors have been established, we are ready to make BAM estimates using `bam_estimate`. Although this has been optimized as much as possible, it is still computationally intensive and may take on the order of several minutes to run, depending on the dataset. For the included `Sacramento` dataset it should be relatively quick (less than 30 seconds) assuming you are on a multicore machine.
+
+```{r}
+Sac_man_amhg <- bam_estimate(bamdata = Sac_data,
+                       variant = "manning_amhg")
+```
+
+Note that in this example I haven't touched the `bam_priors` function. The default behavior for `bam_estimate` is to use `bampriors = bam_priors(bamdata)`, which uses the default priors as discussed above. An estimate using different priors (and using AMHG-only for estimation) could be performed using 
+
+```{r}
+Sac_amhg <- bam_estimate(bamdata = Sac_data, 
+                  bampriors = bam_priors(bamdata = Sac_data, 
+                                         upperbound_logQ = log(5000)),
+                  variant = "amhg")
+```
+
+or by passing a predefined `bampriors` object.
+
+The third option for `variant` is "`manning`", which uses Manning's equation only. 
+
+## 4. Analyzing results. 
+
+Once a BAM estimate has been computed, a hydrograph can be generated using `bam_hydrograph`. 
+
+```{r}
+bam_hydrograph(fit = Sac_man_amhg)
+bam_hydrograph(fit = Sac_amhg)
+```
+
+This displays posterior mean and 95% (by default; this can be adjusted) credible interval flows for all chains. 
+
+If you have observed flow (as we do for the Sacramento), you can plot this alongside using the optional `qobs` argument.
+
+```{r}
+bam_hydrograph(fit = Sac_man_amhg, qobs = Sac_Qobs)
+```
+
+`bam_estimate` uses the `rstan` package to perform the Monte Carlo estimation, and returns an object of class `stanfit`. The `rstan` package contains additional functions for exploring the results, for example to see parameter convergence. See `vignette("stanfit-objects")` (from the `rstan` package) for more info on what you can do with these.
+
+### Validation
+
+`bamr` currently has some basic functionality for validating flow estimates, in addition to the hydrographs already mentioned. 
+
+```{r}
+val_manning_amhg <- bam_validate(fit = Sac_man_amhg, qobs = Sac_Qobs)
+
+# prediction vs. observation
+plot(val_manning_amhg)
+
+# A suite of performance metrics
+val_manning_amhg$stats
+```
+
+If you want to calculate your own metrics, the `bam_valdata()` function might be useful. See its documentation for more info.
+

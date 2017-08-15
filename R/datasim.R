@@ -4,6 +4,7 @@
 #' @importFrom mvtnorm rmvnorm
 #' @importFrom magic adiag
 #' @importFrom reshape2 melt
+#' @importFrom stats rWishart rnorm
 
 bam_simulate <- function(logQ_hat, nx, nt) {
   

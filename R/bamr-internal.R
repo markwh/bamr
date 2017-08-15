@@ -1,9 +1,5 @@
-.Last <-
-function () 
-{
-    if (requireNamespace("todoList", quietly = TRUE)) 
-        todo$write.csv(file = "./todo.csv")
-}
+options("mc.cores" = parallel::detectCores())
+
 .Random.seed <-
 c(403L, 10L, -582393953L, -603564762L, -1977459280L, 215299667L, 
 1538249073L, -1618306912L, 821635134L, 1450975049L, 1301169659L, 

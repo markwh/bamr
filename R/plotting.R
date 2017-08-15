@@ -1,6 +1,7 @@
 # Functions to plot bamr objects
 
 #' @importFrom reshape2 melt
+#' @importFrom stats setNames
 #' @import ggplot2
 #' 
 #' @export
@@ -8,7 +9,7 @@ plot.bamdata <- function(bamdata, piece = c("w", "s", "dA")) {
   piece <- match.arg(piece, several.ok = TRUE)
   
   if (is.null(bamdata$logS) || is.null(bamdata$dA)) {
-    bamdata$logS <- bamdata$dA <- matrix(nr = bamdata$nx, nc = bamdata$nt)
+    bamdata$logS <- bamdata$dA <- matrix(nrow = bamdata$nx, ncol = bamdata$nt)
     piece = "w"
   }
   nx <- bamdata$nx
@@ -56,6 +57,16 @@ bam_hydrograph <- function(fit, qobs = NULL) {
   
   out <- ggplot(qpred, aes(x = time, y = flow, color = stat)) +
     geom_line(aes(linetype = series))
+  
+  if (!is.null(qobs)) {
+    obsdf <- data.frame(time = 1:max(qpred$time),
+                        flow = qobs, series = "observed", stat = NA)
+    out <- out + 
+      geom_line(aes(x = time, y = flow, linetype = series), data = obsdf) +
+      scale_linetype_manual(values = c(2:(nchains + 1), 1))
+  }
+
+  
   out
 }
 

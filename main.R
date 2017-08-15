@@ -20,6 +20,7 @@ use_todo()
 
 # Package dependencies
 # use_package("tidyr")
+use_package("dplyr")
 use_package("reshape2")
 use_package("assertthat")
 use_package("ggplot2")
@@ -32,6 +33,8 @@ use_package("tidyr")
 use_package("truncnorm")
 use_package("magic")
 use_package("mvtnorm")
+use_package("methods") # for `is` function
+use_package("stats")
 
 # document
 devtools::document()

@@ -10,6 +10,8 @@ sample_xs(bamdata, n, seed = NULL)
 \item{bamdata}{a bamdata object, as returned by \code{bam_data()}}
 
 \item{n}{Number of cross-sections to}
+
+\item{seed}{option RNG seed, for reproducibility.}
 }
 \description{
 Take a random sample of a bamdata object's cross-sections.

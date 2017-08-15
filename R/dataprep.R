@@ -151,6 +151,8 @@ compose_bam_inputs <- function(bamdata, priors = bam_priors(bamdata)) {
 #' 
 #' @param bamdata a bamdata object, as returned by \code{bam_data()}
 #' @param n Number of cross-sections to 
+#' @param seed option RNG seed, for reproducibility.
+#' @importFrom methods is
 #' @export
 sample_xs <- function(bamdata, n, seed = NULL) {
   

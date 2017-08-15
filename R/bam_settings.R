@@ -1,6 +1,7 @@
 
 #' Options manager for BAM defaults
 #' 
+#' @export
 bam_settings <- settings::options_manager(
   # BAM variant parameter sets
   manning_params = c("lowerbound_logQ", "upperbound_logQ", "lowerbound_A0", 
