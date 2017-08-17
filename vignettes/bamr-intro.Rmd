@@ -28,7 +28,7 @@ This document illustrates its primary functionality by example. More information
 if (!require("devtools")) {
   install.packages("devtools")
 }
-devtools::install_github("markwh/bamr")
+devtools::install_github("markwh/bamr", local = FALSE)
 library("bamr")
 ```
 

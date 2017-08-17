@@ -101,4 +101,9 @@ test_that("subsetting of cross-sections works", {
   expect_true(identical(bam_data(w = Sac_w, s = Sac_s, dA = Sac_dA, Qhat = Sac_QWBM,
                                  max_xs = 2, seed = 8888), 
                         sample_xs(bdsac, n = 2, seed = 8888)))
+  
+  expect_equal(sample_xs(bdsac, n = 2)$nx, 2)
+
+  nx1 <- bdsac$nx
+  expect_equal(sample_xs(bdsac, n = 1000)$nx, nx1)
 })

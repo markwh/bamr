@@ -11,6 +11,7 @@ vignettes/*.R
 !vignettes/*.Rmd
 vignettes/*.html
 vignettes/*_files
+*/rsconnect
 .DS_Store
 cache
 inst/doc

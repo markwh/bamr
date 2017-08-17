@@ -165,7 +165,7 @@ sample_xs <- function(bamdata, n, seed = NULL) {
     set.seed(seed)
   keepxs <- sort(sample(1:bamdata$nx, size = n, replace = FALSE))
   
-  bamdata$xs <- n
+  bamdata$nx <- n
   bamdata$logW <- bamdata$logW[keepxs, ]
   
   if (!is.null(bamdata$logS)) {
