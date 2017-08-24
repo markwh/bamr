@@ -1,5 +1,7 @@
 # Functions to plot bamr objects
 
+#' Plot a bamdata object
+#' 
 #' @importFrom reshape2 melt
 #' @importFrom stats setNames
 #' @import ggplot2

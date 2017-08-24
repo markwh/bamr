@@ -12,6 +12,8 @@ Ej(pred, meas, j = 1, bench = mean(meas))
 \item{meas}{vector of measurements}
 
 \item{j}{j parameter from general efficiency statistic.}
+
+\item{bench}{Some benchmark for comparison, defaults to the mean of meas.}
 }
 \description{
 E_j general efficiency statistic from Criss and Winston (2008)

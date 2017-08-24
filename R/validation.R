@@ -116,6 +116,7 @@ CoV <- function(pred, meas)
 #' @param pred vector of predictions
 #' @param meas vector of measurements
 #' @param j j parameter from general efficiency statistic.
+#' @param bench Some benchmark for comparison, defaults to the mean of meas.
 #' @export
 Ej <- function(pred, meas, j = 1, bench = mean(meas))
   1 - mean(abs(meas - pred)) / mean(abs(pred - bench))
