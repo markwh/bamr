@@ -84,6 +84,8 @@ bam_check_args <- function(datalist) {
 }
 
 bam_check_nas <- function(datalist, missing) {
+  
+  datalist$omitTimes <- integer(0)
   mats <- vapply(datalist, is.matrix, logical(1))
   if (missing == "omit") {
     nonas <- lapply(datalist[mats], function(x) !is.na(x))
@@ -94,6 +96,8 @@ bam_check_nas <- function(datalist, missing) {
       message(sprintf("Omitting %s times with missing observations", length(nainds)))
       omitCols <- function(mat, which) mat[, -nainds]
       datalist[mats] <- lapply(datalist[mats], omitCols, which = nainds)
+      datalist[["logQ_hat"]] <- datalist[["logQ_hat"]][-nainds]
+      datalist[["omitTimes"]] <- nainds
     }
   } else {
     stop("Missing value treatment other than 'omit' currently not implemented.\n")
