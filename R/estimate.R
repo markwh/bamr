@@ -11,7 +11,9 @@
 #'   See \code{?rstan::sampling}. Defaults to \code{parallel::detectCores}.
 #' @param chains A positive integer specifying the number of Markov chains. 
 #'   The default is 3.
-#' @param iter Number of iterations per chain (including warmup). Defaults to 1000. 
+#' @param iter Number of iterations per chain (including warmup). Defaults to 1000.
+#' @param stanmodel A \code{stanmodel} object to use instead of one of the default 
+#'   models. 
 #' @param pars (passed to rstan::sampling) A vector of character strings specifying 
 #'   parameters of interest. For bam_estimate, the default is Stan transformed  
 #'   variables, "man_rhs", "amhg_rhs", and "logA_man".
@@ -28,6 +30,7 @@ bam_estimate <- function(bamdata,
                          cores = getOption("mc.cores", default = parallel::detectCores()),
                          chains = 3L,
                          iter = 1000L,
+                         stanmodel = NULL, 
                          pars = c("man_rhs", "amhg_rhs", "logA_man"),
                          include = FALSE,
                          ...) {
@@ -39,7 +42,12 @@ bam_estimate <- function(bamdata,
   
   baminputs <- compose_bam_inputs(bamdata, bampriors)
   
-  stanfit <- stanmodels[[variant]]
+  if (!is.null(stanmodel)) {
+    stopifnot(inherits(stanmodel, "stanmodel"))
+    stanfit <- stanmodel
+  } else {
+    stanfit <- stanmodels[[variant]]
+  }
   
   out <- sampling(stanfit, data = baminputs, 
                   pars = pars, cores = cores, chains = chains,
