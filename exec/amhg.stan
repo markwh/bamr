@@ -6,8 +6,9 @@ data {
   
   
   // *Actual* data
-  vector[nt] logW[nx]; // measured widths
-
+  vector[nt] Wobs[nx]; // measured widths
+  // Measurement errors
+  real<lower=0> Werr_sd; 
 
   // Hard bounds on parameters
   real lowerbound_logQ;
@@ -38,20 +39,22 @@ data {
 }
 
 
-
 parameters {
   vector<lower=lowerbound_logQ,upper=upperbound_logQ>[nt] logQ;
   real<lower=lowerbound_logWc,upper=upperbound_logWc> logWc;
   real<lower=lowerbound_logQc,upper=upperbound_logQc> logQc;
   real<lower=lowerbound_b,upper=upperbound_b> b[nx];
+  vector<lower=0>[nt] Wact[nx];
 }
 
 
 
 transformed parameters {
+  vector[nt] logW[nx]; 
   vector[nt] amhg_rhs[nx];
-
+  
   for (i in 1:nx) {
+    logW[i] = log(Wact[i]);
     amhg_rhs[i] = b[i] * (logQ - logQc) + logWc;
   }
 }
@@ -59,17 +62,19 @@ transformed parameters {
 
 
 model {
-  
+
   // Priors
-  logQ ~ normal(logQc_hat, logQ_sd);
+  logQ ~ normal(logQ_hat, logQ_sd);
   
   b ~ normal(b_hat, b_sd);
   logWc ~ normal(logWc_hat, logWc_sd);
   logQc ~ normal(logQc_hat, logQc_sd);
 
 
-  // Likelihood
+  // Likelihood and observations
   for (i in 1:nx) {
+    Wact[i] ~ normal(Wobs[i], Werr_sd);
     logW[i] ~ normal(amhg_rhs[i], sigma_amhg);
+    target += -logW[i];
   }
 }

@@ -10,16 +10,16 @@
 plot.bamdata <- function(bamdata, piece = c("w", "s", "dA")) {
   piece <- match.arg(piece, several.ok = TRUE)
   
-  if (is.null(bamdata$logS) || is.null(bamdata$dA)) {
-    bamdata$logS <- bamdata$dA <- matrix(nrow = bamdata$nx, ncol = bamdata$nt)
-    piece = "w"
+  if (is.null(bamdata$Sobs) || is.null(bamdata$dAobs)) {
+    bamdata$Sobs <- bamdata$dAobs <- matrix(nrow = bamdata$nx, ncol = bamdata$nt)
+    piece <- "w"
   }
   nx <- bamdata$nx
-  w_df <- as.data.frame(exp(t(bamdata$logW))) %>% 
+  w_df <- as.data.frame(t(bamdata$Wobs)) %>% 
     setNames(1:nx)
-  s_df <- as.data.frame(exp(t(bamdata$logS))) %>% 
+  s_df <- as.data.frame(t(bamdata$Sobs)) %>% 
     setNames(1:nx)
-  dA_df <- as.data.frame(t(bamdata$dA)) %>% 
+  dA_df <- as.data.frame(t(bamdata$dAobs)) %>% 
     setNames(1:nx)
   # browser()
   w_df$time <- s_df$time <- dA_df$time <- 1:bamdata$nt
@@ -27,11 +27,11 @@ plot.bamdata <- function(bamdata, piece = c("w", "s", "dA")) {
   sw <- suppressWarnings
   data_long <- sw(dplyr::bind_rows(w = melt(w_df, id.vars = "time",
                                             variable.name = "xs"),
-                                s = melt(s_df, id.vars = "time",
-                                         variable.name = "xs"),
-                                dA = melt(dA_df, id.vars = "time",
-                                          variable.name = "xs"),
-                                .id = "variable"))
+                                   s = melt(s_df, id.vars = "time",
+                                           variable.name = "xs"),
+                                  dA = melt(dA_df, id.vars = "time",
+                                            variable.name = "xs"),
+                                 .id = "variable"))
   data_long$xs <- as.numeric(as.character(data_long$xs))
   plotdata <- data_long[data_long[["variable"]] %in% piece, ]
   

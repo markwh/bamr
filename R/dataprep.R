@@ -31,18 +31,18 @@ bam_data <- function(w,
 
   missing <- match.arg(missing)
   
-  logS <- if(is.null(s)) NULL else log(s)
+  s <- if(is.null(s)) NULL else s
   
-  datalist <- list(logW = log(w),
-                logS = logS,
-                dA = dA,
+  datalist <- list(Wobs = w,
+                Sobs = s,
+                dAobs = dA,
                 logQ_hat = log(Qhat))
   
   datalist <- bam_check_args(datalist)
   datalist <- bam_check_nas(datalist, missing = missing)
 
-  nx <- nrow(datalist$logW)
-  nt <- ncol(datalist$logW)
+  nx <- nrow(datalist$Wobs)
+  nt <- ncol(datalist$Wobs)
   
   out <- structure(c(datalist,
                         nx = nx, 
@@ -122,7 +122,7 @@ bam_priors <- function(bamdata,
                        variant = c("manning_amhg", "manning", "amhg"), 
                        ...) {
   variant <- match.arg(variant)
-  if (variant != "amhg" && (is.null(bamdata$logS) || is.null(bamdata$dA)))
+  if (variant != "amhg" && (is.null(bamdata$Sobs) || is.null(bamdata$dAobs)))
     stop("bamdata must have slope and dA data for non-amhg variants.")
   
   force(bamdata)
@@ -141,9 +141,6 @@ bam_priors <- function(bamdata,
 compose_bam_inputs <- function(bamdata, priors = bam_priors(bamdata)) {
   
   inps <- c(bamdata, priors)
-  # # Quick-and-dirty fix for STAN wanting sideways matrices
-  # mats <- vapply(inps, is.matrix, logical(1))
-  # inps[mats] <- lapply(inps[mats], t)
   
   out <- inps
   out
@@ -170,11 +167,11 @@ sample_xs <- function(bamdata, n, seed = NULL) {
   keepxs <- sort(sample(1:bamdata$nx, size = n, replace = FALSE))
   
   bamdata$nx <- n
-  bamdata$logW <- bamdata$logW[keepxs, ]
+  bamdata$Wobs <- bamdata$Wobs[keepxs, ]
   
-  if (!is.null(bamdata$logS)) {
-    bamdata$logS <- bamdata$logS[keepxs, ]
-    bamdata$dA <- bamdata$dA[keepxs, ]
+  if (!is.null(bamdata$Sobs)) {
+    bamdata$Sobs <- bamdata$Sobs[keepxs, ]
+    bamdata$dAobs <- bamdata$dAobs[keepxs, ]
   }
   
   bamdata

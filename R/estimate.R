@@ -60,9 +60,9 @@ bam_estimate <- function(bamdata,
 bam_q_manning <- function(bamdata, params, plot = TRUE) {
   logn <- params$logn
   A0mat <- matrix(params$A0, nrow = bamdata$nx, ncol = bamdata$nt, byrow = FALSE)
-  logA <- log(bamdata$dA + A0mat)
-  logW <- bamdata$logW
-  logS <- bamdata$logS
+  logA <- log(bamdata$dAobs + A0mat)
+  logW <- log(bamdata$Wobs)
+  logS <- log(bamdata$Sobs)
   logQ <- 5/3 * logA - logn - 2/3 * logW + 1/2 * logS
   q <- exp(logQ)
 }

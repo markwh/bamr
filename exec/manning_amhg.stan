@@ -7,9 +7,13 @@ data {
 
 
   // *Actual* data
-  vector[nt] logW[nx]; // measured widths
-  vector[nt] logS[nx]; // measured slopes
-  vector[nt] dA[nx]; // measured area difference from base area
+  vector[nt] Wobs[nx]; // measured widths
+  vector[nt] Sobs[nx]; // measured slopes
+  vector[nt] dAobs[nx]; // measured area difference from base area
+  
+  real<lower=0> Werr_sd;
+  real<lower=0> Serr_sd;
+  real<lower=0> dAerr_sd;
  
  
   // Hard bounds on parameters
@@ -53,38 +57,42 @@ data {
 
 
 transformed data {
-  vector[nt] man_lhs[nx];
   vector[nt] dA_pos[nx];
 
   for (i in 1:nx) {
-    man_lhs[i] = 4. * logW[i] - 3. * logS[i]; // LHS of manning equation
-    
-    dA_pos[i] = dA[i] - min(dA[i]); // make all dA positive
+    dA_pos[i] = dAobs[i] - min(dAobs[i]); // make all dA positive
   }
 }
 
-
-
 parameters {
   vector<lower=lowerbound_logQ,upper=upperbound_logQ>[nt] logQ;
-
   real<lower=lowerbound_logn,upper=upperbound_logn> logn;
   real<lower=lowerbound_A0,upper=upperbound_A0> A0[nx];
   
   real<lower=lowerbound_logWc,upper=upperbound_logWc> logWc;
   real<lower=lowerbound_logQc,upper=upperbound_logQc> logQc;
   real<lower=lowerbound_b,upper=upperbound_b> b[nx];
+  
+  vector<lower=0>[nt] Wact[nx];
+  vector<lower=0>[nt] Sact[nx];
+  vector[nt] dAact[nx];
 }
 
 
-
 transformed parameters {
+  vector[nt] logW[nx];
+  vector[nt] logS[nx];
+  vector[nt] man_lhs[nx];
+  vector[nt] logA_man[nx]; // log area for Manning's equation
   vector[nt] man_rhs[nx]; // RHS for Manning likelihood
   vector[nt] amhg_rhs[nx]; // RHS for AMHG likelihood
   
-  vector[nt] logA_man[nx]; // log area for Manning's equation
-  
   for (i in 1:nx) {
+    logW[i] = log(Wact[i]);
+    logS[i] = log(Sact[i]);
+    
+    man_lhs[i] = 4. * logW[i] - 3. * logS[i]; // LHS of manning equation
+
     for (t in 1:nt) {
       logA_man[i, t] = log(A0[i] + dA_pos[i, t]);
     }
@@ -108,9 +116,16 @@ model {
   logQc ~ normal(logQc_hat, logQc_sd);
   
   
-  // Likelihood
+  // Likelihood and observation error
   for (i in 1:nx) {
+    Wact[i] ~ normal(Wobs[i], Werr_sd);
+    Sact[i] ~ normal(Sobs[i], Serr_sd);
+    dAact[i] ~ normal(dAobs[i], dAerr_sd);
+    
     man_lhs[i] ~ normal(man_rhs[i], sigma_man);
     logW[i] ~ normal(amhg_rhs[i], sigma_amhg);
+    
+    target += -logW[i];
+    target += -logS[i];
   }
 }

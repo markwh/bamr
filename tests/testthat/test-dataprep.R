@@ -6,14 +6,14 @@ test_that("data preparation produces correct output", {
   
   bdpo <- bam_data(w = Sac_w, s = Sac_s, dA = Sac_dA, Qhat = Sac_QWBM)
   expect_is(bdpo, "bamdata")
-  expect_is(bdpo$logW, "matrix")
-  expect_is(bdpo$logS, "matrix")
-  expect_is(bdpo$dA, "matrix")
+  expect_is(bdpo$Wobs, "matrix")
+  expect_is(bdpo$Sobs, "matrix")
+  expect_is(bdpo$dAobs, "matrix")
   expect_is(bdpo$logQ_hat, "numeric")
   expect_is(bdpo$omitTimes, "integer")
   
-  expect_equal(nrow(bdpo$logW), bdpo$nx)
-  expect_equal(ncol(bdpo$logW), bdpo$nt)
+  expect_equal(nrow(bdpo$Wobs), bdpo$nx)
+  expect_equal(ncol(bdpo$Wobs), bdpo$nt)
   expect_equal(length(bdpo$logQ_hat), bdpo$nt)
   expect_equal(length(bdpo$omitTimes), 0)
   
@@ -63,16 +63,16 @@ test_that("NA values are removed or replaced", {
                    dA = randna(Sac_dA, 5),
                    Qhat = Sac_QWBM))
   
-  expect_equal(sum(is.na(bdpo$logW)), 0)
-  expect_equal(sum(is.na(bdpo$logS)), 0)
-  expect_equal(sum(is.na(bdpo$dA)), 0)
-  expect_equal(ncol(bdpo$logW), length(bdpo$logQ_hat))
+  expect_equal(sum(is.na(bdpo$Wobs)), 0)
+  expect_equal(sum(is.na(bdpo$Sobs)), 0)
+  expect_equal(sum(is.na(bdpo$dAobs)), 0)
+  expect_equal(ncol(bdpo$Wobs), length(bdpo$logQ_hat))
   
   expect_is(bdpo$omitTimes, "integer")
   expect_gte(length(bdpo$omitTimes), 5)
   
-  expect_equal(nrow(bdpo$logW), bdpo$nx)
-  expect_equal(ncol(bdpo$logS), bdpo$nt)
+  expect_equal(nrow(bdpo$Wobs), bdpo$nx)
+  expect_equal(ncol(bdpo$Sobs), bdpo$nt)
 })
 
 
@@ -94,9 +94,9 @@ test_that("subsetting of cross-sections works", {
   bdsm <- sample_xs(bdsac, n = nn, seed = 8888)
   
   expect_is(bdsm, "bamdata")
-  expect_lt(nrow(bdsm$logW), nrow(bdsac$logW))
-  expect_lt(nrow(bdsm$logS), nrow(bdsac$logS))
-  expect_lt(nrow(bdsm$dA), nrow(bdsac$dA))
+  expect_lt(nrow(bdsm$Wobs), nrow(bdsac$Wobs))
+  expect_lt(nrow(bdsm$Sobs), nrow(bdsac$Sobs))
+  expect_lt(nrow(bdsm$dAobs), nrow(bdsac$dAobs))
   
   expect_true(identical(bdsm, sample_xs(bdsac, n = nn, seed = 8888)))
   expect_false(identical(bdsm, sample_xs(bdsac, n = nn, seed = 8889)))
