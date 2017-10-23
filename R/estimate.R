@@ -31,7 +31,8 @@ bam_estimate <- function(bamdata,
                          chains = 3L,
                          iter = 1000L,
                          stanmodel = NULL, 
-                         pars = c("man_rhs", "amhg_rhs", "logA_man"),
+                         pars = c("man_rhs", "amhg_rhs", "logA_man", 
+                                  "Wact", "Sact", "dAact"),
                          include = FALSE,
                          ...) {
   variant <- match.arg(variant)
