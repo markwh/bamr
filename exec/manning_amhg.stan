@@ -94,7 +94,7 @@ transformed parameters {
     man_lhs[i] = 4. * logW[i] - 3. * logS[i]; // LHS of manning equation
 
     for (t in 1:nt) {
-      logA_man[i, t] = log(A0[i] + dA_pos[i, t]);
+      logA_man[i, t] = log(A0[i] + dAact[i, t]);
     }
     man_rhs[i] = 10. * logA_man[i] - 6. * logn - 6. * logQ;
     amhg_rhs[i] = b[i] * (logQ - logQc) + logWc;
