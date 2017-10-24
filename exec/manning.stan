@@ -90,7 +90,7 @@ model {
   for (i in 1:nx) {
     Wact[i] ~ normal(Wobs[i], Werr_sd);
     Sact[i] ~ normal(Sobs[i], Serr_sd);
-    dAact[i] ~ normal(dAobs[i], dAerr_sd);
+    dAact[i] ~ normal(dA_pos[i], dAerr_sd);
     
     man_lhs[i] ~ normal(man_rhs[i], sigma_man); //cv2sigma(0.05));
     
