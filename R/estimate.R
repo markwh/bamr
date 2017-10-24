@@ -5,6 +5,8 @@
 #' 
 #' @param bamdata A bamdata object, as produced by \code{bam_data()}
 #' @param variant Which BAM variant to use: amhg, manning_amhg, or manning
+#' @param meas_error Include measurement error in inference? Setting this to TRUE 
+#'   will slow down the inference by roughly an order of mangnitude.
 #' @param bampriors A bampriors object. If none is supplied, defaults are used 
 #'   from calling \code{bam_priors(bamdata)} (with no other arguments).
 #' @param cores Number of processing cores for running chains in parallel. 
@@ -27,6 +29,7 @@
 bam_estimate <- function(bamdata, 
                          variant = c("manning", "amhg", "manning_amhg"), 
                          bampriors = NULL, 
+                         meas_error = TRUE,
                          cores = getOption("mc.cores", default = parallel::detectCores()),
                          chains = 3L,
                          iter = 1000L,
@@ -47,6 +50,9 @@ bam_estimate <- function(bamdata,
     stopifnot(inherits(stanmodel, "stanmodel"))
     stanfit <- stanmodel
   } else {
+    if (!meas_error) {
+      variant <- paste0(variant, "_nolatent")
+    }
     stanfit <- stanmodels[[variant]]
   }
   
