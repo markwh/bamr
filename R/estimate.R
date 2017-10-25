@@ -33,10 +33,7 @@ bam_estimate <- function(bamdata,
                          cores = getOption("mc.cores", default = parallel::detectCores()),
                          chains = 3L,
                          iter = 1000L,
-                         stanmodel = NULL, 
-                         pars = c("man_rhs", "amhg_rhs", "logA_man", 
-                                  "Wact", "Sact", "dAact"),
-                         include = FALSE,
+                         stanmodel = NULL,
                          ...) {
   variant <- match.arg(variant)
   stopifnot(is(bamdata, "bamdata"))
@@ -57,8 +54,12 @@ bam_estimate <- function(bamdata,
   }
   
   out <- sampling(stanfit, data = baminputs, 
-                  pars = pars, cores = cores, chains = chains,
-                  iter = iter, include = include, ...)
+                  cores = cores, chains = chains, iter = iter,  
+                  pars = c("man_rhs", "amhg_rhs", "logA_man", 
+                           "Wact", "Sact", "dAact", "logW", "logS", 
+                           "man_lhs"),
+                  include = FALSE,
+                  ...)
   
   out
 }
