@@ -32,7 +32,7 @@ data {
   real b_hat[nx]; // ADD CHECK ON THIS FOR DATA PREP
 
   real<lower=0> b_sd;
-  real<lower=0> logQ_sd;
+  vector<lower=0>[nt] logQ_sd;
   real<lower=0> logQc_sd;
   real<lower=0> logWc_sd;
 

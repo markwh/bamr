@@ -46,7 +46,7 @@ data {
   real logA0_hat[nx];
   real logn_hat;
 
-  real<lower=0> logQ_sd;
+  vector<lower=0>[nt] logQ_sd;
   real<lower=0> logQc_sd;
   real<lower=0> logWc_sd;
   real<lower=0> b_sd;

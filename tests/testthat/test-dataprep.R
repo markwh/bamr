@@ -17,7 +17,14 @@ test_that("data preparation produces correct output", {
   expect_equal(length(bdpo$logQ_hat), bdpo$nt)
   expect_equal(length(bdpo$omitTimes), 0)
   
-  expect_is(bam_priors(bamdata = bdpo), "bampriors")
+  expect_is(bdpr <- bam_priors(bamdata = bdpo), "bampriors")
+  expect_equal(length(bdpr$logQ_sd), bdpo$nt)
+  expect_is(bdpr$logQ_sd, "numeric")
+  
+  # manually specify logQ_sd as vector
+  expect_is(bdpr <- bam_priors(bamdata = bdpo, logQ_sd = runif(bdpo$nt)), "bampriors")
+  expect_equal(length(bdpr$logQ_sd), bdpo$nt)
+  expect_is(bdpr$logQ_sd, "numeric")
   
   expect_is(compose_bam_inputs(bdpo, bam_priors(bdpo)), "list")
 

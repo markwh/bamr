@@ -133,6 +133,9 @@ bam_priors <- function(bamdata,
   charparams <- lapply(myparams(), as.character)[-1:-3] # first 3 are parameter sets
   params <- lapply(charparams, function(x) eval(parse(text = x)))
   
+  if (!length(params[["logQ_sd"]]) == bamdata$nt)
+    params$logQ_sd <- rep(params$logQ_sd, length.out = bamdata$nt)
+  
   out <- structure(params[paramset],
                    class = c("bampriors"))
   out
