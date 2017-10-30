@@ -36,6 +36,7 @@ use_package("mvtnorm")
 use_package("methods") # for `is` function
 use_package("stats")
 use_package("testthat", type = "suggests")
+use_package("rlang")
 
 # document
 devtools::document()

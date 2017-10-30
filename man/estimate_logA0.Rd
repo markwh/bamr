@@ -4,10 +4,10 @@
 \alias{estimate_logA0}
 \title{Estimate base cross-sectional area using bam data}
 \usage{
-estimate_logA0(bamdata)
+estimate_logA0(Wobs)
 }
 \arguments{
-\item{bamdata}{a bamdata object, created with bam_data()}
+\item{Wobs}{Observed W,as a space-down, time-across matrix.}
 }
 \description{
 Estimate base cross-sectional area using bam data

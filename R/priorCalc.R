@@ -2,28 +2,22 @@
 
 #' Estimate AHG b exponent using bam data
 #' 
-#' @param bamdata a bamdata object, created with bam_data()
+#' @param Wobs Observed W,as a space-down, time-across matrix.
 #' @export
-estimate_b <- function(bamdata) {
-  if (!is(bamdata, "bamdata"))
-    stop("bamdata must be a bamdata object, as created with bam_data function")
-  lwsd <- apply(log(bamdata$Wobs), 1, sd)
+estimate_b <- function(Wobs) {
+  lwsd <- apply(log(Wobs), 1, sd)
   
   b_hat <- 0.02161 + 0.4578 * lwsd
-  
-  assertthat::are_equal(length(b_hat), bamdata$nx)
   b_hat
 }
 
 #' Estimate base cross-sectional area using bam data
 #' 
-#' @param bamdata a bamdata object, created with bam_data()
+#' @param Wobs Observed W,as a space-down, time-across matrix.
 #' @export
-estimate_logA0 <- function(bamdata) {
-  if (!is(bamdata, "bamdata"))
-    stop("bamdata must be a bamdata object, as created with bam_data function")
-  lwbar <- apply(log(bamdata$Wobs), 1, mean)
-  lwsd <- apply(log(bamdata$Wobs), 1, sd)
+estimate_logA0 <- function(Wobs) {
+  lwbar <- apply(log(Wobs), 1, mean)
+  lwsd <- apply(log(Wobs), 1, sd)
   
   logA0hat <- -1.782 + 1.438 * lwbar - 2.268 * lwsd
 

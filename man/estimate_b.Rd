@@ -4,10 +4,10 @@
 \alias{estimate_b}
 \title{Estimate AHG b exponent using bam data}
 \usage{
-estimate_b(bamdata)
+estimate_b(Wobs)
 }
 \arguments{
-\item{bamdata}{a bamdata object, created with bam_data()}
+\item{Wobs}{Observed W,as a space-down, time-across matrix.}
 }
 \description{
 Estimate AHG b exponent using bam data

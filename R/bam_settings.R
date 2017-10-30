@@ -24,8 +24,8 @@ bam_settings <- settings::options_manager(
      "Werr_sd", "Serr_sd", "dAerr_sd"),
   
   # Bounds on parameters
-  lowerbound_logQ = "maxmin(log(bamdata$Wobs)) + log(0.5) + log(0.5)",
-  upperbound_logQ = "minmax(log(bamdata$Wobs)) + log(40) + log(5)",
+  lowerbound_logQ = rlang::quo(maxmin(log(Wobs)) + log(0.5) + log(0.5)),
+  upperbound_logQ = rlang::quo(minmax(log(Wobs)) + log(40) + log(5)),
   
   lowerbound_A0 = 30,
   upperbound_A0 = 1e6,
@@ -47,10 +47,10 @@ bam_settings <- settings::options_manager(
   
   # Hyperparameters
   # logQ_hat # NO DEFAULT FOR THIS--MUST BE SUPPLIED BY USER
-  logQc_hat = "mean(bamdata$logQ_hat)",
-  logWc_hat = "mean(log(bamdata$Wobs))",
-  b_hat = "estimate_b(bamdata)",
-  logA0_hat = "estimate_logA0(bamdata)",
+  logQc_hat = rlang::quo(mean(logQ_hat)),
+  logWc_hat = rlang::quo(mean(log(Wobs))),
+  b_hat = rlang::quo(estimate_b(Wobs)),
+  logA0_hat = rlang::quo(estimate_logA0(Wobs)),
   logn_hat = -3.5,
   
   logQ_sd = sqrt(log(1^2 + 1)), # CV of Q equals 1

@@ -128,10 +128,12 @@ bam_priors <- function(bamdata,
   force(bamdata)
   paramset <- bam_settings(paste0(variant, "_params"))
   
-  myparams <- settings::clone_and_merge(bam_settings, ...)
+  myparams0 <- rlang::quos(..., .named = TRUE)
+  myparams <- do.call(settings::clone_and_merge, args = (options = c(list(options = bam_settings), 
+                                                                     myparams0)))
   
-  charparams <- lapply(myparams(), as.character)[-1:-3] # first 3 are parameter sets
-  params <- lapply(charparams, function(x) eval(parse(text = x)))
+  quoparams <- myparams()[-1:-3] # first 3 are parameter sets
+  params <- lapply(quoparams, rlang::eval_tidy, data = bamdata)
   
   if (!length(params[["logQ_sd"]]) == bamdata$nt)
     params$logQ_sd <- rep(params$logQ_sd, length.out = bamdata$nt)
