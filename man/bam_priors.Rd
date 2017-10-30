@@ -12,8 +12,9 @@ bam_priors(bamdata, variant = c("manning_amhg", "manning", "amhg"), ...)
 \item{variant}{Which BAM variant to use. Options are "manning_amhg" (default), 
 "manning", or "amhg".}
 
-\item{...}{Optional manually set parameters. Quoted expressions are allowed,
-e.g. \code{logQ_sd = "cv2sigma(0.8)"}.}
+\item{...}{Optional manually set parameters. Unquoted expressions are allowed,
+e.g. \code{logQ_sd = cv2sigma(0.8)}. Additionally, any variables present in 
+\code{bamdata} may be referenced, e.g. \code{lowerbound_logQ = log(mean(Wobs)) + log(5)}}
 }
 \description{
 Produces a bampriors object that can be passed to bam_estimate function

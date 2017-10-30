@@ -114,8 +114,9 @@ bam_check_nas <- function(datalist, missing) {
 #' @param bamdata An object of class bamdata, as returned by \code{bam_data}
 #' @param variant Which BAM variant to use. Options are "manning_amhg" (default), 
 #'   "manning", or "amhg".
-#' @param ... Optional manually set parameters. Quoted expressions are allowed,
-#'   e.g. \code{logQ_sd = "cv2sigma(0.8)"}. 
+#' @param ... Optional manually set parameters. Unquoted expressions are allowed,
+#'   e.g. \code{logQ_sd = cv2sigma(0.8)}. Additionally, any variables present in 
+#'   \code{bamdata} may be referenced, e.g. \code{lowerbound_logQ = log(mean(Wobs)) + log(5)}
 #' @export
 
 bam_priors <- function(bamdata, 
