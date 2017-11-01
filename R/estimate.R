@@ -7,6 +7,7 @@
 #' @param variant Which BAM variant to use: amhg, manning_amhg, or manning
 #' @param meas_error Include measurement error in inference? Setting this to TRUE 
 #'   will slow down the inference by roughly an order of mangnitude.
+#' @param reparam Reparameterize measurement errors to speed up sampling?
 #' @param bampriors A bampriors object. If none is supplied, defaults are used 
 #'   from calling \code{bam_priors(bamdata)} (with no other arguments).
 #' @param cores Number of processing cores for running chains in parallel. 
@@ -30,6 +31,7 @@ bam_estimate <- function(bamdata,
                          variant = c("manning", "amhg", "manning_amhg"), 
                          bampriors = NULL, 
                          meas_error = TRUE,
+                         reparam = TRUE,
                          cores = getOption("mc.cores", default = parallel::detectCores()),
                          chains = 3L,
                          iter = 1000L,
@@ -47,10 +49,14 @@ bam_estimate <- function(bamdata,
     stopifnot(inherits(stanmodel, "stanmodel"))
     stanfit <- stanmodel
   } else {
-    if (!meas_error) {
+    if (!meas_error | reparam) {
       variant <- paste0(variant, "_nolatent")
     }
     stanfit <- stanmodels[[variant]]
+  }
+  
+  if (reparam) {
+    baminputs$sigma_man <- sqrt(baminputs$sigma_man^2 + ln_sigma(ln_hat = TODO))
   }
   
   out <- sampling(stanfit, data = baminputs, 

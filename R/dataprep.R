@@ -138,6 +138,10 @@ bam_priors <- function(bamdata,
   
   if (!length(params[["logQ_sd"]]) == bamdata$nt)
     params$logQ_sd <- rep(params$logQ_sd, length.out = bamdata$nt)
+  if (!length(params[["sigma_man"]]) == bamdata$nt)
+    params$sigma_man <- rep(params$sigma_man, length.out = bamdata$nt)
+  if (!length(params[["sigma_amhg"]]) == bamdata$nt)
+    params$sigma_amhgs <- rep(params$sigma_amhg, length.out = bamdata$nt)
   
   out <- structure(params[paramset],
                    class = c("bampriors"))
@@ -181,4 +185,37 @@ sample_xs <- function(bamdata, n, seed = NULL) {
   }
   
   bamdata
+}
+
+
+
+#' Calculate lognormal moments based on truncated normal parameters
+#' 
+#' Used to put measurement errors into original log-normal parameterization.
+#' 
+ln_moms <- function(ln_hat, ln_sigma, a = 0) {
+  alpha <- (a - ln_hat) / ln_sigma
+  Z <- 1 - pnorm(alpha)
+  
+  mean <- ln_hat + (dnorm(alpha)) / Z * ln_sigma
+  sdquan <- 1 + (alpha * dnorm(alpha)) / Z - 
+    (dnorm(alpha) / Z)^2
+  sd <- ln_sigma * sqrt(sdquan)
+  
+  out <- data.frame(mean = mean, sd = sd)
+  out
+}
+
+#' Calculate lognormal sigma parameter based on truncated normal parameters
+#' 
+#' Used to put measurement errors into original log-normal parameterization.
+#'
+ln_sigma <- function(ro_hat, ro_sigma, a = 0) {
+  moms <- ro_moms(ro_hat = ro_hat, ro_sigma = ro_sigma, a = a)
+  mn <- unname(moms[["mean"]])
+  sd <- unname(moms[["sd"]])
+  mu <- 2 * log(mn) - 0.5 * log(sd^2 + mn^2)
+  sigma <- sqrt(2 * log(mn) - 2 * mu)
+  
+  sigma
 }

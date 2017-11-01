@@ -22,7 +22,7 @@ data {
 
 
   // *Known* likelihood parameters  
-  real<lower=0> sigma_amhg;
+  vector<lower=0>[nt] sigma_amhg;
   
   
   // Hyperparameters

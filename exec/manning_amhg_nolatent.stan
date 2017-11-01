@@ -34,8 +34,8 @@ data {
 
 
   // *Known* likelihood parameters
-  real<lower=0> sigma_man; // Manning error standard deviation
-  real<lower=0> sigma_amhg; // AMHG error standard deviation
+  vector<lower=0>[nt] sigma_man; // Manning error standard deviation
+  vector<lower=0>[nt] sigma_amhg; // AMHG error standard deviation
 
 
   // Hyperparameters

@@ -27,7 +27,7 @@ data {
   
   
   // *Known* likelihood parameters
-  real<lower=0> sigma_man;
+  vector<lower=0>[nt] sigma_man;
   
   
   // Hyperparameters

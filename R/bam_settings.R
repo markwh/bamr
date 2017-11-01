@@ -60,7 +60,7 @@ bam_settings <- settings::options_manager(
   logA0_sd = 0.1,
   logn_sd = 1,
   
-  # Observation errors. Default to no error.
+  # Observation errors. 
   Werr_sd = 10,
   Serr_sd = 1e-5,
   dAerr_sd = 10
