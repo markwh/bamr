@@ -23,6 +23,15 @@ before_install:
   - sed -i.bak "s/ g++/ ${CXX}${CLANG_EXTRA_ARG}/" ~/.R/Makevars
   - sed -i.bak "s/O[0-3]/O$CXX_OLEVEL/" ~/.R/Makevars
 
+before_script:
+  - export PKG_NAME=$(Rscript -e 'cat(paste0(devtools::as.package(".")$package))')
+  - export PKG_TARBALL=$(Rscript -e 'pkg <- devtools::as.package("."); cat(paste0(pkg$package,"_",pkg$version,".tar.gz"))')
+  - R CMD build --no-build-vignettes .
+  - R CMD INSTALL ${PKG_TARBALL}
+  - rm ${PKG_TARBALL}
+  - echo "Session info:"
+  - Rscript -e "library(${PKG_NAME});devtools::session_info('${PKG_NAME}')"
+
 script: 
   - |
     travis_wait R CMD build .
@@ -31,6 +40,7 @@ script:
 after_script:
   - tar -ztvf bamr_*.tar.gz
   - echo ${NOT_CRAN}
+  - rm ${PKG_TARBALL}
 
 after_success:
   - echo $PKG_TARBALL
