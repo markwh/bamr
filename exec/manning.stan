@@ -27,7 +27,7 @@ data {
   
   
   // *Known* likelihood parameters
-  vector<lower=0>[nt] sigma_man;
+  vector<lower=0>[nt] sigma_man[nx];
   
   
   // Hyperparameters
@@ -92,7 +92,7 @@ model {
     Sact[i] ~ normal(Sobs[i], Serr_sd);
     dAact[i] ~ normal(dA_pos[i], dAerr_sd);
     
-    man_lhs[i] ~ normal(man_rhs[i], sigma_man); //cv2sigma(0.05));
+    man_lhs[i] ~ normal(man_rhs[i], 6 * sigma_man[i]); //cv2sigma(0.05));
     
     target += -logW[i];
     target += -logS[i];

@@ -20,7 +20,7 @@ data {
 
 
   // *Known* likelihood parameters  
-  vector<lower=0>[nt] sigma_amhg;
+  vector<lower=0>[nt] sigma_amhg[nx];
   
   
   // Hyperparameters
@@ -77,7 +77,7 @@ model {
   // Likelihood and observations
   for (i in 1:nx) {
     // Wact[i] ~ normal(Wobs[i], Werr_sd);
-    logW[i] ~ normal(amhg_rhs[i], sigma_amhg);
+    logW[i] ~ normal(amhg_rhs[i], sigma_amhg[i]);
     target += -logW[i];
   }
 }

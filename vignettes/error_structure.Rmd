@@ -1,0 +1,50 @@
+---
+title: "Specifying BAM error structure"
+author: "Mark Hagemann"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{BAM_errors}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(fig.width = 7)
+options("mc.cores" = 2)
+
+```
+
+Two primary sources of error provide the likelihood functions used by **bamr**. *Model error*, assumed to be log-normal, represents inability for even an optimally parameterized model to perfectly capture functional relationships between hydrologic variables in the wild. *Measurement error*, assumed to be normal, represents the discrepencey between measured quantities (e.g. the width of a river as measured by the SWOT satellite) and the true quantity (the actual width of the river). Model assumptions and common sense further dictate that the actual width, slope, and cross-sectional area cannot be negative, resulting in a [truncated normal](https://en.wikipedia.org/wiki/Truncated_normal_distribution), bounded below at the negative observation, for each measurement error. 
+
+**bamr** implements this full error structure using latent variables that represent the actual (and unobserved) slope, width, and partial area. While this results in a fully specified model, it does so at the cost of additional parameters and additional resultant computational time. Each iteration of the Monte Carlo sampler needs to draw an additional $N_x \times N_t \times 3$ sample draws representing all $S_{it}, W_{it}, \text{ and } dA_{it}, i = 1, \dots, N_x; t = 1, \dots, N_t$ latent parameters. 
+
+In order to circumvent this additional computational time, **bamr** by default reparameterizes the measurement error, forcing it into the lognormal model-error structure. It does this by a simple method-of-moments estimation of $\sigma^2_{logS}$ and $\sigma^2_{logW}$ in the following equation:
+
+$$
+\log W_{it} = \log W_{obs, it} + \epsilon_{logW}\\
+E[\epsilon_{logW}] = 0; Var[\epsilon_{logW}] = \sigma^2_{logW}
+$$
+
+This is only an approximation, as in reality only one of $W - W_{obs}$ or $\log W - \log W_{obs}$ can have mean of zero. However, it should be a sufficiently close approximation as to yield very similar results to the fully parameterized model.
+
+### Specifying errors in bamr
+
+**bamr** has a couple of options--and associated defaults--for specifying error structure. 
+
+- In `bam_priors` the following are optional arguments:
+    - `sigma_man`, flow error standard deviation (in log space) arising from Manning's equation
+    - `sigma_amhg`, flow error standard deviation (in log space) arising from AMHG
+    - `Werr_sd`, measurement error standard deviation (meters) for remote-sensed width
+    - `Serr_sd`, measurement error standard deviation (unitless) for remote-sensed slope
+    - `dAerr_sd`, measurement error standard deviation (square meters) for remote-sensed $\delta A$
+    
+- In `bam_estimate` the following are optional arguments:
+    - `meas_error` (default: `TRUE`) Include measurement error in likelihood calculation?
+    - `reparam` (default: `TRUE`) Reparameterize errors to make sampling faster? Setting this to `FALSE` will yield a more precise model structure, but may take on the order of 10x longer to compute. 
+    
+
+    
+    
+    
+    

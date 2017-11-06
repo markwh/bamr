@@ -34,8 +34,8 @@ data {
 
 
   // *Known* likelihood parameters
-  vector<lower=0>[nt] sigma_man; // Manning error standard deviation
-  vector<lower=0>[nt] sigma_amhg; // AMHG error standard deviation
+  vector<lower=0>[nt] sigma_man[nx]; // Manning error standard deviation
+  vector<lower=0>[nt] sigma_amhg[nx]; // AMHG error standard deviation
 
 
   // Hyperparameters
@@ -126,8 +126,8 @@ model {
     // Sact[i] ~ normal(Sobs[i], Serr_sd);
     // dAact[i] ~ normal(dAobs[i], dAerr_sd);
     
-    man_lhs[i] ~ normal(man_rhs[i], sigma_man);
-    logW[i] ~ normal(amhg_rhs[i], sigma_amhg);
+    man_lhs[i] ~ normal(man_rhs[i], 6 * sigma_man[i]);
+    logW[i] ~ normal(amhg_rhs[i], sigma_amhg[i]);
     
     target += -logW[i];
     target += -logS[i];

@@ -138,10 +138,20 @@ bam_priors <- function(bamdata,
   
   if (!length(params[["logQ_sd"]]) == bamdata$nt)
     params$logQ_sd <- rep(params$logQ_sd, length.out = bamdata$nt)
-  if (!length(params[["sigma_man"]]) == bamdata$nt)
-    params$sigma_man <- rep(params$sigma_man, length.out = bamdata$nt)
-  if (!length(params[["sigma_amhg"]]) == bamdata$nt)
-    params$sigma_amhgs <- rep(params$sigma_amhg, length.out = bamdata$nt)
+  
+  if (!identical(dim(params[["sigma_man"]]), 
+                 as.integer(c(bamdata$nx, bamdata$nt)))) {
+    params$sigma_man <- matrix(rep(params$sigma_man, 
+                                   length.out = bamdata$nt * bamdata$nx),
+                               nrow = bamdata$nx)
+  }
+    
+  if (!identical(dim(params[["sigma_amhg"]]), 
+                 as.integer(c(bamdata$nx, bamdata$nt)))) {
+    params$sigma_amhg <- matrix(rep(params$sigma_amhg, 
+                                    length.out = bamdata$nt * bamdata$nx),
+                                nrow = bamdata$nx)
+  }
   
   out <- structure(params[paramset],
                    class = c("bampriors"))
@@ -193,16 +203,16 @@ sample_xs <- function(bamdata, n, seed = NULL) {
 #' 
 #' Used to put measurement errors into original log-normal parameterization.
 #' 
-ln_moms <- function(ln_hat, ln_sigma, a = 0) {
-  alpha <- (a - ln_hat) / ln_sigma
+ln_moms <- function(obs, err_sigma, a = 0) {
+  alpha <- (a - obs) / err_sigma
   Z <- 1 - pnorm(alpha)
   
-  mean <- ln_hat + (dnorm(alpha)) / Z * ln_sigma
+  mean <- obs + (dnorm(alpha)) / Z * err_sigma
   sdquan <- 1 + (alpha * dnorm(alpha)) / Z - 
     (dnorm(alpha) / Z)^2
-  sd <- ln_sigma * sqrt(sdquan)
+  sd <- err_sigma * sqrt(sdquan)
   
-  out <- data.frame(mean = mean, sd = sd)
+  out <- list(mean = mean, sd = sd)
   out
 }
 
@@ -210,12 +220,12 @@ ln_moms <- function(ln_hat, ln_sigma, a = 0) {
 #' 
 #' Used to put measurement errors into original log-normal parameterization.
 #'
-ln_sigma <- function(ro_hat, ro_sigma, a = 0) {
-  moms <- ro_moms(ro_hat = ro_hat, ro_sigma = ro_sigma, a = a)
+ln_sigsq <- function(obs, err_sigma, a = 0) {
+  moms <- ln_moms(obs = obs, err_sigma = err_sigma, a = a)
   mn <- unname(moms[["mean"]])
   sd <- unname(moms[["sd"]])
   mu <- 2 * log(mn) - 0.5 * log(sd^2 + mn^2)
-  sigma <- sqrt(2 * log(mn) - 2 * mu)
+  sigsq <- 2 * log(mn) - 2 * mu
   
-  sigma
+  sigsq
 }

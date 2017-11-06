@@ -56,7 +56,13 @@ bam_estimate <- function(bamdata,
   }
   
   if (reparam) {
-    baminputs$sigma_man <- sqrt(baminputs$sigma_man^2 + ln_sigma(ln_hat = TODO))
+    logS_sigsq_obs <- ln_sigsq(obs = bamdata$Sobs, err_sigma = bamdata$Serr_sd)
+    logW_sigsq_obs <- ln_sigsq(obs = bamdata$Wobs, err_sigma = bamdata$Werr_sd)
+    baminputs$sigma_man <- sqrt(baminputs$sigma_man^2 + 
+                                  logS_sigsq_obs * 9 +
+                                  logW_sigsq_obs * 16)
+    baminputs$sigma_amhg <- sqrt(baminputs$sigma_amhg^2 +
+                                   logW_sigsq_obs)
   }
   
   out <- sampling(stanfit, data = baminputs, 
