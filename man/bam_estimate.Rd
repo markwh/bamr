@@ -5,9 +5,9 @@
 \title{Estimate BAM}
 \usage{
 bam_estimate(bamdata, variant = c("manning", "amhg", "manning_amhg"),
-  bampriors = NULL, meas_error = TRUE, cores = getOption("mc.cores",
-  default = parallel::detectCores()), chains = 3L, iter = 1000L,
-  stanmodel = NULL, ...)
+  bampriors = NULL, meas_error = TRUE, reparam = TRUE,
+  cores = getOption("mc.cores", default = parallel::detectCores()),
+  chains = 3L, iter = 1000L, stanmodel = NULL, ...)
 }
 \arguments{
 \item{bamdata}{A bamdata object, as produced by \code{bam_data()}}
@@ -19,6 +19,8 @@ from calling \code{bam_priors(bamdata)} (with no other arguments).}
 
 \item{meas_error}{Include measurement error in inference? Setting this to TRUE 
 will slow down the inference by roughly an order of mangnitude.}
+
+\item{reparam}{Reparameterize measurement errors to speed up sampling?}
 
 \item{cores}{Number of processing cores for running chains in parallel. 
 See \code{?rstan::sampling}. Defaults to \code{parallel::detectCores}.}
