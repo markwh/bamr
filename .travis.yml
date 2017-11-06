@@ -33,9 +33,10 @@ after_script:
   - echo ${NOT_CRAN}
 
 after_success:
+  - echo $PKG_TARBALL
   - ls ..
   - ls .
-  - travis_wait 40 tar -C .. -xf bamr*tar.gz
+  - travis_wait 40 tar -C .. -xf $PKG_TARBALL
   - travis_wait 40 Rscript -e 'covr::codecov()'
 
 after_failure:
