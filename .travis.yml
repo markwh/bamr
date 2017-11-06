@@ -33,6 +33,8 @@ after_script:
   - echo ${NOT_CRAN}
 
 after_success:
+  - ls ..
+  - ls .
   - travis_wait 40 tar -C .. -xf bamr*tar.gz
   - travis_wait 40 Rscript -e 'covr::codecov()'
 
