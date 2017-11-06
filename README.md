@@ -14,8 +14,15 @@ if (!require("devtools")) {
 }
 
 # Then install from github
-install_github("markwh/bamr", args = "--preclean", build_vignettes = FALSE, local = FALSE)
+install_github("markwh/bamr", local = FALSE)
 ```
+
+You can get the development version by specifying the "devel" branch:
+
+```
+install_github("markwh/bamr", ref = "devel", local = FALSE)
+```
+
 
 The bamr package facilitates Bayesian AMHG + Manning discharge estimation using stream slope, width, and partial cross-section area. It includes functions to preprocess and visualize data, perform Bayesian inference using Hamiltonian Monte Carlo (via models pre-written in the Stan language), and analyze the results. 
 

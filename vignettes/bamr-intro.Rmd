@@ -48,9 +48,9 @@ attach(Sacramento)
 
 This will put the following objects in your global environment:
 
-- Sac_w: a matrix of widths (cross-sections as rows, days as columns)
-- Sac_s: a matrix of slopes (cross-sections as rows, days as columns)
-- Sac_dA: a matrix of partial areas (cross-sections as rows, days as columns)
+- Sac_w: a matrix of widths (locations as rows, days as columns)
+- Sac_s: a matrix of slopes (locations as rows, days as columns)
+- Sac_dA: a matrix of partial areas (locations as rows, days as columns)
 - Sac_QWBM: a vector of water-balance-model discharge estimates for the days represented in the other matrices. This is required as a prior parameter for BAM. In this case, the estimates are all the same, representing the average water-balance-model discharge for the Sacramento, and could be supplied as a single number rather than a vector. But it is also possible to specify time-varying prior estimates.
 
 
@@ -100,7 +100,7 @@ bam_settings("lowerbound_A0", "upperbound_A0")
 bam_settings("logQc_hat", "upperbound_logQ")
 ```
 
-(The `minmax` function used in the "upperbound_logQ" parameter takes the minimum in space of the maximum in time for each cross-section.)
+(The `minmax` function used in the "upperbound_logQ" parameter takes the minimum in space of the maximum in time for each location.)
 
 These settings are used to generate a set of BAM prior parameters for a particular analysis, using the `bam_priors` function:
 
@@ -116,12 +116,13 @@ If you wish to use a different prior, you can specify it. For example:
 Sac_priors_mod1 <- bam_priors(bamdata = Sac_data, lowerbound_A0 = 20)
 ```
 
-Data-dependent priors can also be specified using quoted expressions. These must reference an object called "bamdata". For example:
+Data-dependent priors can also be specified using unquoted expressions. Any variables referenced therein must be part of the object specified in the `bamdata` argument. For example:
 
 ```{r}
 Sac_priors_mod2 <- bam_priors(bamdata = Sac_data, 
-                             logQc_hat = "median(bamdata$logQ_hat)")
+                             logQc_hat = median(logQ_hat))
 ```
+
 
 
 ## 3. Estimation via Bayesian inference
