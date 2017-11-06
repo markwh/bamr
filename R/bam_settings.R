@@ -41,7 +41,7 @@ bam_settings <- settings::options_manager(
   
   
   # *Known* likelihood parameters
-  sigma_man = 6 * 0.25,
+  sigma_man = 0.25,
   sigma_amhg = 0.22, # UPDATE THIS FROM CAITLINE'S WORK
   
   
@@ -60,7 +60,7 @@ bam_settings <- settings::options_manager(
   logA0_sd = 0.1,
   logn_sd = 1,
   
-  # Observation errors. Default to no error.
+  # Observation errors. 
   Werr_sd = 10,
   Serr_sd = 1e-5,
   dAerr_sd = 10

@@ -21,6 +21,12 @@ test_that("data preparation produces correct output", {
   expect_equal(length(bdpr$logQ_sd), bdpo$nt)
   expect_is(bdpr$logQ_sd, "numeric")
   
+  expect_is(bdpr$sigma_man, "matrix")
+  expect_is(bdpr$sigma_amhg, "matrix")
+  expect_equal(nrow(bdpr$sigma_man), bdpo$nx)
+  expect_equal(ncol(bdpr$sigma_amhg), bdpo$nt)
+  
+  
   # manually specify logQ_sd as vector
   expect_is(bdpr <- bam_priors(bamdata = bdpo, logQ_sd = runif(bdpo$nt)), "bampriors")
   expect_equal(length(bdpr$logQ_sd), bdpo$nt)
@@ -120,4 +126,23 @@ test_that("subsetting of cross-sections works", {
 
   nx1 <- bdsac$nx
   expect_equal(sample_xs(bdsac, n = 1000)$nx, nx1)
+})
+
+
+test_that("error reparameterization works as expected", {
+  data("Sacramento")
+  attach(Sacramento)
+  
+  bdsac <- bam_data(w = Sac_w, s = Sac_s, dA = Sac_dA, Qhat = Sac_QWBM)
+  
+  expect_is((w_ln_sigsq <- ln_sigsq(bdsac$Wobs, 30)), "matrix")
+  expect_equal(nrow(w_ln_sigsq), bdsac$nx)
+  expect_equal(ncol(w_ln_sigsq), bdsac$nt)
+  
+  expect_equal(order(as.vector(w_ln_sigsq)), 
+               order(as.vector(bdsac$Wobs), decreasing = TRUE))
+  expect_equal(order(as.vector(ln_sigsq(bdsac$Sobs, 1e-4))), 
+                     order(as.vector(bdsac$Sobs), decreasing = TRUE))
+               
+  
 })

@@ -24,7 +24,7 @@ bam_settings <- settings::options_manager(
   
   
   # *Known* likelihood parameters
-  sigma_man = 6 * 0.25,
+  sigma_man = 0.25,
   sigma_amhg = 0.22, # UPDATE THIS FROM CAITLINE'S WORK
   
   
