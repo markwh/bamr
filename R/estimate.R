@@ -56,8 +56,8 @@ bam_estimate <- function(bamdata,
   }
   
   if (reparam) {
-    logS_sigsq_obs <- ln_sigsq(obs = bamdata$Sobs, err_sigma = bamdata$Serr_sd)
-    logW_sigsq_obs <- ln_sigsq(obs = bamdata$Wobs, err_sigma = bamdata$Werr_sd)
+    logS_sigsq_obs <- ln_sigsq(obs = baminputs$Sobs, err_sigma = baminputs$Serr_sd)
+    logW_sigsq_obs <- ln_sigsq(obs = baminputs$Wobs, err_sigma = baminputs$Werr_sd)
     baminputs$sigma_man <- sqrt(baminputs$sigma_man^2 + 
                                   logS_sigsq_obs * 9 +
                                   logW_sigsq_obs * 16)

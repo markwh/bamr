@@ -12,8 +12,9 @@ test_that("BAM estimates return expected values", {
   myseed <- 582
   
   bp1 <- bam_priors(bda, Werr_sd = 1600, variant = "amhg")
+  bp2 <- bam_priors(bdm, Werr_sd = 10, sigma_man = 0.2)
   expect_is(est1 <- bam_estimate(bda, "amhg", bampriors = bp1, seed = myseed), c("stanfit"))
-  expect_is(est2 <- bam_estimate(bdm, "manning", seed = myseed), c("stanfit"))
+  expect_is(est2 <- bam_estimate(bdm, "manning", bampriors = bp2, seed = myseed), c("stanfit"))
   expect_is(est3 <- bam_estimate(bdm, "manning", seed = myseed), c("stanfit"))
   
   expect_equivalent(est2, est3)
