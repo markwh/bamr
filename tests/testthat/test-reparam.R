@@ -9,9 +9,9 @@ test_that("reparameterization returns correct object types", {
   sobs <- rlnorm(100, log(0.2 / 1000), 0.7) + rnorm(100, 0, sdS)
   dAobs <- rlnorm(100, 6.5, 0.5) + rnorm(100, 0, sddA)
   
-  expect_is(wmoms <- ln_moms(wobs, sdW), "data.frame")
-  expect_is(smoms <- ln_moms(sobs, sdS), "data.frame")
-  expect_is(dAmoms <- ln_moms(dAobs, sddA), "data.frame")
+  expect_is(wmoms <- ln_moms(wobs, sdW), "list")
+  expect_is(smoms <- ln_moms(sobs, sdS), "list")
+  expect_is(dAmoms <- ln_moms(dAobs, sddA), "list")
   
   expect_is(wmoms$mean, "numeric")
   expect_is(smoms$mean, "numeric")
@@ -33,7 +33,5 @@ test_that("reparameterization bamr results are roughly equivalent", {
   expect_is(bda <- bam_data(w = Sac_w_sm, Qhat = Sac_QWBM_sm), "bamdata")
   expect_is(bdm <- bam_data(w = Sac_w_sm, s = Sac_s_sm, dA = Sac_dA_sm, Qhat = Sac_QWBM_sm),
             "bamdata")
-  
-  expect_is(est1 <- bam_estimate(bda, "amhg", Werr_sd = 0.), c("stanfit"))
-  expect_is(est2 <- bam_estimate(bdm, "manning"), c("stanfit"))
+  # TODO
 })
