@@ -16,3 +16,4 @@ vignettes/*_files
 cache
 inst/doc
 inst/notebook
+*.dll
