@@ -11,9 +11,9 @@ data {
   vector[nt] Sobs[nx]; // measured slopes
   vector[nt] dAobs[nx]; // measured area difference from base area
   
-  real<lower=0> Werr_sd;
-  real<lower=0> Serr_sd;
-  real<lower=0> dAerr_sd;
+  // real<lower=0> Werr_sd;
+  // real<lower=0> Serr_sd;
+  // real<lower=0> dAerr_sd;
 
 
   // Hard bounds on parameters
@@ -41,9 +41,14 @@ data {
 }
 
 transformed data {
+  vector[nt] logW[nx];
+  vector[nt] logS[nx];
   vector[nt] dA_pos[nx];
 
   for (i in 1:nx) {
+    logW[i] = log(Wobs[i]);
+    logS[i] = log(Sobs[i]);
+    
     dA_pos[i] = dAobs[i] - min(dAobs[i]); // make all dA positive
   }
 }
@@ -53,26 +58,24 @@ parameters {
   real<lower=lowerbound_logn,upper=upperbound_logn> logn;
   real<lower=lowerbound_A0,upper=upperbound_A0> A0[nx];
   
-  vector<lower=0>[nt] Wact[nx];
-  vector<lower=0>[nt] Sact[nx];
-  vector[nt] dAact[nx];
+  // vector<lower=0>[nt] Wact[nx];
+  // vector<lower=0>[nt] Sact[nx];
+  // vector[nt] dAact[nx];
 }
 
 transformed parameters {
-  vector[nt] logW[nx];
-  vector[nt] logS[nx];
   vector[nt] man_lhs[nx];
   vector[nt] logA_man[nx]; // log area for Manning's equation
   vector[nt] man_rhs[nx]; // RHS for Manning likelihood
   
   for (i in 1:nx) {
-    logW[i] = log(Wact[i]);
-    logS[i] = log(Sact[i]);
+    // logW[i] = log(Wact[i]);
+    // logS[i] = log(Sact[i]);
     
     man_lhs[i] = 4. * logW[i] - 3. * logS[i]; // LHS of manning equation
     
     for (t in 1:nt) {
-      logA_man[i, t] = log(A0[i] + dAact[i, t]);
+      logA_man[i, t] = log(A0[i] + dA_pos[i, t]);
     }
     man_rhs[i] = 10. * logA_man[i] - 6. * logn - 6. * logQ;
   }
@@ -88,9 +91,9 @@ model {
   
   // Likelihood and observation error
   for (i in 1:nx) {
-    Wact[i] ~ normal(Wobs[i], Werr_sd);
-    Sact[i] ~ normal(Sobs[i], Serr_sd);
-    dAact[i] ~ normal(dA_pos[i], dAerr_sd);
+    // Wact[i] ~ normal(Wobs[i], Werr_sd);
+    // Sact[i] ~ normal(Sobs[i], Serr_sd);
+    // dAact[i] ~ normal(dAobs[i], dAerr_sd);
     
     man_lhs[i] ~ normal(man_rhs[i], 6 * sigma_man[i]); //cv2sigma(0.05));
     
