@@ -31,11 +31,13 @@ data {
   
   
   // Hyperparameters
-  vector[nt] logQ_hat;
+  // vector[nt] logQ_hat;
+  real logQ_hat;
   real logA0_hat[nx];
   real logn_hat;
   
-  vector<lower=0>[nt] logQ_sd; // QWBM error in predicting mean log Q
+  // vector<lower=0>[nt] logQ_sd; // QWBM error in predicting mean log Q
+  real<lower=0> logQ_sd; // QWBM error in predicting mean log Q
   real<lower=0> logA0_sd;
   real<lower=0> logn_sd;
   
@@ -70,8 +72,7 @@ parameters {
   real<lower=0> truesigma_man;
   real<lower=0> sigma_logQ;
   
-  // real<lower=lowerbound_logn,upper=upperbound_logn> logn;
-  real<lower=-upperbound_logn,upper=-lowerbound_logn> logk;
+  real<lower=lowerbound_logn,upper=upperbound_logn> logn;
   real<lower=lowerbound_A0,upper=upperbound_A0> A0[nx];
 
   real<lower=lowerbound_logQ,upper=upperbound_logQ> logQbar;
@@ -86,7 +87,7 @@ transformed parameters {
   vector[nt] logA_man[nx]; // log area for Manning's equation
   real<lower=lowerbound_logQn,upper=upperbound_logQn> logQnbar;
   
-  logQnbar = logQbar - logk; 
+  logQnbar = logQbar + logn; 
   
   for (i in 1:nx) {
     // logW[i] = log(Wact[i]);
@@ -129,17 +130,14 @@ model {
   
   A0 ~ lognormal(logA0_hat, logA0_sd);
   
-  logQnbar ~ normal(logQ_hat - logk, logQ_sd);
+  logQnbar ~ normal(logQ_hat + logn, logQ_sd);
   // logQbar ~ normal(logQ_hat, logQ_sd);
-  // logn ~ normal(logn_hat, logn_sd);
-  logk ~ normal(-logn_hat, logn_sd);
+  logn ~ normal(logn_hat, logn_sd);
   
 }
 
 generated quantities {
   // vector<lower=lowerbound_logQ,upper=upperbound_logQ>[nt] logQ;
   vector[nt] logQ;
-  real logn;
-  logQ = logQtn + logk;
-  logn = -logk;
+  logQ = logQtn - logn;
 }
