@@ -33,6 +33,10 @@ bam_data <- function(w,
   
   s <- if(is.null(s)) NULL else s
   
+  if (!(length(Qhat) == 1)) {
+    stop("Qhat must be a single number.\n")
+  }
+  
   datalist <- list(Wobs = w,
                 Sobs = s,
                 dAobs = dA,
@@ -76,9 +80,10 @@ bam_check_args <- function(datalist) {
   if (!(all(vapply(matlist, nrow, 0L) == nr) &&
         all(vapply(matlist, ncol, 0L) == nc)))
     stop("All data must have same dimensions.\n")
-  if (!length(logQ_hat) == nc)
-    logQ_hat <- rep(logQ_hat, length.out = nc)
-  
+  if (!length(logQ_hat) == 1) {
+    stop("Vector discharge estimates not currently supported.\n")
+  }
+    
   out <- c(matlist, list(logQ_hat = logQ_hat))
   out
 }
@@ -130,15 +135,16 @@ bam_priors <- function(bamdata,
   paramset <- bam_settings(paste0(variant, "_params"))
   
   myparams0 <- rlang::quos(..., .named = TRUE)
-  myparams <- do.call(settings::clone_and_merge, args = (options = c(list(options = bam_settings), 
-                                                                     myparams0)))
+  myparams <- do.call(settings::clone_and_merge, 
+                      args = c(list(options = bam_settings), myparams0))
   
   quoparams <- myparams()[-1:-3] # first 3 are parameter sets
   params <- lapply(quoparams, rlang::eval_tidy, data = bamdata)
   
-  if (!length(params[["logQ_sd"]]) == bamdata$nt)
-    params$logQ_sd <- rep(params$logQ_sd, length.out = bamdata$nt)
-  
+  if (!length(params[["logQ_sd"]]) == 1) {
+    stop("Vector estimates of flow uncertainty not currently supported.\n")
+  }
+
   if (!identical(dim(params[["sigma_man"]]), 
                  as.integer(c(bamdata$nx, bamdata$nt)))) {
     params$sigma_man <- matrix(rep(params$sigma_man, 

@@ -35,7 +35,7 @@ data {
   real logQ_hat;
   real logA0_hat[nx];
   real logn_hat;
-  real<lower=0> sigma_man;
+  vector<lower=0>[nt] sigma_man[nx];
   
   // vector<lower=0>[nt] logQ_sd; // QWBM error in predicting mean log Q
   real<lower=0> logQ_sd; // QWBM error in predicting mean log Q
@@ -97,7 +97,9 @@ transformed parameters {
       logA_man[i, t] = log(A0[i] + dA_pos[i, t]);
     }
     
-    man_lhs[i] = (5. / 3. * logA_man[i]) - (2. / 3. * logW[i]) + (1. / 2. * logS[i]);
+    man_lhs[i] = ((5. / 3. * logA_man[i]) - 
+                  (2. / 3. * logW[i]) + 
+                  (1. / 2. * logS[i])) ./ sigma_man[i];
   }
   
   // print(logA_man[1, 1])
@@ -112,7 +114,7 @@ model {
     // Sact[i] ~ normal(Sobs[i], Serr_sd);
     // dAact[i] ~ normal(dAobs[i], dAerr_sd);
     
-    man_lhs[i] ~ normal(logQtn, truesigma_man); //cv2sigma(0.05));
+    man_lhs[i] ~ normal(logQtn, truesigma_man);
     
     target += -(log(A0[i] + dA_pos[i]));
     target += log(5. / 3.);
@@ -126,12 +128,12 @@ model {
   // logQ ~ normal(logQ_hat, logQ_sd);
   logQtn ~ normal(logQnbar, sigma_logQ);
   sigma_logQ ~ normal(0, 1);
-  truesigma_man ~ normal(0, sigma_man);
+  truesigma_man ~ normal(0, 1);
   
   A0 ~ lognormal(logA0_hat, logA0_sd);
   
   logQnbar ~ normal(logQ_hat + logn, logQ_sd);
-  // logQbar ~ normal(logQ_hat, logQ_sd);
+  logQbar ~ normal(logQ_hat, logQ_sd);
   logn ~ normal(logn_hat, logn_sd);
   
 }
