@@ -27,7 +27,7 @@ data {
   
   
   // *Known* likelihood parameters
-  vector<lower=0>[nt] sigma_man[nx];
+  // vector<lower=0>[nt] sigma_man[nx]; // This is now a hyperparameter
   
   
   // Hyperparameters
@@ -35,6 +35,7 @@ data {
   real logQ_hat;
   real logA0_hat[nx];
   real logn_hat;
+  real<lower=0> sigma_man;
   
   // vector<lower=0>[nt] logQ_sd; // QWBM error in predicting mean log Q
   real<lower=0> logQ_sd; // QWBM error in predicting mean log Q
@@ -112,7 +113,6 @@ model {
     // dAact[i] ~ normal(dAobs[i], dAerr_sd);
     
     man_lhs[i] ~ normal(logQtn, truesigma_man); //cv2sigma(0.05));
-    truesigma_man ~ normal(0, sigma_man[i]);
     
     target += -(log(A0[i] + dA_pos[i]));
     target += log(5. / 3.);
@@ -126,7 +126,7 @@ model {
   // logQ ~ normal(logQ_hat, logQ_sd);
   logQtn ~ normal(logQnbar, sigma_logQ);
   sigma_logQ ~ normal(0, 1);
-  
+  truesigma_man ~ normal(0, sigma_man);
   
   A0 ~ lognormal(logA0_hat, logA0_sd);
   
