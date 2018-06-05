@@ -7,7 +7,7 @@
 bam_estimate(bamdata, variant = c("manning", "amhg", "manning_amhg"),
   bampriors = NULL, meas_error = TRUE, reparam = TRUE,
   cores = getOption("mc.cores", default = parallel::detectCores()),
-  chains = 3L, iter = 1000L, stanmodel = NULL, ...)
+  chains = 3L, iter = 1000L, stanmodel = NULL, pars = NULL, ...)
 }
 \arguments{
 \item{bamdata}{A bamdata object, as produced by \code{bam_data()}}
@@ -33,15 +33,12 @@ The default is 3.}
 \item{stanmodel}{A \code{stanmodel} object to use instead of one of the default 
 models.}
 
+\item{pars}{(passed to rstan::sampling) A vector of character strings specifying 
+parameters of interest to be returned in the stanfit object. If not specified, 
+a default parameter set is returned.}
+
 \item{...}{Other arguments passed to rstan::sampling() for customizing the 
 Monte Carlo sampler}
-
-\item{pars}{(passed to rstan::sampling) A vector of character strings specifying 
-parameters of interest. For bam_estimate, the default is Stan transformed  
-variables, "man_rhs", "amhg_rhs", and "logA_man".}
-
-\item{include}{Defaults to FALSE, which omits parameters specified in 
-\code{pars}. If set to TRUE, only the \code{pars} parameters will be returned.}
 }
 \description{
 Fits a BAM model of one of several variants using Hamiltonian Monte Carlo.
