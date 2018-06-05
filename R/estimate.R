@@ -18,10 +18,8 @@
 #' @param stanmodel A \code{stanmodel} object to use instead of one of the default 
 #'   models. 
 #' @param pars (passed to rstan::sampling) A vector of character strings specifying 
-#'   parameters of interest. For bam_estimate, the default is Stan transformed  
-#'   variables, "man_rhs", "amhg_rhs", and "logA_man".
-#' @param include Defaults to FALSE, which omits parameters specified in 
-#'   \code{pars}. If set to TRUE, only the \code{pars} parameters will be returned.
+#'   parameters of interest to be returned in the stanfit object. If not specified, 
+#'   a default parameter set is returned.
 #' @param ... Other arguments passed to rstan::sampling() for customizing the 
 #'   Monte Carlo sampler
 #' @import rstan
@@ -36,6 +34,7 @@ bam_estimate <- function(bamdata,
                          chains = 3L,
                          iter = 1000L,
                          stanmodel = NULL,
+                         pars = NULL, 
                          ...) {
   variant <- match.arg(variant)
   stopifnot(is(bamdata, "bamdata"))
@@ -55,6 +54,11 @@ bam_estimate <- function(bamdata,
     stanfit <- stanmodels[[variant]]
   }
   
+  if (is.null(pars)) {
+    pars <- c("logQ", "A0", "logn", "logQc", "logWc", "b", "logQbar", 
+              "sigma_logQ", "truesigma_man")
+  }
+  
   if (reparam && meas_error) {
     logS_sigsq_obs <- ln_sigsq(obs = baminputs$Sobs, err_sigma = baminputs$Serr_sd)
     logW_sigsq_obs <- ln_sigsq(obs = baminputs$Wobs, err_sigma = baminputs$Werr_sd)
@@ -67,24 +71,10 @@ bam_estimate <- function(bamdata,
   
   out <- sampling(stanfit, data = baminputs, 
                   cores = cores, chains = chains, iter = iter,  
-                  pars = c("man_rhs", "amhg_rhs", "logA_man", 
-                           "Wact", "Sact", "dAact", "logW", "logS", 
-                           "man_lhs"),
-                  include = FALSE,
+                  pars = pars,
                   ...)
   
   out
-}
-
-
-bam_q_manning <- function(bamdata, params, plot = TRUE) {
-  logn <- params$logn
-  A0mat <- matrix(params$A0, nrow = bamdata$nx, ncol = bamdata$nt, byrow = FALSE)
-  logA <- log(bamdata$dAobs + A0mat)
-  logW <- log(bamdata$Wobs)
-  logS <- log(bamdata$Sobs)
-  logQ <- 5/3 * logA - logn - 2/3 * logW + 1/2 * logS
-  q <- exp(logQ)
 }
 
 

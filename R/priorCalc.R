@@ -19,7 +19,7 @@ estimate_logA0 <- function(Wobs) {
   lwbar <- apply(log(Wobs), 1, mean)
   lwsd <- apply(log(Wobs), 1, sd)
   
-  logA0hat <- -1.782 + 1.438 * lwbar - 2.268 * lwsd
+  logA0hat <- -1.4058 + 1.4931 * lwbar - 0.2293 * lwsd
 
   logA0hat
 }

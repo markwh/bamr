@@ -83,8 +83,10 @@ bam_check_args <- function(datalist) {
   if (!length(logQ_hat) == 1) {
     stop("Vector discharge estimates not currently supported.\n")
   }
-    
-  out <- c(matlist, list(logQ_hat = logQ_hat))
+  
+  dA_shift <- apply(matlist[["dAobs"]], 1, function(x) median(x) - min(x))
+
+  out <- c(matlist, list(dA_shift = dA_shift, logQ_hat = logQ_hat))
   out
 }
 

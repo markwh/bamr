@@ -10,6 +10,7 @@ data {
   vector[nt] Wobs[nx]; // measured widths
   vector[nt] Sobs[nx]; // measured slopes
   vector[nt] dAobs[nx]; // measured area difference from base area
+  real<lower=1> dA_shift[nx]; // median(dA) - min(dA) for each location
   
   // real<lower=0> Werr_sd;
   // real<lower=0> Serr_sd;
@@ -24,7 +25,6 @@ data {
   real upperbound_A0;
   real lowerbound_logn;
   real upperbound_logn;
-  
   
   // *Known* likelihood parameters
   // vector<lower=0>[nt] sigma_man[nx]; // This is now a hyperparameter
@@ -51,9 +51,6 @@ transformed data {
   
   real lowerbound_logQn;
   real upperbound_logQn;
-
-  print(logn_hat)
-  print(logn_sd)
   
   lowerbound_logQn = lowerbound_logQ + lowerbound_logn;
   upperbound_logQn = upperbound_logQ + upperbound_logn;
@@ -87,40 +84,30 @@ transformed parameters {
   vector[nt] man_lhs[nx];
   vector[nt] logA_man[nx]; // log area for Manning's equation
   real<lower=lowerbound_logQn,upper=upperbound_logQn> logQnbar;
+  real A0_med[nx];
   
   logQnbar = logQbar + logn; 
   
   for (i in 1:nx) {
-    // logW[i] = log(Wact[i]);
-    // logS[i] = log(Sact[i]);
+    A0_med[i] = A0[i] + dA_shift[i];
     for (t in 1:nt) {
       logA_man[i, t] = log(A0[i] + dA_pos[i, t]);
     }
     
     man_lhs[i] = ((5. / 3. * logA_man[i]) - 
                   (2. / 3. * logW[i]) + 
-                  (1. / 2. * logS[i])) ./ sigma_man[i];
+                  (1. / 2. * logS[i]) - logQtn) ./ sigma_man[i];
   }
-  
-  // print(logA_man[1, 1])
-  // print(5./3. * logA_man[1, 1] - 2./3. * logW[1, 1] + 1./2. * logS[1, 1])
-  // print(man_lhs[1, 1])
 }
 
 model {
   // Likelihood and observation error
   for (i in 1:nx) {
-    // Wact[i] ~ normal(Wobs[i], Werr_sd);
-    // Sact[i] ~ normal(Sobs[i], Serr_sd);
-    // dAact[i] ~ normal(dAobs[i], dAerr_sd);
-    
-    man_lhs[i] ~ normal(logQtn, truesigma_man);
+    // man_lhs[i] ~ normal(logQtn, truesigma_man);
+    man_lhs[i] ~ normal(0, truesigma_man);
+    A0_med[i] ~ lognormal(logA0_hat, logA0_sd);
     
     target += -(log(A0[i] + dA_pos[i]));
-    target += log(5. / 3.);
-
-    // target += -logW[i];
-    // target += -logS[i];
   }
   
   
