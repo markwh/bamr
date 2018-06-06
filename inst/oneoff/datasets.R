@@ -1,39 +1,18 @@
 # Datasets that bamr will store
 
-library(dplyr)
-library(tidyr)
-load("../SWOT/cache/Pepsi.RData")
+# load("../SWOT/cache/Pepsi.RData")
+load("../SWOT/cache/nc_r.RData")
+Pepsi <- nc_r
 
-Po_pepsi <- Pepsi %>% 
-  filter(name == "Po") %>% 
-  transmute(xs, time, dA, H, S, W, QWBM, Q, A0 = Ao)
+Po_pepsi <- nc_r$Po
 
-Po_w <- Po_pepsi %>% 
-  select(xs, time, W) %>% 
-  spread(key = xs, value = W, convert = TRUE) %>% 
-  select(-time) %>% 
-  as.matrix() %>% 
-  t()
+Po_w <- Po_pepsi$w
 
-Po_s <- Po_pepsi%>% 
-  select(xs, time, S) %>% 
-  spread(key = xs, value = S, convert = TRUE) %>% 
-  select(-time) %>% 
-  as.matrix() %>% 
-  t()
+Po_s <- Po_pepsi$s
 
-Po_dA <- Po_pepsi%>% 
-  select(xs, time, dA) %>% 
-  spread(key = xs, value = dA, convert = TRUE) %>% 
-  select(-time) %>% 
-  as.matrix() %>% 
-  t()
+Po_dA <- Po_pepsi$dA
 
-Po_QWBM <- Po_pepsi%>% 
-  select(xs, time, QWBM) %>% 
-  group_by(time) %>% 
-  summarize(QWBM = median(QWBM)) %>% 
-  `[[`("QWBM")
+Po_QWBM <- Po_pepsi$QWBM[1]
 
 Po <- list(Po_w = Po_w,
            Po_s = Po_s,
@@ -43,42 +22,17 @@ Po <- list(Po_w = Po_w,
 
 # Sacramento downstream, since Po is off limits ---------------------------
 
+Sac_pepsi <- nc_r$SacramentoDownstream
 
-Sac_pepsi <- Pepsi %>% 
-  filter(name == "SacramentoDownstream") %>% 
-  transmute(xs, time, dA, H, S, W, QWBM, Q, A0 = Ao)
+Sac_w <- Sac_pepsi$w
 
-Sac_w <- Sac_pepsi%>% 
-  select(xs, time, W) %>% 
-  spread(key = xs, value = W, convert = TRUE) %>% 
-  select(-time) %>% 
-  as.matrix() %>% 
-  t()
+Sac_s <- Sac_pepsi$s
 
-Sac_s <- Sac_pepsi%>% 
-  select(xs, time, S) %>% 
-  spread(key = xs, value = S, convert = TRUE) %>% 
-  select(-time) %>% 
-  as.matrix() %>% 
-  t()
+Sac_dA <- Sac_pepsi$dA
 
-Sac_dA <- Sac_pepsi%>% 
-  select(xs, time, dA) %>% 
-  spread(key = xs, value = dA, convert = TRUE) %>% 
-  select(-time) %>% 
-  as.matrix() %>% 
-  t()
+Sac_QWBM <- Sac_pepsi$QWBM[1]
 
-Sac_QWBM <- Sac_pepsi%>% 
-  select(xs, time, QWBM) %>% 
-  group_by(time) %>% 
-  summarize(QWBM = median(QWBM)) %>% 
-  `[[`("QWBM")
-
-Sac_Qobs <- Sac_pepsi %>% 
-  group_by(time) %>% 
-  summarize(Qobs = median(Q)) %>% 
-  `[[`("Qobs")
+Sac_Qobs <- Sac_pepsi$Qobs
 
 Sacramento <- list(Sac_w = Sac_w,
            Sac_s = Sac_s,
@@ -94,7 +48,7 @@ t_sub <- 101:105
 Po_w_sm <- Po_w[xs_sub, t_sub]
 Po_s_sm <- Po_s[xs_sub, t_sub]
 Po_dA_sm <- Po_dA[xs_sub, t_sub]
-Po_QWBM_sm <- Po_QWBM[t_sub]
+Po_QWBM_sm <- Po_QWBM
 
 Po_sm <- list(Po_w_sm = Po_w_sm,
            Po_s_sm = Po_s_sm,
@@ -108,7 +62,7 @@ Sac_w_sm <- Sac_w[xs_sub, t_sub]
 Sac_s_sm <- Sac_s[xs_sub, t_sub]
 Sac_dA_sm <- Sac_dA[xs_sub, t_sub]
 Sac_QWBM_sm <- Sac_QWBM[t_sub]
-Sac_Qobs_sm <- Sac_Qobs[t_sub]
+Sac_Qobs_sm <- Sac_Qobs
 
 Sacramento_sm <- list(Sac_w_sm = Sac_w_sm,
               Sac_s_sm = Sac_s_sm,
