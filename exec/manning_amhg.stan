@@ -40,14 +40,14 @@ data {
 
 
   // Hyperparameters
-  vector[nt] logQ_hat; // prior mean on logQ
+  real logQ_hat; // prior mean on logQ
   real logQc_hat; // prior mean on logQc
   real logWc_hat;
   real b_hat[nx]; // ADD CHECK ON THIS FOR DATA PREP
   real logA0_hat[nx];
   real logn_hat;
 
-  vector<lower=0>[nt] logQ_sd;
+  real<lower=0> logQ_sd;
   real<lower=0> logQc_sd;
   real<lower=0> logWc_sd;
   real<lower=0> b_sd;

@@ -32,11 +32,11 @@ data {
   
   
   // Hyperparameters
-  vector[nt] logQ_hat;
+  real logQ_hat;
   real logA0_hat[nx];
   real logn_hat;
   
-  vector<lower=0>[nt] logQ_sd;
+  real<lower=0> logQ_sd;
   real<lower=0> logA0_sd;
   real<lower=0> logn_sd;
 }
