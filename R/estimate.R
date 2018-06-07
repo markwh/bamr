@@ -10,6 +10,8 @@
 #' @param reparam Reparameterize measurement errors to speed up sampling?
 #' @param bampriors A bampriors object. If none is supplied, defaults are used 
 #'   from calling \code{bam_priors(bamdata)} (with no other arguments).
+#' @param unk_var Treat flow-law error variance as an unknown parameter? Setting 
+#'   this to TRUE may adversely impact sampling performance (e.g. convergence).
 #' @param cores Number of processing cores for running chains in parallel. 
 #'   See \code{?rstan::sampling}. Defaults to \code{parallel::detectCores}.
 #' @param chains A positive integer specifying the number of Markov chains. 
@@ -29,12 +31,14 @@ bam_estimate <- function(bamdata,
                          variant = c("manning", "amhg", "manning_amhg"), 
                          bampriors = NULL, 
                          meas_error = TRUE,
+                         unk_var = FALSE,
                          reparam = TRUE,
                          cores = getOption("mc.cores", default = parallel::detectCores()),
                          chains = 3L,
                          iter = 1000L,
                          stanmodel = NULL,
                          pars = NULL, 
+                         include = FALSE,
                          ...) {
   variant <- match.arg(variant)
   stopifnot(is(bamdata, "bamdata"))
@@ -51,12 +55,19 @@ bam_estimate <- function(bamdata,
     if (!meas_error | reparam) {
       variant <- paste0(variant, "_nolatent")
     }
+    if (unk_var) {
+      if (!grepl("manning", variant)) {
+        message("unk_var not available for AMHG-only.")
+      } else {
+        variant <- paste0(variant, "_unkvar")
+      }
+    }
     stanfit <- stanmodels[[variant]]
   }
   
   if (is.null(pars)) {
-    pars <- c("logQ", "A0", "logn", "logQc", "logWc", "b", "logQbar", 
-              "sigma_logQ", "truesigma_man")
+    pars <- c("logQtn", "A0_med", "man_lhs", "logA_man", 
+              "logQnbar", "sigma_logQ")
   }
   
   if (reparam && meas_error) {

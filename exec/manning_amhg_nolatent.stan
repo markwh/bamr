@@ -69,7 +69,6 @@ transformed data {
 
 parameters {
   vector<lower=lowerbound_logQn,upper=upperbound_logQn>[nt] logQtn;
-  real<lower=0> truesigma_man;
   real<lower=0> sigma_logQ;
   
   real<lower=lowerbound_logn,upper=upperbound_logn> logn;
@@ -92,36 +91,34 @@ transformed parameters {
   vector[nt] amhg_rhs[nx]; // RHS for AMHG likelihood
   real<lower=lowerbound_logQn,upper=upperbound_logQn> logQnbar;
   real A0_med[nx];
-  
   vector[nt] logQ;
-  
   
   logQ = logQtn - logn;
   logQnbar = logQbar + logn; 
-  
   
   for (i in 1:nx) {
     logW[i] = log(Wobs[i]);
     logS[i] = log(Sobs[i]);
     A0_med[i] = A0[i] + dA_shift[i];
-    
-    man_lhs[i] = ((5. / 3. * logA_man[i]) - 
-                  (2. / 3. * logW[i]) + 
-                  (1. / 2. * logS[i]) - logQtn) ./ sigma_man[i];
 
     for (t in 1:nt) {
       logA_man[i, t] = log(A0[i] + dA_pos[i, t]);
     }
+    
+    man_lhs[i] = ((5. / 3. * logA_man[i]) - 
+              (2. / 3. * logW[i]) + 
+              (1. / 2. * logS[i]) - logQtn) ./ sigma_man[i];
+    
     amhg_rhs[i] = b[i] * (logQ - logQc) + logWc;
   }
+  
 }
 
 model {
   // Likelihood and observation error
   for (i in 1:nx) {
 
-    // man_lhs[i] ~ normal(logQtn, truesigma_man);
-    man_lhs[i] ~ normal(0, truesigma_man);
+    man_lhs[i] ~ normal(0, 1); //already scaled by sigma_man
     A0_med[i] ~ lognormal(logA0_hat, logA0_sd);
     
     logW[i] ~ normal(amhg_rhs[i], sigma_amhg[i]);
@@ -136,7 +133,6 @@ model {
   
   logQtn ~ normal(logQnbar, sigma_logQ);
   sigma_logQ ~ normal(0, 1);
-  truesigma_man ~ normal(0, 1);
   
   logQnbar ~ normal(logQ_hat + logn, logQ_sd);
   logQbar ~ normal(logQ_hat, logQ_sd);

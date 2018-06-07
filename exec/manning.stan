@@ -55,7 +55,6 @@ transformed data {
 
 parameters {
   vector<lower=lowerbound_logQn,upper=upperbound_logQn>[nt] logQtn;
-  real<lower=0> truesigma_man;
   real<lower=0> sigma_logQ;
   
   real<lower=lowerbound_logn,upper=upperbound_logn> logn;
@@ -101,8 +100,7 @@ model {
     Sact[i] ~ normal(Sobs[i], Serr_sd);
     dAact[i] ~ normal(dA_pos[i], dAerr_sd);
     
-    // man_lhs[i] ~ normal(logQtn, truesigma_man);
-    man_lhs[i] ~ normal(0, truesigma_man);
+    man_lhs[i] ~ normal(0, 1); // already scaled by sigma_man
     A0_med[i] ~ lognormal(logA0_hat, logA0_sd);
     
     // Jacobian adjustments
@@ -115,7 +113,6 @@ model {
   // Priors
   logQtn ~ normal(logQnbar, sigma_logQ);
   sigma_logQ ~ normal(0, 1);
-  truesigma_man ~ normal(0, 1);
   
   logQnbar ~ normal(logQ_hat + logn, logQ_sd);
   logQbar ~ normal(logQ_hat, logQ_sd);

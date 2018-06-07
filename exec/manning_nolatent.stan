@@ -67,7 +67,6 @@ transformed data {
 
 parameters {
   vector<lower=lowerbound_logQn,upper=upperbound_logQn>[nt] logQtn;
-  real<lower=0> truesigma_man;
   real<lower=0> sigma_logQ;
   
   real<lower=lowerbound_logn,upper=upperbound_logn> logn;
@@ -103,8 +102,7 @@ transformed parameters {
 model {
   // Likelihood and observation error
   for (i in 1:nx) {
-    // man_lhs[i] ~ normal(logQtn, truesigma_man);
-    man_lhs[i] ~ normal(0, truesigma_man);
+    man_lhs[i] ~ normal(0, 1); //already scaled by sigma_man
     A0_med[i] ~ lognormal(logA0_hat, logA0_sd);
     
     target += -(log(A0[i] + dA_pos[i]));
@@ -115,8 +113,7 @@ model {
   // logQ ~ normal(logQ_hat, logQ_sd);
   logQtn ~ normal(logQnbar, sigma_logQ);
   sigma_logQ ~ normal(0, 1);
-  truesigma_man ~ normal(0, 1);
-  
+
   A0 ~ lognormal(logA0_hat, logA0_sd);
   
   logQnbar ~ normal(logQ_hat + logn, logQ_sd);
