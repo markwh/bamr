@@ -117,8 +117,6 @@ model {
   sigma_logQ ~ normal(0, 1);
   truesigma_man ~ normal(0, 1);
   
-  A0 ~ lognormal(logA0_hat, logA0_sd);
-  
   logQnbar ~ normal(logQ_hat + logn, logQ_sd);
   logQbar ~ normal(logQ_hat, logQ_sd);
   logn ~ normal(logn_hat, logn_sd);
