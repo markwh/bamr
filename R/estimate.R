@@ -67,7 +67,8 @@ bam_estimate <- function(bamdata,
   
   if (is.null(pars)) {
     pars <- c("logQtn", "A0_med", "man_lhs", "logA_man", 
-              "logQnbar", "sigma_logQ")
+              "logQnbar", "sigma_logQ", "Sact", "Wact", "dAact", 
+              "logW", "logS")
   }
   
   if (reparam && meas_error) {
