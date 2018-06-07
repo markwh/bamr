@@ -61,8 +61,8 @@ Po_sm <- list(Po_w_sm = Po_w_sm,
 Sac_w_sm <- Sac_w[xs_sub, t_sub]
 Sac_s_sm <- Sac_s[xs_sub, t_sub]
 Sac_dA_sm <- Sac_dA[xs_sub, t_sub]
-Sac_QWBM_sm <- Sac_QWBM[t_sub]
-Sac_Qobs_sm <- Sac_Qobs
+Sac_QWBM_sm <- Sac_QWBM
+Sac_Qobs_sm <- Sac_Qobs[t_sub]
 
 Sacramento_sm <- list(Sac_w_sm = Sac_w_sm,
               Sac_s_sm = Sac_s_sm,

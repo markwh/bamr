@@ -14,11 +14,11 @@ test_that("data preparation produces correct output", {
   
   expect_equal(nrow(bdpo$Wobs), bdpo$nx)
   expect_equal(ncol(bdpo$Wobs), bdpo$nt)
-  expect_equal(length(bdpo$logQ_hat), bdpo$nt)
+  expect_equal(length(bdpo$logQ_hat), 1)
   expect_equal(length(bdpo$omitTimes), 0)
   
   expect_is(bdpr <- bam_priors(bamdata = bdpo), "bampriors")
-  expect_equal(length(bdpr$logQ_sd), bdpo$nt)
+  expect_equal(length(bdpr$logQ_sd), 1)
   expect_is(bdpr$logQ_sd, "numeric")
   
   expect_is(bdpr$sigma_man, "matrix")
@@ -28,9 +28,8 @@ test_that("data preparation produces correct output", {
   
   
   # manually specify logQ_sd as vector
-  expect_is(bdpr <- bam_priors(bamdata = bdpo, logQ_sd = runif(bdpo$nt)), "bampriors")
-  expect_equal(length(bdpr$logQ_sd), bdpo$nt)
-  expect_false(bdpr$logQ_sd[1] == bdpr$logQ_sd[2])
+  expect_is(bdpr <- bam_priors(bamdata = bdpo, logQ_sd = runif(1)), "bampriors")
+  expect_equal(length(bdpr$logQ_sd), 1)
   expect_is(bdpr$logQ_sd, "numeric")
   
   expect_is(compose_bam_inputs(bdpo, bam_priors(bdpo)), "list")
@@ -80,7 +79,7 @@ test_that("NA values are removed or replaced", {
   expect_equal(sum(is.na(bdpo$Wobs)), 0)
   expect_equal(sum(is.na(bdpo$Sobs)), 0)
   expect_equal(sum(is.na(bdpo$dAobs)), 0)
-  expect_equal(ncol(bdpo$Wobs), length(bdpo$logQ_hat))
+  expect_equal(length(bdpo$logQ_hat), 1)
   
   expect_is(bdpo$omitTimes, "integer")
   expect_gte(length(bdpo$omitTimes), 5)
@@ -141,8 +140,10 @@ test_that("error reparameterization works as expected", {
   
   expect_equal(order(as.vector(w_ln_sigsq)), 
                order(as.vector(bdsac$Wobs), decreasing = TRUE))
-  expect_equal(order(as.vector(ln_sigsq(bdsac$Sobs, 1e-4))), 
-                     order(as.vector(bdsac$Sobs), decreasing = TRUE))
+  
+  uniqSvec <- unique(round(as.vector(bdsac$Sobs), digits = 10))
+  expect_equal(order(uniqSvec), 
+               order(ln_sigsq(uniqSvec, 1e-4), decreasing = TRUE))
                
   
 })
