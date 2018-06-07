@@ -5,9 +5,10 @@
 \title{Estimate BAM}
 \usage{
 bam_estimate(bamdata, variant = c("manning", "amhg", "manning_amhg"),
-  bampriors = NULL, meas_error = TRUE, reparam = TRUE,
+  bampriors = NULL, meas_error = TRUE, unk_var = FALSE, reparam = TRUE,
   cores = getOption("mc.cores", default = parallel::detectCores()),
-  chains = 3L, iter = 1000L, stanmodel = NULL, pars = NULL, ...)
+  chains = 3L, iter = 1000L, stanmodel = NULL, pars = NULL,
+  include = FALSE, ...)
 }
 \arguments{
 \item{bamdata}{A bamdata object, as produced by \code{bam_data()}}
@@ -19,6 +20,9 @@ from calling \code{bam_priors(bamdata)} (with no other arguments).}
 
 \item{meas_error}{Include measurement error in inference? Setting this to TRUE 
 will slow down the inference by roughly an order of mangnitude.}
+
+\item{unk_var}{Treat flow-law error variance as an unknown parameter? Setting 
+this to TRUE may adversely impact sampling performance (e.g. convergence).}
 
 \item{reparam}{Reparameterize measurement errors to speed up sampling?}
 
