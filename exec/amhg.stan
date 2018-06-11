@@ -35,7 +35,6 @@ data {
   real<lower=0> logQ_sd;
   real<lower=0> logQc_sd;
   real<lower=0> logWc_sd;
-
 }
 
 
@@ -50,11 +49,9 @@ parameters {
 
 
 transformed parameters {
-  vector[nt] logW[nx]; 
   vector[nt] amhg_rhs[nx];
   
   for (i in 1:nx) {
-    logW[i] = log(Wact[i]);
     amhg_rhs[i] = b[i] * (logQ - logQc) + logWc;
   }
 }
@@ -63,6 +60,13 @@ transformed parameters {
 
 model {
 
+  // Likelihood and observations
+  for (i in 1:nx) {
+    Wobs[i] ~ normal(Wact[i], Werr_sd);
+    log(Wact[i]) ~ normal(amhg_rhs[i], sigma_amhg[i]);
+    target += -log(Wact[i]);
+  }
+  
   // Priors
   logQ ~ normal(logQ_hat, logQ_sd);
   
@@ -70,11 +74,4 @@ model {
   logWc ~ normal(logWc_hat, logWc_sd);
   logQc ~ normal(logQc_hat, logQc_sd);
 
-
-  // Likelihood and observations
-  for (i in 1:nx) {
-    Wact[i] ~ normal(Wobs[i], Werr_sd);
-    logW[i] ~ normal(amhg_rhs[i], sigma_amhg[i]);
-    target += -logW[i];
-  }
 }

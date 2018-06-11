@@ -36,22 +36,12 @@ data {
 
 }
 
-transformed data {
-  
-  vector[nt] logW[nx]; 
-  for (i in 1:nx) {
-    logW[i] = log(Wobs[i]);
-  }
-}
-
 parameters {
   vector<lower=lowerbound_logQ,upper=upperbound_logQ>[nt] logQ;
   real<lower=lowerbound_logWc,upper=upperbound_logWc> logWc;
   real<lower=lowerbound_logQc,upper=upperbound_logQc> logQc;
   real<lower=lowerbound_b,upper=upperbound_b> b[nx];
-  // vector<lower=0>[nt] Wact[nx];
 }
-
 
 
 transformed parameters {
@@ -63,8 +53,12 @@ transformed parameters {
 }
 
 
-
 model {
+  
+  // Likelihood and observations
+  for (i in 1:nx) {
+    log(Wobs[i]) ~ normal(amhg_rhs[i], sigma_amhg[i]);
+  }
 
   // Priors
   logQ ~ normal(logQ_hat, logQ_sd);
@@ -72,12 +66,4 @@ model {
   b ~ normal(b_hat, b_sd);
   logWc ~ normal(logWc_hat, logWc_sd);
   logQc ~ normal(logQc_hat, logQc_sd);
-
-
-  // Likelihood and observations
-  for (i in 1:nx) {
-    // Wact[i] ~ normal(Wobs[i], Werr_sd);
-    logW[i] ~ normal(amhg_rhs[i], sigma_amhg[i]);
-    target += -logW[i];
-  }
 }
