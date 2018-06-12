@@ -44,13 +44,20 @@ bam_qpred <- function(fit, chain = "all", conf.level = 0.95) {
 
 
 
-#' MCMC diagnostics for BAM inference
+#' Scope Rhat stat over all parameters
 #' 
-#' Uses bayesplot functions to diagnose convergence and other health metrics for 
-#' BAM MC.
+#' 
+#' @param fit a stanfit object, as returned by bam_estimate
+#' @param pars Which parameters to include--passed to stan_rhat
+#' @param ... other arguments passed to stan_rhat
+#' @param plot Create a plot?
 #' 
 #' @export
 
-bam_convergence <- function() {
-  
+bam_check_rhat <- function(fit, pars, ..., plot = TRUE) {
+  rhats <- rstan::stan_rhat(fit, pars = pars, ...)$data
+  if (plot) {
+    plot(rhats$stat, xlab = "parameter", ylab = "Rhat statistic")
+  }
+  invisible(rhats)
 }

@@ -1,6 +1,9 @@
 # BAMR - Bayesian AMHG + Manning estimation using R
 
 [![Build Status](https://travis-ci.org/markwh/bamr.svg?branch=master)](https://travis-ci.org/markwh/bamr)
+
+[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/markwh/bamr?branch=master&svg=true)](https://ci.appveyor.com/project/markwh/bamr)
+
 [![Coverage Status](https://img.shields.io/codecov/c/github/markwh/bamr/master.svg)](https://codecov.io/github/markwh/bamr?branch=master)
 
 
