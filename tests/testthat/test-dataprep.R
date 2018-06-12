@@ -47,11 +47,11 @@ test_that("different BAM variants yield proper behavior", {
   expect_error(bam_priors(bda))
   expect_error(bam_priors(bda, variant = "manning"))
   expect_is(bpa <- bam_priors(bda, variant = "amhg"), "bampriors")
-  expect_is(bpm <- bam_priors(bdm, variant = "manning"), "bampriors")
-  expect_is(bpam <- bam_priors(bdm, variant = "manning_amhg"), "bampriors")
+  # expect_is(bpm <- bam_priors(bdm, variant = "manning"), "bampriors")
+  # expect_is(bpam <- bam_priors(bdm, variant = "manning_amhg"), "bampriors")
   
-  expect_lt(length(bpm), length(bpam))
-  expect_lt(length(bpa), length(bpam))
+  # expect_lt(length(bpm), length(bpam))
+  # expect_lt(length(bpa), length(bpam))
   
   expect_is(plot(bda), "gg")
 })
