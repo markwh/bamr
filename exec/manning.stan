@@ -30,7 +30,6 @@ data {
   // *Known* likelihood parameters
   vector<lower=0>[nt] sigma_man[nx];
   
-  
   // Hyperparameters
   real logQ_hat;
   real logA0_hat[nx];
@@ -43,18 +42,14 @@ data {
 
 transformed data {
   vector[nt] dA_pos[nx];
-  real lowerbound_logQn;
-  real upperbound_logQn;
-
-  lowerbound_logQn = lowerbound_logQ + lowerbound_logn;
-  upperbound_logQn = upperbound_logQ + upperbound_logn;
+  
   for (i in 1:nx) {
     dA_pos[i] = dAobs[i] - min(dAobs[i]); // make all dA positive
   }
 }
 
 parameters {
-  vector<lower=lowerbound_logQn,upper=upperbound_logQn>[nt] logQtn;
+  vector<lower=lowerbound_logQ,upper=upperbound_logQ>[nt] logQ;
   real<lower=0> sigma_logQ;
   
   real<lower=lowerbound_logn,upper=upperbound_logn> logn;
@@ -68,62 +63,34 @@ parameters {
 }
 
 transformed parameters {
-  vector[nt] logW[nx];
-  vector[nt] logS[nx];
-  vector[nt] man_lhs[nx];
-  vector[nt] logA_man[nx]; // log area for Manning's equation
-  real<lower=lowerbound_logQn,upper=upperbound_logQn> logQnbar;
-  real A0_med[nx];
-  
-  logQnbar = logQbar + logn; 
-  
+  vector[nt] logWSpart[nx];
+  vector[nt] man_rhs[nx];
   
   for (i in 1:nx) {
-    logW[i] = log(Wact[i]);
-    logS[i] = log(Sact[i]);
-    A0_med[i] = A0[i] + dA_shift[i];
-    
-    for (t in 1:nt) {
-      logA_man[i, t] = log(A0[i] + dAact[i, t]);
-    }
-    
-    man_lhs[i] = ((5. / 3. * logA_man[i]) - 
-                  (2. / 3. * logW[i]) + 
-                  (1. / 2. * logS[i]) - logQtn) ./ sigma_man[i];
+    logWSpart[i] = 1. / 2. * log(Sact[i]) - 2. / 3. * log(Wact[i]);
+    man_rhs[i] = logQ + logn - 5. / 3. * log(A0[i] + dA_pos[i]);
   }
 }
 
 model {
   // Likelihood and observation error
   for (i in 1:nx) {
-    Wact[i] ~ normal(Wobs[i], Werr_sd);
-    Sact[i] ~ normal(Sobs[i], Serr_sd);
-    dAact[i] ~ normal(dA_pos[i], dAerr_sd);
+    Wobs[i] ~ normal(Wact[i], Werr_sd);
+    Sobs[i] ~ normal(Sact[i], Serr_sd);
+    dA_pos[i] ~ normal(dAact[i], dAerr_sd);
     
-    man_lhs[i] ~ normal(0, 1); // already scaled by sigma_man
-    A0_med[i] ~ lognormal(logA0_hat, logA0_sd);
+    logWSpart[i] ~ normal(man_rhs[i], sigma_man[i]); // already scaled by sigma_man
+    A0[i] + dA_shift[i] ~ lognormal(logA0_hat, logA0_sd);
     
     // Jacobian adjustments
-    target += -(log(A0[i] + dA_pos[i]));
-    target += -logW[i];
-    target += -logS[i];
+    target += -log(Wact[i]);
+    target += -log(Sact[i]);
   }
 
-  
   // Priors
-  logQtn ~ normal(logQnbar, sigma_logQ);
-  sigma_logQ ~ normal(0, 1);
+  logQ ~ normal(logQbar, sigma_logQ);
+  logn ~ normal(logn_hat, logn_sd);
   
-  logQnbar ~ normal(logQ_hat + logn, logQ_sd);
   logQbar ~ normal(logQ_hat, logQ_sd);
-  logn ~ normal(logn_hat, logn_sd); // has median of 0.03, 95% CI of (0.006, 0.156)
-
-}
-
-
-
-generated quantities {
-  // vector<lower=lowerbound_logQ,upper=upperbound_logQ>[nt] logQ;
-  vector[nt] logQ;
-  logQ = logQtn - logn;
+  sigma_logQ ~ normal(0, 1);
 }
