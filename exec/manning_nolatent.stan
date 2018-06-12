@@ -37,21 +37,27 @@ data {
 transformed data {
   vector[nt] logWSpart[nx];
   vector[nt] dA_pos[nx];
+  real lowerbound_logQn;
+  real upperbound_logQn;
 
   for (i in 1:nx) {
     logWSpart[i] = 1. / 2. * log(Sobs[i]) - 2. / 3. * log(Wobs[i]);
     dA_pos[i] = dAobs[i] - min(dAobs[i]); // make all dA positive
   }
+  
+  lowerbound_logQn = lowerbound_logQ + lowerbound_logn;
+  upperbound_logQn = upperbound_logQ + upperbound_logn;
 }
 
 parameters {
-  vector<lower=lowerbound_logQ,upper=upperbound_logQ>[nt] logQ;
+  vector<lower=lowerbound_logQn,upper=upperbound_logQn>[nt] logQtn;
   real<lower=0> sigma_logQ;
   
   real<lower=lowerbound_logn,upper=upperbound_logn> logn;
   real<lower=lowerbound_A0,upper=upperbound_A0> A0[nx];
 
-  real<lower=lowerbound_logQ,upper=upperbound_logQ> logQbar;
+  real<lower=lowerbound_logQ,upper=upperbound_logQ> logQnbar;
+  // real<lower=lowerbound_logQ,upper=upperbound_logQ> logQbar;
   
   // vector<lower=0>[nt] Wact[nx];
   // vector<lower=0>[nt] Sact[nx];
@@ -61,7 +67,7 @@ parameters {
 transformed parameters {
   vector[nt] man_rhs[nx];
   for (i in 1:nx) {
-    man_rhs[i] = logQ + logn - 5. / 3. * log(A0[i] + dA_pos[i]);
+    man_rhs[i] = logQtn - 5. / 3. * log(A0[i] + dA_pos[i]);
   }
 }
 
@@ -73,9 +79,22 @@ model {
   }
   
   // Priors
-  logQ ~ normal(logQbar, sigma_logQ);
+  logQtn ~ normal(logQnbar, sigma_logQ);
+  // logQ ~ normal(logQbar, sigma_logQ);
   logn ~ normal(logn_hat, logn_sd);
-  
-  logQbar ~ normal(logQ_hat, logQ_sd);
-  sigma_logQ ~ normal(0, 1);
+    
+  // logQbar ~ normal(logQ_hat, logQ_sd);
+  logQnbar ~ normal(logQ_hat + logn, logQ_sd);
+  sigma_logQ ~ normal(0.96, 0.4);
 }
+
+generated quantities {
+  real logQbar;
+  vector[nt] logQ;
+  
+  logQbar = logQnbar - logn;
+  logQ = logQtn - logn;
+}
+
+
+
