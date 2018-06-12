@@ -5,7 +5,7 @@
 \title{Estimate BAM}
 \usage{
 bam_estimate(bamdata, variant = c("manning", "amhg", "manning_amhg"),
-  bampriors = NULL, meas_error = TRUE, unk_var = FALSE, reparam = TRUE,
+  bampriors = NULL, meas_error = TRUE, reparam = TRUE,
   cores = getOption("mc.cores", default = parallel::detectCores()),
   chains = 3L, iter = 1000L, stanmodel = NULL, pars = NULL,
   include = FALSE, ...)
@@ -21,13 +21,10 @@ from calling \code{bam_priors(bamdata)} (with no other arguments).}
 \item{meas_error}{Include measurement error in inference? Setting this to TRUE 
 will slow down the inference by roughly an order of mangnitude.}
 
-\item{unk_var}{Treat flow-law error variance as an unknown parameter? Setting 
-this to TRUE may adversely impact sampling performance (e.g. convergence).}
-
 \item{reparam}{Reparameterize measurement errors to speed up sampling?}
 
 \item{cores}{Number of processing cores for running chains in parallel. 
-See \code{?rstan::sampling}. Defaults to \code{parallel::detectCores}.}
+See \code{?rstan::sampling}. Defaults to \code{parallel::detectCores()}.}
 
 \item{chains}{A positive integer specifying the number of Markov chains. 
 The default is 3.}
