@@ -71,6 +71,7 @@ test_that("NA values are removed or replaced", {
     mat
   }
   
+  
   expect_message(bdpo <- bam_data(w = randna(Sac_w, 3), 
                    s = randna(Sac_s, 4), 
                    dA = randna(Sac_dA, 5),
