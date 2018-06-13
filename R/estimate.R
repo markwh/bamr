@@ -57,6 +57,7 @@ bam_estimate <- function(bamdata,
   
   if (is.null(pars)) {
     pars <- c("man_rhs", "amhg_rhs", "logWSpart", 
+              "logQtn", "logQnbar",
               "Sact", "Wact", "dAact")
   }
   
