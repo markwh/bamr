@@ -17,3 +17,5 @@ cache
 inst/doc
 inst/notebook
 *.dll
+src-i386
+src-x64
