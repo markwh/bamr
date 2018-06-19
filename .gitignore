@@ -16,3 +16,5 @@ vignettes/*_files
 cache
 inst/doc
 inst/notebook
+src-*
+src/bamr.dll
