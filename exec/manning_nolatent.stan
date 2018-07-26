@@ -10,6 +10,8 @@ data {
   vector[nt] Wobs[nx]; // measured widths
   vector[nt] Sobs[nx]; // measured slopes
   vector[nt] dAobs[nx]; // measured area difference from base area
+  vector[nx] dA_shift; // adjustment from min to median
+
   
   // real<lower=0> Werr_sd;
   // real<lower=0> Serr_sd;
@@ -56,7 +58,7 @@ transformed data {
 parameters {
   vector<lower=lowerbound_logQ,upper=upperbound_logQ>[nt] logQ;
   real<lower=lowerbound_logn,upper=upperbound_logn> logn;
-  real<lower=lowerbound_A0,upper=upperbound_A0> A0[nx];
+  vector<lower=lowerbound_A0,upper=upperbound_A0>[nx] A0;
   
   // vector<lower=0>[nt] Wact[nx];
   // vector<lower=0>[nt] Sact[nx];
@@ -86,7 +88,7 @@ model {
   // Priors
   logQ ~ normal(logQ_hat, logQ_sd);
   
-  A0 ~ lognormal(logA0_hat, logA0_sd);
+  A0 + dA_shift ~ lognormal(logA0_hat, logA0_sd);
   logn ~ normal(logn_hat, logn_sd); // has median of 0.03, 95% CI of (0.006, 0.156)
   
   // Likelihood and observation error
