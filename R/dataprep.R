@@ -135,8 +135,8 @@ bam_priors <- function(bamdata,
   paramset <- bam_settings(paste0(variant, "_params"))
   
   myparams0 <- rlang::quos(..., .named = TRUE)
-  myparams <- do.call(settings::clone_and_merge, args = (options = c(list(options = bam_settings), 
-                                                                     myparams0)))
+  myparams <- do.call(settings::clone_and_merge, 
+                      args = c(list(options = bam_settings), myparams0))
   
   quoparams <- myparams()[-1:-3] # first 3 are parameter sets
   params <- lapply(quoparams, rlang::eval_tidy, data = bamdata)
