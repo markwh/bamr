@@ -49,11 +49,11 @@ bam_estimate <- function(bamdata,
     stopifnot(inherits(stanmodel, "stanmodel"))
     stanfit <- stanmodel
   } else {
-    if (!meas_error | reparam) {
-      variant <- paste0(variant, "_nolatent")
-    }
-    stanfit <- stanmodels[[variant]]
+    stanfit <- stanmodels[["master"]]
   }
+  baminputs$meas_err <- ifelse(meas_error && !reparam, 1, 0)
+  baminputs$inc_m <- ifelse(variant %in% c("manning", "manning_amhg"), 1, 0)
+  baminputs$inc_a <- ifelse(variant %in% c("amhg", "manning_amhg"), 1, 0)
   
   if (reparam) {
     logS_sigsq_obs <- ln_sigsq(obs = baminputs$Sobs, err_sigma = baminputs$Serr_sd)

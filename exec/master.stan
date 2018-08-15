@@ -2,7 +2,7 @@
 data {
   
   // Options
-  int<lower=1, upper=1> inc_m; // Include Manning? 0=no; 1=yes;
+  int<lower=0, upper=1> inc_m; // Include Manning? 0=no; 1=yes;
   int<lower=0, upper=1> inc_a; // Include AMHG? 0=no; 1=yes;
   int<lower=0, upper=1> meas_err; // 0=no; 1=yes;
   
@@ -16,7 +16,7 @@ data {
   vector[nt] Wobs[nx]; // measured widths
   vector[nt] Sobs[nx]; // measured slopes
   vector[nt] dAobs[nx]; // measured partial area
-  vector[nx] dA_shift[inc_m]; // adjustment from min to median
+  vector[nx] dA_shift; // adjustment from min to median
 
   
   real<lower=0> Werr_sd;

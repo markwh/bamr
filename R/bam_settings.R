@@ -3,19 +3,19 @@
 #' 
 #' @export
 bam_settings <- settings::options_manager(
-  # BAM variant parameter sets
-  manning_params = c("lowerbound_logQ", "upperbound_logQ", "lowerbound_A0", 
-    "upperbound_A0", "lowerbound_logn", "upperbound_logn", 
-    "sigma_man", "logA0_hat", "logn_hat", "logQ_sd", "logA0_sd", "logn_sd",
-    "Werr_sd", "Serr_sd", "dAerr_sd"),
-  
-  amhg_params = c("lowerbound_logQ", "upperbound_logQ", "lowerbound_logQc", 
-     "upperbound_logQc", "lowerbound_logWc", "upperbound_logWc", 
-     "lowerbound_b", "upperbound_b", "sigma_amhg", "logQc_hat", "logWc_hat", 
-     "b_hat", "logQ_sd", "logQc_sd", "logWc_sd", "b_sd",
-     "Werr_sd"),
-  
-  manning_amhg_params = c("lowerbound_logQ", "upperbound_logQ", "lowerbound_A0", 
+  # # BAM variant parameter sets
+  # manning_params = c("lowerbound_logQ", "upperbound_logQ", "lowerbound_A0", 
+  #   "upperbound_A0", "lowerbound_logn", "upperbound_logn", 
+  #   "sigma_man", "logA0_hat", "logn_hat", "logQ_sd", "logA0_sd", "logn_sd",
+  #   "Werr_sd", "Serr_sd", "dAerr_sd"),
+  # 
+  # amhg_params = c("lowerbound_logQ", "upperbound_logQ", "lowerbound_logQc", 
+  #    "upperbound_logQc", "lowerbound_logWc", "upperbound_logWc", 
+  #    "lowerbound_b", "upperbound_b", "sigma_amhg", "logQc_hat", "logWc_hat", 
+  #    "b_hat", "logQ_sd", "logQc_sd", "logWc_sd", "b_sd",
+  #    "Werr_sd"),
+  # 
+  paramnames = c("lowerbound_logQ", "upperbound_logQ", "lowerbound_A0", 
      "upperbound_A0", "lowerbound_logn", "upperbound_logn", "lowerbound_logQc", 
      "upperbound_logQc", "lowerbound_logWc", "upperbound_logWc", 
      "lowerbound_b", "upperbound_b", "sigma_man", "sigma_amhg", "logQc_hat", 

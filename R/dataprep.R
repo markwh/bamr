@@ -31,8 +31,11 @@ bam_data <- function(w,
 
   missing <- match.arg(missing)
   
-  s <- if(is.null(s)) NULL else s
-  
+  manning_ready <- !is.null(s) && !is.null(dA)
+  if (!manning_ready) {
+    s <- dA <- matrix(1, nrow = nrow(w), ncol = ncol(w))
+  }
+
   datalist <- list(Wobs = w,
                 Sobs = s,
                 dAobs = dA,
@@ -47,6 +50,7 @@ bam_data <- function(w,
   out <- structure(c(datalist,
                         nx = nx, 
                         nt = nt), 
+                   manning_ready = manning_ready,
                    class = c("bamdata"))
   
   if (nx > max_xs)
@@ -128,17 +132,17 @@ bam_priors <- function(bamdata,
                        variant = c("manning_amhg", "manning", "amhg"), 
                        ...) {
   variant <- match.arg(variant)
-  if (variant != "amhg" && (is.null(bamdata$Sobs) || is.null(bamdata$dAobs)))
+  if (variant != "amhg" && !attr(bamdata, "manning_ready"))
     stop("bamdata must have slope and dA data for non-amhg variants.")
   
   force(bamdata)
-  paramset <- bam_settings(paste0(variant, "_params"))
+  paramset <- bam_settings("paramnames")
   
   myparams0 <- rlang::quos(..., .named = TRUE)
   myparams <- do.call(settings::clone_and_merge, 
                       args = c(list(options = bam_settings), myparams0))
   
-  quoparams <- myparams()[-1:-3] # first 3 are parameter sets
+  quoparams <- myparams()[-1] # first one is parameter set
   params <- lapply(quoparams, rlang::eval_tidy, data = bamdata)
   
   if (!length(params[["logQ_sd"]]) == bamdata$nt)
