@@ -41,16 +41,3 @@ bam_qpred <- function(fit, chain = "all", conf.level = 0.95) {
   
   qstats
 }
-
-
-
-#' MCMC diagnostics for BAM inference
-#' 
-#' Uses bayesplot functions to diagnose convergence and other health metrics for 
-#' BAM MC.
-#' 
-#' @export
-
-bam_convergence <- function() {
-  
-}
