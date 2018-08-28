@@ -11,6 +11,13 @@ data {
   int<lower=0> nx; // number of cross-sections
   int<lower=0> nt; // number of observation times
 
+  // Missing data
+  int<lower=0> n_mis_w; // number of missing width data
+  int<lower=0> n_mis_s; // number of missing slope data
+  int<lower=0> n_mis_dA; // number of missing dA data
+  int mis_w_inds[n_mis_w, 2]; // Indices (rows, columns) of missing width data
+  int mis_s_inds[n_mis_s, 2]; // Indices (rows, columns) of missing slope data
+  int mis_dA_inds[n_mis_dA, 2]; // Indices (rows, columns) of missing dA data
   
   // *Actual* data
   vector[nt] Wobs[nx]; // measured widths
@@ -77,6 +84,10 @@ transformed data {
 }
 
 parameters {
+  vector<lower=0>[n_mis_w] Wact_mis;
+  vector<lower=0>[n_mis_s] Sact_mis;
+  vector<lower=0>[n_mis_dA] dAact_mis;  
+  
   vector<lower=lowerbound_logQ,upper=upperbound_logQ>[nt] logQ;
   real<lower=lowerbound_logn,upper=upperbound_logn> logn[inc_m];
   vector<lower=lowerbound_A0,upper=upperbound_A0>[nx] A0[inc_m];
@@ -98,7 +109,17 @@ transformed parameters {
   vector[nt] man_rhs[nx * inc_m]; // RHS for Manning likelihood
   vector[nt] amhg_rhs[nx * inc_a]; // RHS for AMHG likelihood
   
+  # filled-in datasets
+  vector<lower=0>[nt] Wfull[nx];
+  vector<lower=0>[nt] Sfull[nx];
+  vector<lower=0>[nt] dAfull[nx];
+  
+  Wfull[mis_w_inds[1], mis_w_inds[2]] = Wact_mis;
+  Sfull[mis_s_inds[1], mis_s_inds[2]] = Sact_mis;
+  dAfull[mis_dA_inds[1], mis_dA_inds[2]] = dAact_mis;
+  
   for (i in 1:nx) {
+    
     if (inc_m) {
       logA_man[i] = log(A0[1][i] + (meas_err ? dAact[i] : dA_pos[i]));
       man_rhs[i] = 10. * logA_man[i] - 6. * logn[1] - 6. * logQ;
