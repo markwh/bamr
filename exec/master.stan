@@ -11,6 +11,13 @@ data {
   int<lower=0> nx; // number of cross-sections
   int<lower=0> nt; // number of observation times
 
+  // Missing data
+  int<lower=0> n_mis_w; // number of missing width data
+  int<lower=0> n_mis_s; // number of missing slope data
+  int<lower=0> n_mis_dA; // number of missing dA data
+  int mis_w_inds[n_mis_w, 2]; // Indices (rows, columns) of missing width data
+  int mis_s_inds[n_mis_s, 2]; // Indices (rows, columns) of missing slope data
+  int mis_dA_inds[n_mis_dA, 2]; // Indices (rows, columns) of missing dA data
   
   // *Actual* data
   vector[nt] Wobs[nx]; // measured widths
