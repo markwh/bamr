@@ -13,10 +13,6 @@ library(dplyr)
 # Set up Stan skeleton
 # rstan_package_skeleton()
 
-# Set up todoList
-library(todoList)
-use_todo()
-
 # Package dependencies
 use_package("dplyr")
 use_package("reshape2")
