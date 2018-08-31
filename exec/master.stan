@@ -1,4 +1,95 @@
 
+
+
+functions {
+  // Conversion from array to vector takes place by row.
+  // Nested elements are appended in sequence. 
+  
+  
+  // Convert an array to a vector based on a binary matrix 
+  // indicating non-missing data
+  
+  vector ragged_vec(vector[] x, int[,] bin) {
+    vector[num_elements(x)] out;
+    int ind;
+    
+    ind = 1;
+    for (i in 1:size(x)) {
+      for (t in 1:num_elements(x[1])) {
+        if (bin[i, t] == 1) {
+          out[ind] = x[i, t];
+          ind += 1;
+        }
+      }
+    }
+    // print(out);
+    return(out[1:(ind - 1)]);
+  }
+  
+  // Repeat elements of a "row" vector to match with 2-D array vectorization
+  vector ragged_row(vector x, int[,] bin) {
+    vector[num_elements(bin)] out;
+    int ind;
+    
+    ind = 0;
+    for (i in 1:size(bin)) {
+      for (t in 1:num_elements(bin[1])) {
+        if (bin[i, t] == 1) {
+          ind += 1;
+          out[ind] = x[t];
+        }
+      }
+    }
+    return(out[1:ind]);
+  }
+  
+  // Repeat elements of a "column" vector to match with 2-D array vectorization
+  vector ragged_col(vector x, int[,] bin) {
+    vector[num_elements(bin)] out;
+    int ind;
+    
+    ind = 0;
+    for (i in 1:size(bin)) {
+      for (t in 1:num_elements(bin[1])) {
+        if (bin[i, t] == 1) {
+          ind += 1;
+          out[ind] = x[i];
+        }
+      }
+    }
+    return(out[1:ind]);
+  }
+  
+  // indices of vectorized bin1 that are also in vectorized bin2
+  int[] commoninds(int[,] bin1, int[,] bin2) {
+    int out[num_elements(bin1)];
+    int vecinds[size(bin1), num_elements(bin1[1])];
+    int ctr;
+    int ind;
+
+    ctr = 0;
+    for (i in 1:size(bin1)) {
+      for (t in 1:num_elements(bin1[1])) {
+        if (bin1[i, t] == 1) {
+          ctr += 1;
+          vecinds[i, t] = ctr;
+        }
+      }
+    }
+
+    ind = 0;
+    for (i in 1:size(vecinds)) {
+      for (t in 1:size(vecinds[1])) {
+        if (bin2[i, t] == 1) {
+          ind += 1;
+          out[ind] = vecinds[i, t];
+        }
+      }
+    }
+    return(out[1:ind]);
+  }
+}
+
 data {
   
   // Options
@@ -8,24 +99,22 @@ data {
   
   
   // Dimensions
-  int<lower=0> nx; // number of cross-sections
-  int<lower=0> nt; // number of observation times
-
-  // Missing data
-  int<lower=0> n_mis_w; // number of missing width data
-  int<lower=0> n_mis_s; // number of missing slope data
-  int<lower=0> n_mis_dA; // number of missing dA data
-  int mis_w_inds[n_mis_w, 2]; // Indices (rows, columns) of missing width data
-  int mis_s_inds[n_mis_s, 2]; // Indices (rows, columns) of missing slope data
-  int mis_dA_inds[n_mis_dA, 2]; // Indices (rows, columns) of missing dA data
+  int<lower=0> nx; // number of reaches
+  int<lower=0> nt; // number of times
+  int<lower=0> ntot_man; // total number of non-missing Manning observations
+  int<lower=0> ntot_amhg; // number of non-missing width observations
+  
+  // // Missing data
+  int<lower=0,upper=1> hasdat_man[nx, nt]; // matrix of 0 (missing), 1 (not missing)
+  int<lower=0,upper=1> hasdat_amhg[nx, nt];
   
   // *Actual* data
-  vector[nt] Wobs[nx]; // measured widths
+  vector[nt] Wobs[nx]; // measured widths, including placeholders for missing
   vector[nt] Sobs[nx]; // measured slopes
   vector[nt] dAobs[nx]; // measured partial area
   vector[nx] dA_shift; // adjustment from min to median
 
-  
+
   real<lower=0> Werr_sd;
   real<lower=0> Serr_sd;
   real<lower=0> dAerr_sd;
@@ -72,21 +161,50 @@ data {
 
 
 transformed data {
-  vector[nt] dA_pos[nx];
-  vector[nt] logW_obs[nx];
-  vector[nt] logS_obs[nx];
+  // Transformed data are *vectors*, not arrays. This to allow ragged structure
 
+  vector[nt] dApos_array[nx];
+  
+  vector[ntot_man] Wobsvec_man;
+  vector[ntot_amhg] Wobsvec_amhg;
+  vector[inc_a ? ntot_amhg : ntot_man] Wobsvec;
+  vector[ntot_man] Sobs_vec;
+  
+  vector[ntot_man] logWobs_man;
+  vector[ntot_amhg] logWobs_amhg;
+  vector[ntot_man] logSobs;
+  vector[ntot_man] dApos_obs;
+  vector[ntot_man] sigmavec_man;
+  vector[ntot_amhg] sigmavec_amhg;
+  
+  int maninds_amhg[ntot_man];
+  
+  int ntot_w; // how many widths in likelihood: equal to ntot_man unless inc_a
+  ntot_w = inc_a ? ntot_amhg : ntot_man;
+  
   for (i in 1:nx) {
-    dA_pos[i] = dAobs[i] - min(dAobs[i]); // make all dA positive
-    logS_obs[i] = log(Sobs[i]);
-    logW_obs[i] = log(Wobs[i]);
+    dApos_array[i] = dAobs[i] - min(dAobs[i]); // make all dA positive
   }
+  
+  // convert pseudo-ragged arrays to vectors
+  Wobsvec_man = ragged_vec(Wobs, hasdat_man);
+  Wobsvec_amhg = ragged_vec(Wobs, hasdat_amhg);
+  Wobsvec = inc_a ? Wobsvec_amhg : Wobsvec_man;
+  Sobs_vec = ragged_vec(Sobs, hasdat_man);
+  dApos_obs = ragged_vec(dApos_array, hasdat_man);
+  
+  logWobs_man = log(Wobsvec_man);
+  logSobs = log(Sobs_vec);
+  
+  sigmavec_man = ragged_vec(sigma_man, hasdat_man);
+  sigmavec_amhg = ragged_vec(sigma_amhg, hasdat_amhg);
+  
+  // indices of vectorized hasdat_amhg that correspond to indices of 
+  // vectorized hasdat_man
+  maninds_amhg = commoninds(hasdat_amhg, hasdat_man);
 }
 
 parameters {
-  vector<lower=0>[n_mis_w] Wact_mis;
-  vector<lower=0>[n_mis_s] Sact_mis;
-  vector<lower=0>[n_mis_dA] dAact_mis;  
   
   vector<lower=lowerbound_logQ,upper=upperbound_logQ>[nt] logQ;
   real<lower=lowerbound_logn,upper=upperbound_logn> logn[inc_m];
@@ -96,41 +214,43 @@ parameters {
   real<lower=lowerbound_logQc,upper=upperbound_logQc> logQc[inc_a];
   vector<lower=lowerbound_b,upper=upperbound_b>[nx] b[inc_a];
   
-  vector<lower=0>[nt] Wact[nx * meas_err];
-  vector<lower=0>[nt] Sact[nx * meas_err * inc_m];
-  vector[nt] dAact[nx * meas_err * inc_m];
+  vector<lower=0>[ntot_w] Wact[meas_err];
+  vector<lower=0>[ntot_man] Sact[meas_err * inc_m];
+  vector[ntot_man] dApos_act[meas_err * inc_m];
 }
 
 
 transformed parameters {
 
-  vector[nt] man_lhs[nx * inc_m];
-  vector[nt] logA_man[nx * inc_m]; // log area for Manning's equation
-  vector[nt] man_rhs[nx * inc_m]; // RHS for Manning likelihood
-  vector[nt] amhg_rhs[nx * inc_a]; // RHS for AMHG likelihood
+  vector[ntot_man] man_lhs[inc_m]; // LHS for Manning likelihood
+  vector[ntot_man] logA_man[inc_m]; // log area for Manning's equation
+  vector[ntot_man] man_rhs[inc_m]; // RHS for Manning likelihood
+  vector[ntot_man] Wact_man[inc_m * meas_err]; // subset of Wact parameter
+  vector[ntot_man] logQ_man[inc_m]; // location-repeated logQ
+
+  vector[ntot_amhg] amhg_rhs[inc_a]; // RHS for AMHG likelihood
+  vector[ntot_amhg] logQ_amhg[inc_a]; // location-repeated logQ
   
-  # filled-in datasets
-  vector<lower=0>[nt] Wfull[nx];
-  vector<lower=0>[nt] Sfull[nx];
-  vector<lower=0>[nt] dAfull[nx];
-  
-  Wfull[mis_w_inds[1], mis_w_inds[2]] = Wact_mis;
-  Sfull[mis_s_inds[1], mis_s_inds[2]] = Sact_mis;
-  dAfull[mis_dA_inds[1], mis_dA_inds[2]] = dAact_mis;
-  
-  for (i in 1:nx) {
+  // Manning params
+  if (inc_m) {
+    if (meas_err) {
+      Wact_man[1] = Wact[1][maninds_amhg];
+      logA_man[1] = log(ragged_col(A0[1], hasdat_man) + dApos_act[1]);
+      man_lhs[1] = 4. * log(Wact_man[1]) - 3. * log(Sact[1]);
+    }
+    else{
+      logA_man[1] = log(ragged_col(A0[1], hasdat_man) + dApos_obs);
+      man_lhs[1] = 4. * logWobs_man - 3. * logSobs;
+    }
     
-    if (inc_m) {
-      logA_man[i] = log(A0[1][i] + (meas_err ? dAact[i] : dA_pos[i]));
-      man_rhs[i] = 10. * logA_man[i] - 6. * logn[1] - 6. * logQ;
-      if (meas_err)
-        man_lhs[i] = 4. * log(Wact[i]) - 3. * log(Sact[i]); // LHS of manning equation
-      else
-        man_lhs[i] = 4. * log(Wobs[i]) - 3. * log(Sobs[i]); // LHS of manning equation
-    }
-    if (inc_a) {
-      amhg_rhs[i] = b[1][i] * (logQ - logQc[1]) + logWc[1];
-    }
+    logQ_man[1] = ragged_row(logQ, hasdat_man);
+    man_rhs[1] = 10. * logA_man[1] - 6. * logn[1] - 6. * logQ_man[1];
+  }
+  
+  // AMHG params
+  if (inc_a) {
+    logQ_amhg[1] = ragged_row(logQ, hasdat_amhg);
+    amhg_rhs[1] = ragged_col(b[1], hasdat_amhg) .* (logQ_amhg[1] - logQc[1]) + logWc[1];
   }
 }
 
@@ -150,28 +270,30 @@ model {
   }
   
   // Likelihood and observation error
-  for (i in 1:nx) {
-    if (inc_m) {
-      man_lhs[i] ~ normal(man_rhs[i], 6 * sigma_man[i]);
-    }
     
-    if (meas_err) {
-      Wact[i] ~ normal(Wobs[i], Werr_sd);
-      
-      if (inc_m) {
-        Sact[i] ~ normal(Sobs[i], Serr_sd);
-        dAact[i] ~ normal(dA_pos[i], dAerr_sd);
-        target += -log(Wact[i]);
-        target += -log(Sact[i]);      
-      }
-      if (inc_a) {
-        Wact[i] ~ lognormal(amhg_rhs[i], sigma_amhg[i]);
-      }
+  // Manning likelihood
+  if (inc_m) {
+    man_lhs[1] ~ normal(man_rhs[1], 6 * sigmavec_man);
+  }
+  
+  // Latent vars for measurement error
+  if (meas_err) {
+    Wact[1] ~ normal(Wobsvec, Werr_sd); // W meas err
+    
+    if (inc_m) {
+      Sact[1] ~ normal(Sobs_vec, Serr_sd); // S meas err
+      dApos_act[1] ~ normal(dApos_obs, dAerr_sd); // dA meas err
+      target += -log(Wact[1]); // Jacobian adjustments
+      target += -log(Sact[1]);
     }
-    else {
-      if (inc_a) {
-        Wobs[i] ~ lognormal(amhg_rhs[i], sigma_amhg[i]);
-      }
+    if (inc_a) { // AMHG likelihood (w/ meas err)
+      Wact[1] ~ lognormal(amhg_rhs[1], sigmavec_amhg);
+    }
+  }
+  
+  else {
+    if (inc_a) { // AMHG likelihood (w/o meas err)
+      Wobsvec ~ lognormal(amhg_rhs[1], sigmavec_amhg);
     }
   }
 }

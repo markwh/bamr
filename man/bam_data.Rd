@@ -4,8 +4,7 @@
 \alias{bam_data}
 \title{Preprocess data for BAM estimation}
 \usage{
-bam_data(w, s = NULL, dA = NULL, Qhat, max_xs = 30L, seed = NULL,
-  missing = c("omit", "impute"))
+bam_data(w, s = NULL, dA = NULL, Qhat, max_xs = 30L, seed = NULL)
 }
 \arguments{
 \item{w}{Matrix (or data frame) of widths: time as columns, space as rows}
@@ -20,9 +19,6 @@ bam_data(w, s = NULL, dA = NULL, Qhat, max_xs = 30L, seed = NULL,
 sampling time. Defaults to 30.}
 
 \item{seed}{RNG seed to use for sampling cross-sections, if nx > max_xs.}
-
-\item{missing}{How to treat missing values in data? Currently the only option is
-"omit", which omits times with missing observations.}
 }
 \description{
 Produces a bamdata object that can be passed to bam_estimate function

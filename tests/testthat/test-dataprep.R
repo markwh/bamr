@@ -10,13 +10,17 @@ test_that("data preparation produces correct output", {
   expect_is(bdpo$Sobs, "matrix")
   expect_is(bdpo$dAobs, "matrix")
   expect_is(bdpo$logQ_hat, "numeric")
-  expect_is(bdpo$omitTimes, "integer")
+  expect_is(bdpo$omitTimes, "NULL")
   
   expect_equal(nrow(bdpo$Wobs), bdpo$nx)
   expect_equal(ncol(bdpo$Wobs), bdpo$nt)
   expect_equal(length(bdpo$logQ_hat), bdpo$nt)
-  expect_equal(length(bdpo$omitTimes), 0)
   
+  expect_is(bdpo$hasdat_man, "matrix")
+  expect_is(bdpo$hasdat_amhg, "matrix")
+  expect_is(bdpo$ntot_man, "numeric")
+  expect_is(bdpo$ntot_amhg, "numeric")
+
   expect_is(bdpr <- bam_priors(bamdata = bdpo), "bampriors")
   expect_equal(length(bdpr$logQ_sd), bdpo$nt)
   expect_is(bdpr$logQ_sd, "numeric")
@@ -25,7 +29,6 @@ test_that("data preparation produces correct output", {
   expect_is(bdpr$sigma_amhg, "matrix")
   expect_equal(nrow(bdpr$sigma_man), bdpo$nx)
   expect_equal(ncol(bdpr$sigma_amhg), bdpo$nt)
-  
   
   # manually specify logQ_sd as vector
   expect_is(bdpr <- bam_priors(bamdata = bdpo, logQ_sd = runif(bdpo$nt)), "bampriors")
@@ -59,7 +62,7 @@ test_that("different BAM variants yield proper behavior", {
 })
 
 
-test_that("NA values are removed or replaced", {
+test_that("NA values are no longer removed or replaced", {
   data("Sacramento")
   attach(Sacramento)
   
@@ -73,19 +76,22 @@ test_that("NA values are removed or replaced", {
     mat
   }
   
-  expect_message(bdpo <- bam_data(w = randna(Sac_w, 3), 
+  bdpo <- bam_data(w = randna(Sac_w, 3), 
                    s = randna(Sac_s, 4), 
                    dA = randna(Sac_dA, 5),
-                   Qhat = Sac_QWBM))
+                   Qhat = Sac_QWBM)
   
   expect_equal(sum(is.na(bdpo$Wobs)), 0)
   expect_equal(sum(is.na(bdpo$Sobs)), 0)
   expect_equal(sum(is.na(bdpo$dAobs)), 0)
+  
+  expect_equal(sum(!bdpo$hasdat_amhg), 3)
+  expect_gte(sum(!bdpo$hasdat_man), 5)
+  
   expect_equal(ncol(bdpo$Wobs), length(bdpo$logQ_hat))
   
-  expect_is(bdpo$omitTimes, "integer")
-  expect_gte(length(bdpo$omitTimes), 5)
-  
+  expect_is(bdpo$omitTimes, "NULL")
+
   expect_equal(nrow(bdpo$Wobs), bdpo$nx)
   expect_equal(ncol(bdpo$Sobs), bdpo$nt)
 })

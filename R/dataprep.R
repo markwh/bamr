@@ -17,8 +17,6 @@
 #' @param max_xs Maximum number of cross-sections to allow in data. Used to reduce 
 #'   sampling time. Defaults to 30.
 #' @param seed RNG seed to use for sampling cross-sections, if nx > max_xs. 
-#' @param missing How to treat missing values in data? Currently the only option is
-#'   "omit", which omits times with missing observations. 
 #' @export
 
 bam_data <- function(w, 
@@ -26,11 +24,8 @@ bam_data <- function(w,
                      dA = NULL, 
                      Qhat, 
                      max_xs = 30L,
-                     seed = NULL,
-                     missing = c("omit", "impute")) {
+                     seed = NULL) {
 
-  missing <- match.arg(missing)
-  
   manning_ready <- !is.null(s) && !is.null(dA)
   if (!manning_ready) {
     s <- dA <- matrix(1, nrow = nrow(w), ncol = ncol(w))
@@ -42,7 +37,7 @@ bam_data <- function(w,
                 logQ_hat = log(Qhat))
   
   datalist <- bam_check_args(datalist)
-  datalist <- bam_check_nas(datalist, missing = missing)
+  datalist <- bam_check_nas(datalist)
 
   nx <- nrow(datalist$Wobs)
   nt <- ncol(datalist$Wobs)
@@ -92,26 +87,51 @@ bam_check_args <- function(datalist) {
   out
 }
 
-bam_check_nas <- function(datalist, missing) {
+#' Add missing-data inputs to data list
+#' 
+#' Binary matrices indicating where data are/aren't missing are 
+#' added to the data list. This is required in order to run 
+#' ragged-array data structures in the stanfile. 
+#' 
+#' Previously this function omitted any times with missing data, 
+#' but now that ragged arrays are accommodated in the stanfile the 
+#' operations are entirely different. 
+bam_check_nas <- function(datalist) {
   
-  datalist$omitTimes <- integer(0)
   mats <- vapply(datalist, is.matrix, logical(1))
-  if (missing == "omit") {
-    nonas <- lapply(datalist[mats], function(x) !is.na(x))
-    namat <- !Reduce(`*`, nonas, init = nonas[[1]])
-    nainds <- which(namat, arr.ind = TRUE)[, 2]
+  nonas <- lapply(datalist[mats], function(x) !is.na(x))
+  
+  # AMHG has-data matrix
+  hasdat_amhg <- (!is.na(datalist[["Wobs"]])) * 1
+
+  # Replace NA's with zeros so Stan will accept the data
+  datalist[["Wobs"]][!hasdat_amhg] <- 0
+  
+  
+  # Manning has-data matrix (only nonzero if all Manning obs present)
+  if (identical(setdiff(c("Wobs", "Sobs", "dAobs"), 
+                        names(datalist[mats])), 
+                character(0))) {
+    hasdat_s <- (!is.na(datalist[["Sobs"]])) * 1
+    hasdat_a <- (!is.na(datalist[["dAobs"]])) * 1
     
-    if (length(nainds) > 0) {
-      message(sprintf("Omitting %s times with missing observations", length(nainds)))
-      omitCols <- function(mat, which) mat[, -nainds]
-      datalist[mats] <- lapply(datalist[mats], omitCols, which = nainds)
-      datalist[["logQ_hat"]] <- datalist[["logQ_hat"]][-nainds]
-      datalist[["omitTimes"]] <- nainds
-    }
+    hasdat_man <- hasdat_amhg * hasdat_s * hasdat_a
+    
+    # Replace NA's with zeros so Stan will accept the data
+    datalist[["Sobs"]][!hasdat_man] <- 0
+    datalist[["dAobs"]][!hasdat_man] <- 0
   } else {
-    stop("Missing value treatment other than 'omit' currently not implemented.\n")
+    hasdat_man <- matrix(0, nrow = nrow(hasdat_amhg), ncol = ncol(hasdat_amhg))
   }
-  out <- datalist
+  
+  newbits <- list(
+    hasdat_man = hasdat_man, 
+    hasdat_amhg = hasdat_amhg,
+    ntot_man = sum(hasdat_man), 
+    ntot_amhg = sum(hasdat_amhg)
+  )
+  
+  out <- c(datalist, newbits)
   out
 }
 
