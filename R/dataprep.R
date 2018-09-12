@@ -54,13 +54,17 @@ bam_data <- function(w,
   out
 }
 
+#' Performs the following checks:
+#' - types:
+#'     - logQ_hat is numeric vector
+#'     - everything else matrix
+#' - dimensions:
+#'     - all matrices have same dims
+#'     - logQ_hat has length equal to ncol of matrices
 bam_check_args <- function(datalist) {
   
   logQ_hat <- datalist$logQ_hat
   matlist <- datalist[names(datalist) != "logQ_hat"]
-  
-  # Remove NULLs
-  matlist <- matlist[!vapply(matlist, is.null, logical(1))]
   
   # Check types
   if (!(is(logQ_hat, "numeric") && is(logQ_hat, "vector")))
@@ -79,10 +83,6 @@ bam_check_args <- function(datalist) {
     logQ_hat <- rep(logQ_hat, length.out = nc)
   
   out <- c(matlist, list(logQ_hat = logQ_hat))
-  
-  if (!is.null(matlist[["dAobs"]])) {
-    out$dA_shift <- apply(matlist[["dAobs"]], 1, function(x) median(x) - min(x))
-  }
   
   out
 }
@@ -124,11 +124,18 @@ bam_check_nas <- function(datalist) {
     hasdat_man <- matrix(0, nrow = nrow(hasdat_amhg), ncol = ncol(hasdat_amhg))
   }
   
+  if (!is.null(matlist[["dAobs"]])) {
+    dA_shift <- apply(matlist[["dAobs"]], 1, function(x) median(x) - min(x))
+  } else {
+    dA_shift <- rep(0, nrow(datalist[["Wobs"]]))
+  }
+  
   newbits <- list(
     hasdat_man = hasdat_man, 
     hasdat_amhg = hasdat_amhg,
     ntot_man = sum(hasdat_man), 
-    ntot_amhg = sum(hasdat_amhg)
+    ntot_amhg = sum(hasdat_amhg),
+    dA_shift = dA_shift
   )
   
   out <- c(datalist, newbits)

@@ -21,6 +21,7 @@ test_that("data preparation produces correct output", {
   expect_is(bdpo$ntot_man, "numeric")
   expect_is(bdpo$ntot_amhg, "numeric")
 
+  
   expect_is(bdpr <- bam_priors(bamdata = bdpo), "bampriors")
   expect_equal(length(bdpr$logQ_sd), bdpo$nt)
   expect_is(bdpr$logQ_sd, "numeric")
