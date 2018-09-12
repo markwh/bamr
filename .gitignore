@@ -1,12 +1,13 @@
 .RData
 .Ruserdata
-exec/*.rda
 .Rproj.user
 .Rhistory
-src/Modules*
+src/stan_files/*.o
+src/stan_files/*.cc
+src/stan_files/*.hpp
 src/bamr.so
+src/bamr.dll
 src/init.o
-src/include
 vignettes/*.R
 !vignettes/*.Rmd
 vignettes/*.html
