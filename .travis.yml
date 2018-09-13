@@ -4,48 +4,47 @@ r: devel
 cache: packages
 
 latex: true
-r_build_args: '--no-build-vignettes'
-r_check_args: '--ignore-vignettes --no-examples'
 
-r_github_packages:
-  - jimhester/covr
 
 env:
   matrix: 
     - CXX_OLEVEL=2 CXX=clang++
 
+matrix:
+  include:
+    - os: linux
+      compiler: clang
+      addons:
+        apt:
+          sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-5.0' ]        
+          packages:
+            - llvm-5.0-dev
+      env:
+        - CXX_OLEVEL=2 CXX=clang++
+
+
 before_install:
+  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+  - sudo apt-get update -q
   - mkdir -p ~/.R/
   - echo "CXX = `R CMD config CXX`" >> ~/.R/Makevars
-  - echo "CXXFLAGS = `R CMD config CXXFLAGS` -pedantic -g0" >> ~/.R/Makevars 
+  - echo "CXXFLAGS = `R CMD config CXXFLAGS` -pedantic -g0 -flto -stdlib=libc++" >> ~/.R/Makevars
+  - echo "LDFLAGS += -flto -stdlib=libc++" >> ~/.R/Makevars
   - export CLANG_EXTRA_ARG=""
   - if [[ $CXX = "clang++" ]] ;  then export CLANG_EXTRA_ARG=" -Qunused-arguments -fcolor-diagnostics " ; fi
   - sed -i.bak "s/ g++/ ${CXX}${CLANG_EXTRA_ARG}/" ~/.R/Makevars
   - sed -i.bak "s/O[0-3]/O$CXX_OLEVEL/" ~/.R/Makevars
 
-before_script:
-  - export PKG_NAME=$(Rscript -e 'cat(paste0(devtools::as.package(".")$package))')
-  - export PKG_TARBALL=$(Rscript -e 'pkg <- devtools::as.package("."); cat(paste0(pkg$package,"_",pkg$version,".tar.gz"))')
-  - R CMD build --no-build-vignettes .
-  - R CMD INSTALL ${PKG_TARBALL}
-  - rm ${PKG_TARBALL}
-  - echo "Session info:"
-  - Rscript -e "library(${PKG_NAME});devtools::session_info('${PKG_NAME}')"
-
 script: 
   - |
-    travis_wait R CMD build .
-    travis_wait 42 R CMD check bamr*tar.gz
+    travis_wait 42 R CMD build .
+    travis_wait 59 R CMD check bamr*tar.gz
 
 after_script:
   - tar -ztvf bamr_*.tar.gz
   - echo ${NOT_CRAN}
-  - rm ${PKG_TARBALL}
 
 after_success:
-  - echo $PKG_TARBALL
-  - ls ..
-  - ls .
   - travis_wait 40 tar -C .. -xf $PKG_TARBALL
   - travis_wait 40 Rscript -e 'covr::codecov()'
 
