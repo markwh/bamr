@@ -124,8 +124,8 @@ bam_check_nas <- function(datalist) {
     hasdat_man <- matrix(0, nrow = nrow(hasdat_amhg), ncol = ncol(hasdat_amhg))
   }
   
-  if (!is.null(matlist[["dAobs"]])) {
-    dA_shift <- apply(matlist[["dAobs"]], 1, function(x) median(x) - min(x))
+  if (!is.null(datalist[["dAobs"]])) {
+    dA_shift <- apply(datalist[["dAobs"]], 1, function(x) median(x) - min(x))
   } else {
     dA_shift <- rep(0, nrow(datalist[["Wobs"]]))
   }

@@ -58,7 +58,7 @@ bam_hydrograph <- function(fit, qobs = NULL) {
     reshape2::melt(id.vars = c("series", "time"),
                    measure.vars = c("mean", "conf.low", "conf.high"),
                    variable.name = "stat", value.name = "flow") %>% 
-    mutate(stat = as.character(stat))
+    dplyr::mutate(stat = as.character(stat))
 
   out <- ggplot(qpred, aes(x = time, y = flow, color = stat)) +
     geom_line(aes(linetype = series))
@@ -80,9 +80,9 @@ bam_hydrograph <- function(fit, qobs = NULL) {
 plot_DAWG <- function(dawgmat) {
   dawgdf <- as.data.frame(t(dawgmat)) %>% 
     setNames(1:nrow(dawgmat)) %>% 
-    mutate(time = 1:ncol(dawgmat)) %>% 
+    dplyr::mutate(time = 1:ncol(dawgmat)) %>% 
     melt(id.vars = "time", variable.name = "xs") %>% 
-    mutate(xs = as.numeric(xs))
+    dplyr::mutate(xs = as.numeric(xs))
   
   ggplot(dawgdf, aes(x = time, y = xs, group = xs)) +
     geom_line(aes(color = xs, group = xs)) +
