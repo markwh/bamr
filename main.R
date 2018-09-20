@@ -35,7 +35,7 @@ devtools::test()
 
 # Vignettes
 devtools::use_vignette("BAM_Sacramento") # BAM discharge estimation on Po river
-
+devtools::use_vignette("bam-likelihood")
 
 # Datasets ----------------------------------------------------------------
 # dir.create("data")

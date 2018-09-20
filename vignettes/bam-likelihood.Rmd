@@ -1,0 +1,73 @@
+---
+title: "Manning likelihood"
+author: "Mark Hagemann"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Definitions
+
+SWOT observes the dataset $\{x_{st}, \delta A_{st}\}$, where $x_{st} = -\frac{2}{3} \log W_{st} + \frac{1}{2} \log S_{st}$. $s = 1, \dots N$ indexes space and $t = 1 \dots T$ indexes time. Based on Mass-conserved Manning's equation, these data are assumed to be generated according to the following pdf:
+
+$$
+f(x_{st}, \delta A_{st}) = \frac{1}{(A_{0,s} + \delta A_{st}) \sqrt{2  \pi\sigma^2}} \exp\Big(-\frac{1}{2\sigma^2}\big(\frac{3}{5}\log({A_{0,s} + \delta A_{st}}) + x_{st} - \log(q_tn)\big)^2\Big)
+$$
+
+where $\sigma$ is the standard deviation of log-transformed errors (errors are assumed to be lognormal). 
+
+## Full likelihood - Manning's equation
+
+The full log-likelihood, $\ell$, for the parameters given the data is as follows:
+
+
+$$
+\ell(A_{0,s}, q_t, n, \sigma^2 | \delta A_{st}, x_{st}) = - \frac{NT}{2\sigma^2} - \sum_{s = 1}^N\sum_{t = 1}^T \Big[\frac{3}{5}\log(A_{0,s} + \delta A_{st}) + \frac{1}{2 \sigma^2} \big(\log({A_{0,s} + \delta A_{st}}) + x_{st} - \log(q_tn)\big)^2 \Big] , \\
+A_{0,s} > -\min_t \delta A_{st}; q_t > 0; n > 0; \sigma > 0
+$$
+
+## Conditional log-likelihood
+
+For sampling purposes (e.g. Gibbs sampler) it is often useful to express the likelihood of a single parameter conditional on all other parameters and the data. 
+
+### Conditional likelihood for $\log(q_tn)$
+
+Note that in the above, the same likelihood value is obtained from any pair of $q_t, n$ values such that $q_tn = c$ for any constant $c$. In other words, the model is not fully *identifiable* with respect to the parameters $q_t$ and $n$; these parameters cannot be determined from the likelihood alone. BAM addresses this inference problem by using fairly informative priors on $q_t$ and $n$. However, the model is identifiable with respect to the *product* $q_tn$, and thus parameterized the conditional log-likelihood is as follows:
+
+$$
+\ell(q_tn | \delta A_{st}, x_{st}, A_{0,s}, \sigma^2) = - \sum_{s = 1}^N \Big[\log(A_{0,s} + \delta A_{st}) + \frac{1}{2 \sigma^2} \big(\frac{3}{5} \log({A_{0,s} + \delta A_{st}}) + x_{st} - \log(q_tn)\big)^2 \Big] , \\
+q_t > 0; n > 0
+$$
+
+Note that this is exactly a lognormal likelihood, meaning that the posterior for $q_tn$ could be sampled directly using a Gibbs sampler, provided that the prior distributions for $q_t$ and $n$ are also lognormal. 
+
+
+### Conditional likelihood for $A_0$
+
+The conditoinal log likelihood for $A_0$ is given by:
+
+$$
+\ell(A_{0,s} | \delta A_{st}, x_{st}, q_tn, \sigma^2) = - \frac{T}{2\sigma^2} - \sum_{t = 1}^T \Big[\log(A_{0,s} + \delta A_{st}) + \frac{1}{2 \sigma^2} \big(\log({A_{0,s} + \delta A_{st}}) + \frac{5}{3} x_{st} - \frac{5}{3} \log(q_tn)\big)^2 \Big] , \\
+A_{0,s} > -\min_t \delta A_{st}
+$$
+
+If $A_{0,s}$ has a prior distribution with pdf $\pi(A_{0,s})$, then the conditional posterior for $A_{0,s}$ is given by adding $\log \pi(A_{0,s})$ to the above:
+
+$$
+p(A_{0,s} | \delta A_{st}, x_{st}, q_tn, \sigma^2) = - \frac{T}{2\sigma^2} - \sum_{t = 1}^T \Big[\log(A_{0,s} + \delta A_{st}) + \frac{1}{2 \sigma^2} \big(\frac{3}{5} \log({A_{0,s} + \delta A_{st}}) + x_{st} - \log(q_tn)\big)^2 \Big] + \log\pi(A_{0,s}) , \\
+A_{0,s} > -\min_t \delta A_{st}
+$$
+
+Unlike $q_tn$, this posterior cannot be sampled from directly (no matter what the choice of prior distribution), and therefore other sampling methods must be used (e.g. Metropolis). 
+
+
