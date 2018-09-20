@@ -21,8 +21,6 @@ test_that("reparameterization returns correct object types", {
 })
 
 
-
-
 test_that("reparameterization bamr results are roughly equivalent", {
   data("Sacramento_sm")
   attach(Sacramento_sm)
