@@ -31,6 +31,7 @@ bam_data <- function(w,
     s <- dA <- matrix(1, nrow = nrow(w), ncol = ncol(w))
   }
 
+
   datalist <- list(Wobs = w,
                 Sobs = s,
                 dAobs = dA,
@@ -79,11 +80,19 @@ bam_check_args <- function(datalist) {
   if (!(all(vapply(matlist, nrow, 0L) == nr) &&
         all(vapply(matlist, ncol, 0L) == nc)))
     stop("All data must have same dimensions.\n")
-  if (!length(logQ_hat) == nc)
-    logQ_hat <- rep(logQ_hat, length.out = nc)
+  if (!length(logQ_hat) == 1) {
+    stop("Vector discharge estimates not currently supported.\n")
+  }
   
   out <- c(matlist, list(logQ_hat = logQ_hat))
   
+<<<<<<< HEAD
+  if (!is.null(matlist[["dAobs"]])) {
+    out$dA_shift <- apply(matlist[["dAobs"]], 1, function(x) median(x) - min(x))
+  }
+  
+=======
+>>>>>>> 2752245d68eedbee27572840682f322d61e5bb1a
   out
 }
 
@@ -172,9 +181,10 @@ bam_priors <- function(bamdata,
   quoparams <- myparams()[-1] # first one is parameter set
   params <- lapply(quoparams, rlang::eval_tidy, data = bamdata)
   
-  if (!length(params[["logQ_sd"]]) == bamdata$nt)
-    params$logQ_sd <- rep(params$logQ_sd, length.out = bamdata$nt)
-  
+  if (!length(params[["logQ_sd"]]) == 1) {
+    stop("Vector estimates of flow uncertainty not currently supported.\n")
+  }
+
   if (!identical(dim(params[["sigma_man"]]), 
                  as.integer(c(bamdata$nx, bamdata$nt)))) {
     params$sigma_man <- matrix(rep(params$sigma_man, 

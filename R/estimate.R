@@ -11,17 +11,15 @@
 #' @param bampriors A bampriors object. If none is supplied, defaults are used 
 #'   from calling \code{bam_priors(bamdata)} (with no other arguments).
 #' @param cores Number of processing cores for running chains in parallel. 
-#'   See \code{?rstan::sampling}. Defaults to \code{parallel::detectCores}.
+#'   See \code{?rstan::sampling}. Defaults to \code{parallel::detectCores()}.
 #' @param chains A positive integer specifying the number of Markov chains. 
 #'   The default is 3.
 #' @param iter Number of iterations per chain (including warmup). Defaults to 1000.
 #' @param stanmodel A \code{stanmodel} object to use instead of one of the default 
 #'   models. 
 #' @param pars (passed to rstan::sampling) A vector of character strings specifying 
-#'   parameters of interest. For bam_estimate, the default is Stan transformed  
-#'   variables, "man_rhs", "amhg_rhs", and "logA_man".
-#' @param include Defaults to FALSE, which omits parameters specified in 
-#'   \code{pars}. If set to TRUE, only the \code{pars} parameters will be returned.
+#'   parameters of interest to be returned in the stanfit object. If not specified, 
+#'   a default parameter set is returned.
 #' @param ... Other arguments passed to rstan::sampling() for customizing the 
 #'   Monte Carlo sampler
 #' @import rstan
@@ -36,6 +34,8 @@ bam_estimate <- function(bamdata,
                          chains = 3L,
                          iter = 1000L,
                          stanmodel = NULL,
+                         pars = NULL, 
+                         include = FALSE,
                          ...) {
   variant <- match.arg(variant)
   stopifnot(is(bamdata, "bamdata"))
@@ -55,36 +55,28 @@ bam_estimate <- function(bamdata,
   baminputs$inc_m <- ifelse(variant %in% c("manning", "manning_amhg"), 1, 0)
   baminputs$inc_a <- ifelse(variant %in% c("amhg", "manning_amhg"), 1, 0)
   
-  if (reparam) {
+  if (is.null(pars)) {
+    pars <- c("man_rhs", "amhg_rhs", "logWSpart", 
+              "logQtn", "logQnbar",
+              "Sact", "Wact", "dAact")
+  }
+  
+  if (reparam && meas_error) {
     logS_sigsq_obs <- ln_sigsq(obs = baminputs$Sobs, err_sigma = baminputs$Serr_sd)
     logW_sigsq_obs <- ln_sigsq(obs = baminputs$Wobs, err_sigma = baminputs$Werr_sd)
     baminputs$sigma_man <- sqrt(baminputs$sigma_man^2 + 
-                                  logS_sigsq_obs * 9 +
-                                  logW_sigsq_obs * 16)
+                                  logS_sigsq_obs * (3 / 6)^2 +
+                                  logW_sigsq_obs * (4 / 6)^2)
     baminputs$sigma_amhg <- sqrt(baminputs$sigma_amhg^2 +
                                    logW_sigsq_obs)
   }
   
   out <- sampling(stanfit, data = baminputs, 
                   cores = cores, chains = chains, iter = iter,  
-                  pars = c("man_rhs", "amhg_rhs", "logA_man", 
-                           "Wact", "Sact", "dAact", "logW", "logS", 
-                           "man_lhs"),
-                  include = FALSE,
+                  pars = pars, include = include,
                   ...)
   
   out
-}
-
-
-bam_q_manning <- function(bamdata, params, plot = TRUE) {
-  logn <- params$logn
-  A0mat <- matrix(params$A0, nrow = bamdata$nx, ncol = bamdata$nt, byrow = FALSE)
-  logA <- log(bamdata$dAobs + A0mat)
-  logW <- log(bamdata$Wobs)
-  logS <- log(bamdata$Sobs)
-  logQ <- 5/3 * logA - logn - 2/3 * logW + 1/2 * logS
-  q <- exp(logQ)
 }
 
 

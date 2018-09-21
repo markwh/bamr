@@ -4,3 +4,4 @@ cleanup*
 ^\.Rproj\.user$
 ^\.Rprofile$
 ^codecov\.yml$
+^appveyor\.yml$
