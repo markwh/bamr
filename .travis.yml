@@ -27,8 +27,10 @@ before_install:
   - eval "${MATRIX_EVAL}"
   - mkdir -p ~/.R/
   - echo "CXX = `R CMD config CXX`" >> ~/.R/Makevars
-  - echo "CXXFLAGS = `R CMD config CXXFLAGS` -pedantic -g3 -flto" >> ~/.R/Makevars
+  - echo "CXXFLAGS = `R CMD config CXXFLAGS` -pedantic -g0 -flto" >> ~/.R/Makevars
   - echo "LDFLAGS += -flto" >> ~/.R/Makevars
+  - echo "CXX_FLTO_FLAGS= " >> ~/.R/Makevars
+  - echo "LD_FLTO_FLAGS= " >> ~/.R/Makevars
   - export CLANG_EXTRA_ARG=""
   - if [[ $CXX = "clang++" ]] ;  then export CLANG_EXTRA_ARG=" -Qunused-arguments -fcolor-diagnostics " ; fi
   - sed -i.bak "s/ g++/ ${CXX}${CLANG_EXTRA_ARG}/" ~/.R/Makevars
