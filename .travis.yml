@@ -18,6 +18,7 @@ matrix:
           packages:
             - clang-5.0
             - llvm-5.0-dev
+            - binutils-gold 
       env:
         - MATRIX_EVAL="CXX_OLEVEL=2 && CXX=clang++-5.0"
 
