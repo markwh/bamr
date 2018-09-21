@@ -1,4 +1,5 @@
 language: r
+dist: trusty
 sudo: false
 r: devel
 cache: packages
@@ -6,30 +7,29 @@ cache: packages
 latex: true
 
 
-env:
-  matrix: 
-    - CXX_OLEVEL=2 CXX=clang++
-
 matrix:
   include:
     - os: linux
       compiler: clang
       addons:
         apt:
-          sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-5.0' ]        
+          sources: 
+            - llvm-toolchain-trusty-5.0
           packages:
+            - clang-5.0
             - llvm-5.0-dev
+            - binutils-gold 
       env:
-        - CXX_OLEVEL=2 CXX=clang++
+        - MATRIX_EVAL="CXX=clang++-5.0"
 
 
 before_install:
-  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-  - sudo apt-get update -q
+  - eval "${MATRIX_EVAL}"
   - mkdir -p ~/.R/
   - echo "CXX = `R CMD config CXX`" >> ~/.R/Makevars
   - echo "CXXFLAGS = `R CMD config CXXFLAGS` -pedantic -g0 -flto" >> ~/.R/Makevars
   - echo "LDFLAGS += -flto" >> ~/.R/Makevars
+  - echo "LDFLAGS += -fuse-ld=gold" >> ~/.R/Makevars
   - export CLANG_EXTRA_ARG=""
   - if [[ $CXX = "clang++" ]] ;  then export CLANG_EXTRA_ARG=" -Qunused-arguments -fcolor-diagnostics " ; fi
   - sed -i.bak "s/ g++/ ${CXX}${CLANG_EXTRA_ARG}/" ~/.R/Makevars
@@ -45,8 +45,7 @@ after_script:
   - echo ${NOT_CRAN}
 
 after_success:
-  - travis_wait 40 tar -C .. -xf $PKG_TARBALL
-  - travis_wait 40 Rscript -e 'covr::codecov()'
+  - Rscript -e 'covr::codecov()'
 
 after_failure:
   - cat bamr.Rcheck/00*
