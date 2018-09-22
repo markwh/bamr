@@ -22,7 +22,7 @@ test_that("data preparation produces correct output", {
   expect_is(bdpo$ntot_amhg, "numeric")
 
   expect_is(bdpr <- bam_priors(bamdata = bdpo), "bampriors")
-  expect_equal(length(bdpr$logQ_sd), 1)
+  expect_equal(length(bdpr$logQ_sd), bdpo$nt)
   expect_is(bdpr$logQ_sd, "numeric")
   
   expect_is(bdpr$sigma_man, "matrix")
@@ -150,8 +150,8 @@ test_that("error reparameterization works as expected", {
   expect_equal(order(as.vector(w_ln_sigsq)), 
                order(as.vector(bdsac$Wobs), decreasing = TRUE))
   
-  expect_equal(order(as.vector(ln_sigsq(bdsac$Sobs, 1e-4))), 
-               order(as.vector(bdsac$Sobs), decreasing = TRUE))
+  # expect_equal(order(as.vector(ln_sigsq(bdsac$Sobs, 1e-4))), 
+  #              order(as.vector(bdsac$Sobs), decreasing = TRUE))
                
   
 })
