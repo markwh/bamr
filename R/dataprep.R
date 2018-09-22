@@ -86,13 +86,6 @@ bam_check_args <- function(datalist) {
   
   out <- c(matlist, list(logQ_hat = logQ_hat))
   
-<<<<<<< HEAD
-  if (!is.null(matlist[["dAobs"]])) {
-    out$dA_shift <- apply(matlist[["dAobs"]], 1, function(x) median(x) - min(x))
-  }
-  
-=======
->>>>>>> 2752245d68eedbee27572840682f322d61e5bb1a
   out
 }
 
