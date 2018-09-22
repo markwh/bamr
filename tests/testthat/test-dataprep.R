@@ -31,8 +31,9 @@ test_that("data preparation produces correct output", {
   expect_equal(ncol(bdpr$sigma_amhg), bdpo$nt)
   
   # manually specify logQ_sd as vector
-  expect_is(bdpr <- bam_priors(bamdata = bdpo, logQ_sd = runif(1)), "bampriors")
-  expect_equal(length(bdpr$logQ_sd), 1)
+  expect_is(bdpr <- bam_priors(bamdata = bdpo, logQ_sd = runif(bdpo$nt)), "bampriors")
+  expect_equal(length(bdpr$logQ_sd), bdpo$nt)
+  expect_false(bdpr$logQ_sd[1] == bdpr$logQ_sd[2])
   expect_is(bdpr$logQ_sd, "numeric")
   
   expect_is(compose_bam_inputs(bdpo, bam_priors(bdpo)), "list")
@@ -50,8 +51,8 @@ test_that("different BAM variants yield proper behavior", {
   expect_error(bam_priors(bda))
   expect_error(bam_priors(bda, variant = "manning"))
   expect_is(bpa <- bam_priors(bda, variant = "amhg"), "bampriors")
-  # expect_is(bpm <- bam_priors(bdm, variant = "manning"), "bampriors")
-  # expect_is(bpam <- bam_priors(bdm, variant = "manning_amhg"), "bampriors")
+  expect_is(bpm <- bam_priors(bdm, variant = "manning"), "bampriors")
+  expect_is(bpam <- bam_priors(bdm, variant = "manning_amhg"), "bampriors")
   
   ## The following no longer apply after consolidating to a single stan file.
   # expect_lt(length(bpm), length(bpam))
@@ -149,9 +150,8 @@ test_that("error reparameterization works as expected", {
   expect_equal(order(as.vector(w_ln_sigsq)), 
                order(as.vector(bdsac$Wobs), decreasing = TRUE))
   
-  uniqSvec <- unique(round(as.vector(bdsac$Sobs), digits = 10))
-  expect_equal(order(uniqSvec), 
-               order(ln_sigsq(uniqSvec, 1e-4), decreasing = TRUE))
+  expect_equal(order(as.vector(ln_sigsq(bdsac$Sobs, 1e-4))), 
+               order(as.vector(bdsac$Sobs), decreasing = TRUE))
                
   
 })

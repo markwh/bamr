@@ -12,23 +12,23 @@ test_that("BAM estimates return expected values", {
   myseed <- 582
   
   bp1 <- bam_priors(bda, Werr_sd = 1600, variant = "amhg")
-  bp2 <- bam_priors(bdm, Werr_sd = 20, Serr_sd = 1e-5, sigma_man = 0.2, logA0_sd = 0.1)
-  # expect_is(est1 <- bam_estimate(bda, "amhg", bampriors = bp1, seed = myseed), c("stanfit"))
+  bp2 <- bam_priors(bdm, Werr_sd = 20, Serr_sd = 1e-5, sigma_man = 0.2)
+  expect_is(est1 <- bam_estimate(bda, "amhg", bampriors = bp1, seed = myseed), c("stanfit"))
   expect_is(est2 <- bam_estimate(bdm, "manning", bampriors = bp2, seed = myseed), c("stanfit"))
   expect_is(est3 <- bam_estimate(bdm, "manning", seed = myseed), c("stanfit"))
   
   expect_equivalent(est2, est3)
   
   # Now check meas_error functionality
-  bp5 <- bam_priors(bdm, sigma_man = 0.2, logA0_sd = 0.1)
-  # expect_is(est4 <- bam_estimate(bda, "amhg", meas_error = FALSE, seed = myseed), c("stanfit"))
+  bp5 <- bam_priors(bdm, sigma_man = 0.2)
+  expect_is(est4 <- bam_estimate(bda, "amhg", meas_error = FALSE, seed = myseed), c("stanfit"))
   expect_is(est5 <- bam_estimate(bdm, "manning", meas_error = FALSE, 
                                  bampriors = bp5, seed = myseed), 
             c("stanfit"))
   
-  # expect_is(qp1 <- bam_qpred(est1), "data.frame")
+  expect_is(qp1 <- bam_qpred(est1), "data.frame")
   expect_is(qp2 <- bam_qpred(est2), "data.frame")
-  # expect_is(qp4 <- bam_qpred(est4), "data.frame")
+  expect_is(qp4 <- bam_qpred(est4), "data.frame")
   expect_is(qp5 <- bam_qpred(est5), "data.frame")
   
   ## (Commented out because AMHG isn't behaving re: meas. error)
@@ -52,15 +52,15 @@ test_that("Measurement error reparameterization works", {
   
   # Test reparameterization
   rs <- 2438
-  # expect_is(est1 <- bam_estimate(bda, "amhg", reparam = FALSE, seed = rs), c("stanfit"))
+  expect_is(est1 <- bam_estimate(bda, "amhg", reparam = FALSE, seed = rs), c("stanfit"))
   expect_is(est2 <- bam_estimate(bdm, "manning", reparam = FALSE, seed = rs), c("stanfit"))
   
-  # expect_is(est3 <- bam_estimate(bda, "amhg", reparam = TRUE, seed = rs), c("stanfit"))
+  expect_is(est3 <- bam_estimate(bda, "amhg", reparam = TRUE, seed = rs), c("stanfit"))
   expect_is(est4 <- bam_estimate(bdm, "manning", reparam = TRUE, seed = rs), c("stanfit"))
   
-  # expect_true(identical(bam_qpred(bam_estimate(bda, "amhg", reparam = FALSE, seed = rs)), 
-                        # bam_qpred(est1)))
-  # expect_false(identical(bam_qpred(est1), bam_qpred(est3)))
+  expect_true(identical(bam_qpred(bam_estimate(bda, "amhg", reparam = FALSE, seed = rs)),
+  bam_qpred(est1)))
+  expect_false(identical(bam_qpred(est1), bam_qpred(est3)))
   expect_false(identical(bam_qpred(est2), bam_qpred(est4)))
   
 })
