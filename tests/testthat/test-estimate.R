@@ -36,9 +36,9 @@ test_that("BAM estimates return expected values", {
   #                 (qp4$conf.high - qp4$conf.low)) 
   #             == 0)
   
-  expect_true(sum((qp2$conf.high - qp2$conf.low) <= 
-                    (qp5$conf.high - qp5$conf.low)) 
-              == 0)
+  # expect_true(sum((qp2$conf.high - qp2$conf.low) <= 
+  #                   (qp5$conf.high - qp5$conf.low)) 
+  #             == 0)
 })
 
 
