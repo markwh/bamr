@@ -1,10 +1,10 @@
 # BAMR - Bayesian AMHG + Manning estimation using R
 
-[![Build Status](https://travis-ci.org/markwh/bamr.svg?branch=master)](https://travis-ci.org/markwh/bamr)
+[![Build Status](https://travis-ci.org/markwh/bamr.svg?branch=devel)](https://travis-ci.org/markwh/bamr)
 
-[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/markwh/bamr?branch=master&svg=true)](https://ci.appveyor.com/project/markwh/bamr)
+[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/markwh/bamr?branch=devel&svg=true)](https://ci.appveyor.com/project/markwh/bamr)
 
-[![Coverage Status](https://img.shields.io/codecov/c/github/markwh/bamr/master.svg)](https://codecov.io/github/markwh/bamr?branch=master)
+[![Coverage Status](https://img.shields.io/codecov/c/github/markwh/bamr/devel.svg)](https://codecov.io/github/markwh/bamr?branch=devel)
 
 
 This package is currently under development. But it *can* be used. To install, run the following:
