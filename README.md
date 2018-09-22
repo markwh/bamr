@@ -1,10 +1,10 @@
 # BAMR - Bayesian AMHG + Manning estimation using R
 
-[![Build Status](https://travis-ci.org/markwh/bamr.svg?branch=devel)](https://travis-ci.org/markwh/bamr)
+[![Build Status](https://travis-ci.org/markwh/bamr.svg?branch=master)](https://travis-ci.org/markwh/bamr)
 
-[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/markwh/bamr?branch=devel&svg=true)](https://ci.appveyor.com/project/markwh/bamr)
+[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/markwh/bamr?branch=masterl&svg=true)](https://ci.appveyor.com/project/markwh/bamr)
 
-[![Coverage Status](https://img.shields.io/codecov/c/github/markwh/bamr/devel.svg)](https://codecov.io/github/markwh/bamr?branch=devel)
+[![Coverage Status](https://img.shields.io/codecov/c/github/markwh/bamr/master.svg)](https://codecov.io/github/markwh/bamr?branch=master)
 
 
 This package is currently under development. But it *can* be used. To install, run the following:
@@ -29,5 +29,5 @@ install_github("markwh/bamr", ref = "devel", local = FALSE)
 
 The bamr package facilitates Bayesian AMHG + Manning discharge estimation using stream slope, width, and partial cross-section area. It includes functions to preprocess and visualize data, perform Bayesian inference using Hamiltonian Monte Carlo (via models pre-written in the Stan language), and analyze the results. 
 
-The best way to get started is to follow the examples in the included vignette: `vignette("bamr-intro")`
+The best way to get started is to follow the examples in the included vignette: `vignette("bamr-intro")`.
 
