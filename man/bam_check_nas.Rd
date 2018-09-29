@@ -6,6 +6,9 @@
 \usage{
 bam_check_nas(datalist)
 }
+\arguments{
+\item{datalist}{a list of BAM inputs}
+}
 \description{
 Binary matrices indicating where data are/aren't missing are 
 added to the data list. This is required in order to run 

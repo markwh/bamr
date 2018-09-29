@@ -6,6 +6,9 @@
 \usage{
 minmax(x)
 }
+\arguments{
+\item{x}{a numeric matrix}
+}
 \description{
 Minimum across xs of max across time of width
 }

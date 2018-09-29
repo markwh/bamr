@@ -34,9 +34,12 @@ The default is 3.}
 \item{stanmodel}{A \code{stanmodel} object to use instead of one of the default 
 models.}
 
-\item{pars}{(passed to rstan::sampling) A vector of character strings specifying 
+\item{pars}{(passed to \code{rstan::sampling()}) A vector of character strings specifying 
 parameters of interest to be returned in the stanfit object. If not specified, 
 a default parameter set is returned.}
+
+\item{include}{(passed to \code{rstan::sampling()}) Defaults to FALSE, which 
+excludes parameters specified in \code{pars} from the returned model.}
 
 \item{...}{Other arguments passed to rstan::sampling() for customizing the 
 Monte Carlo sampler}

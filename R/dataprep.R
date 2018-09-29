@@ -25,6 +25,7 @@ bam_data <- function(w,
                      Qhat, 
                      max_xs = 30L,
                      seed = NULL) {
+  force(Qhat)
 
   manning_ready <- !is.null(s) && !is.null(dA)
   if (!manning_ready) {
@@ -62,6 +63,8 @@ bam_data <- function(w,
 #' - dimensions:
 #'     - all matrices have same dims
 #'     - logQ_hat has length equal to ncol of matrices
+#'     
+#' @param datalist A list of BAM data inputs
 bam_check_args <- function(datalist) {
   
   logQ_hat <- datalist$logQ_hat
@@ -97,6 +100,9 @@ bam_check_args <- function(datalist) {
 #' Previously this function omitted any times with missing data, 
 #' but now that ragged arrays are accommodated in the stanfile the 
 #' operations are entirely different. 
+#' 
+#' @param datalist a list of BAM inputs
+#' @importFrom stats median
 bam_check_nas <- function(datalist) {
   
   mats <- vapply(datalist, is.matrix, logical(1))
@@ -240,6 +246,10 @@ sample_xs <- function(bamdata, n, seed = NULL) {
 #' 
 #' Used to put measurement errors into original log-normal parameterization.
 #' 
+#' @param obs A numeric vector of observations
+#' @param err_sigma Standard deviation of measurement error
+#' @param a zero-reference for method of moments.
+#' @importFrom stats dnorm pnorm
 ln_moms <- function(obs, err_sigma, a = 0) {
   alpha <- (a - obs) / err_sigma
   Z <- 1 - pnorm(alpha)
@@ -257,6 +267,9 @@ ln_moms <- function(obs, err_sigma, a = 0) {
 #' 
 #' Used to put measurement errors into original log-normal parameterization.
 #'
+#' @param obs A numeric vector of observations
+#' @param err_sigma Standard deviation of measurement error
+#' @param a zero-reference for method of moments.
 ln_sigsq <- function(obs, err_sigma, a = 0) {
   moms <- ln_moms(obs = obs, err_sigma = err_sigma, a = a)
   mn <- unname(moms[["mean"]])

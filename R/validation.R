@@ -8,12 +8,13 @@
 #' @param fit A stanfit object, as returned from \code{bam_estimate()}
 #' @param qobs a vector of observed flow.
 #' 
+#' @importFrom rlang .data
 #' @export
 bam_valdata <- function(fit, qobs) {
   stopifnot(is(fit, "stanfit"))
   stopifnot(is.numeric(qobs))
   qpred <- bam_qpred(fit = fit, chain = "all") %>% 
-    dplyr::transmute(time, qpred = mean)
+    dplyr::transmute(.data$time, qpred = mean)
   stopifnot(length(qobs) == nrow(qpred))
   out <- cbind(qpred, qobs = qobs)
   out
@@ -23,6 +24,7 @@ bam_valdata <- function(fit, qobs) {
 #' 
 #' @param fit A stanfit object, as returned from \code{bam_estimate()}
 #' @param qobs a vector of observed flow.
+#' @param stats Which stats to include in the summary?
 #' 
 #' @export
 bam_validate <- function(fit, qobs, stats = c("RRMSE", "MRR", "SDRR", 
@@ -39,16 +41,6 @@ bam_validate <- function(fit, qobs, stats = c("RRMSE", "MRR", "SDRR",
   out <- structure(list(valdata = valdata,
                         stats = statvals), 
                    class = c("bamval"))
-}
-
-#' Plot a bamval object to show predictive performance
-#' @import ggplot2
-#' @export
-plot.bamval <- function(bamval) {
-  valdata <- bamval$valdata
-  ggplot(valdata, aes(x = qobs, y = qpred)) + 
-    geom_point() +
-    geom_abline(aes(intercept = 0, slope = 1))
 }
 
 

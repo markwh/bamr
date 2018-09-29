@@ -11,6 +11,8 @@ bam_validate(fit, qobs, stats = c("RRMSE", "MRR", "SDRR", "NSE", "NRMSE",
 \item{fit}{A stanfit object, as returned from \code{bam_estimate()}}
 
 \item{qobs}{a vector of observed flow.}
+
+\item{stats}{Which stats to include in the summary?}
 }
 \description{
 Calculate validation metrics and plots

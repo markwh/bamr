@@ -58,7 +58,7 @@ test_that("different BAM variants yield proper behavior", {
   # expect_lt(length(bpm), length(bpam))
   # expect_lt(length(bpa), length(bpam))
   
-  expect_is(plot(bda), "gg")
+  expect_is(bam_plot(bda), "gg")
 })
 
 

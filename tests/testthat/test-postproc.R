@@ -22,6 +22,6 @@ test_that("bam postprocessing and validation work as expected", {
   expect_is(bval1 <- bam_validate(est2, qobs = Sac_Qobs_sm), "bamval")
   expect_identical(bval1$valdata, bam_valdata(est2, qobs = Sac_Qobs_sm))
   expect_is(bval1$stats, "numeric")
-  expect_is(plot(bval1), "gg")
+  expect_is(bam_plot(bval1), "gg")
   
 })

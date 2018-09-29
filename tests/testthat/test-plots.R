@@ -6,5 +6,5 @@ test_that("plotting functions produce gg objects", {
   
   bdpo <- bam_data(w = Sac_w, s = Sac_s, dA = Sac_dA, Qhat = Sac_QWBM)
   
-  expect_is(plot(bdpo), "gg")
+  expect_is(bam_plot(bdpo), "gg")
 })

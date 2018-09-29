@@ -8,6 +8,7 @@
 #' @param conf.level A numeric value on (0, 1) specifying the size of the Bayesian 
 #'   credible interval. Default is 0.95.
 #' @importFrom stats quantile
+#' @importFrom rlang .data
 #' @export 
 
 bam_qpred <- function(fit, chain = "all", conf.level = 0.95) {
@@ -26,18 +27,18 @@ bam_qpred <- function(fit, chain = "all", conf.level = 0.95) {
   stopifnot(is.numeric(chain))
   
   qstats <- qpost %>% 
-    dplyr::mutate(chains = gsub("^chain:", "", chains)) %>% 
-    dplyr::filter(chains %in% chain) %>% 
-    dplyr::mutate(value = exp(value)) %>% 
-    dplyr::group_by(parameters) %>%
-    dplyr::summarize(mean = mean(value),
-              conf.low = quantile(value, alpha / 2),
-              conf.high = quantile(value, 1 - (alpha / 2))) %>% 
-    dplyr::rename(time = parameters) %>% 
-    dplyr::mutate(time = gsub("^logQ\\[", "", time),
-           time = gsub("\\]$", "", time),
-           time = as.numeric(time)) %>% 
-    dplyr::arrange(time)
+    dplyr::mutate(chains = gsub("^chain:", "", .data$chains)) %>% 
+    dplyr::filter(.data$chains %in% chain) %>% 
+    dplyr::mutate(value = exp(.data$value)) %>% 
+    dplyr::group_by(.data$parameters) %>%
+    dplyr::summarize(mean = mean(.data$value),
+              conf.low = quantile(.data$value, alpha / 2),
+              conf.high = quantile(.data$value, 1 - (alpha / 2))) %>% 
+    dplyr::rename(time = .data$parameters) %>% 
+    dplyr::mutate(time = gsub("^logQ\\[", "", .data$time),
+           time = gsub("\\]$", "", .data$time),
+           time = as.numeric(.data$time)) %>% 
+    dplyr::arrange(.data$time)
   
   qstats
 }
