@@ -1,3 +1,8 @@
+0.1.5.9002:
+
+- Remove `wildcard` function in Makevars so that GNU make is no longer a `SystemRequirements`
+
+
 0.1.5.9001: 
 
 - `plot.bamdata` and `plot.bamval` have been moved from `plot` to a new generic, `bam_plot`. 
