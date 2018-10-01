@@ -13,7 +13,7 @@ clean:
 		RM -rf stan_files/*.cc
 		RM -rf stan_files/*.hpp
 
-%.cc: %.stan
+master.cc: master.stan
 				"$(R_HOME)/bin$(R_ARCH_BIN)/Rscript" -e "source(file.path('..', 'tools', 'make_cc.R')); make_cc(commandArgs(TRUE))" $<
 
 				
