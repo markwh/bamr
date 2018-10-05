@@ -1,3 +1,5 @@
+^docs$
+^_pkgdown\.yml$
 cleanup*
 ^\.travis\.yml$
 ^.*\.Rproj$
@@ -5,3 +7,4 @@ cleanup*
 ^\.Rprofile$
 ^codecov\.yml$
 ^appveyor\.yml$
+vignettes/rsconnect

@@ -35,3 +35,5 @@ Suggests: knitr,
     covr,
     testthat
 VignetteBuilder: knitr
+URL: https://github.com/markwh/bamr
+BugReports: https://github.com/markwh/bamr/issues
