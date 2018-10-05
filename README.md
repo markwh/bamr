@@ -42,7 +42,7 @@ install_github("markwh/bamr", local = FALSE)
 
 ## Usage
 
-The best way to get started is to follow the examples in the included vignettes, now located at the [**bamr** website](https://markwh.github.io/bamr/)
+The best way to get started is to follow the examples in the included vignettes, now located at the [**bamr** website](https://markwh.github.io/bamr/index.html)
 
 Also check out the companion [**swotr**](https://markwh.github.io/swotr/) package.
 
