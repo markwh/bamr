@@ -17,9 +17,11 @@
 #' @param iter Number of iterations per chain (including warmup). Defaults to 1000.
 #' @param stanmodel A \code{stanmodel} object to use instead of one of the default 
 #'   models. 
-#' @param pars (passed to rstan::sampling) A vector of character strings specifying 
+#' @param pars (passed to \code{rstan::sampling()}) A vector of character strings specifying 
 #'   parameters of interest to be returned in the stanfit object. If not specified, 
 #'   a default parameter set is returned.
+#' @param include (passed to \code{rstan::sampling()}) Defaults to FALSE, which 
+#'   excludes parameters specified in \code{pars} from the returned model.
 #' @param ... Other arguments passed to rstan::sampling() for customizing the 
 #'   Monte Carlo sampler
 #' @import rstan

@@ -6,6 +6,13 @@
 \usage{
 ln_sigsq(obs, err_sigma, a = 0)
 }
+\arguments{
+\item{obs}{A numeric vector of observations}
+
+\item{err_sigma}{Standard deviation of measurement error}
+
+\item{a}{zero-reference for method of moments.}
+}
 \description{
 Used to put measurement errors into original log-normal parameterization.
 }

@@ -67,14 +67,14 @@ This returns an object of class "bamdata" that will be used to create prior para
 It is a good idea to plot the data; this can be done by simply calling
 
 ```{r}
-plot(Sac_data)
+bam_plot(Sac_data)
 ```
 
-As this `plot` method for `bamdata` returns a ggplot object, it can be modified, for example to make the y-axis be log scale:
+As `bam_plot` returns a ggplot object, it can be modified, for example to make the y-axis be log scale:
 
 ```{r}
 library(ggplot2)
-plot(Sac_data) + scale_y_log10()
+bam_plot(Sac_data) + scale_y_log10()
 ```
 
 
@@ -85,7 +85,7 @@ The AMHG-only BAM variant relies on width data only, and so it is possible to sp
 ```{r}
 Sac_amhg <- bam_data(w = Sac_w, Qhat = Sac_QWBM)
 
-plot(Sac_amhg)
+bam_plot(Sac_amhg)
 ```
 
 
@@ -174,7 +174,7 @@ If you have observed flow (as we do for the Sacramento), you can plot this along
 # val_manning_amhg <- bam_validate(fit = Sac_man_amhg, qobs = Sac_Qobs)
 
 # prediction vs. observation
-plot(val_manning_amhg)
+bam_plot(val_manning_amhg)
 
 # A suite of performance metrics
 val_manning_amhg$stats

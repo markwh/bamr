@@ -6,6 +6,9 @@
 \usage{
 maxmin(x)
 }
+\arguments{
+\item{x}{a numeric matrix}
+}
 \description{
 Maximum across xs of min across time of width
 }

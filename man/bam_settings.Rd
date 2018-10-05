@@ -6,6 +6,13 @@
 \usage{
 bam_settings(..., .__defaults = FALSE, .__reset = FALSE)
 }
+\arguments{
+\item{...}{(Optional) named settings to query or set.}
+
+\item{.__defaults}{See \code{?settings::option_manager}}
+
+\item{.__reset}{See \code{?settings::option_manager}}
+}
 \description{
 Options manager for BAM defaults
 }

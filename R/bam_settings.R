@@ -1,6 +1,9 @@
 
 #' Options manager for BAM defaults
 #' 
+#' @param ... (Optional) named settings to query or set. 
+#' @param .__defaults See \code{?settings::option_manager}  
+#' @param .__reset See \code{?settings::option_manager}
 #' @export
 bam_settings <- settings::options_manager(
   # # BAM variant parameter sets

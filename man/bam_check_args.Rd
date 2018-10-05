@@ -12,6 +12,9 @@
 \usage{
 bam_check_args(datalist)
 }
+\arguments{
+\item{datalist}{A list of BAM data inputs}
+}
 \description{
 Performs the following checks:
 - types:
