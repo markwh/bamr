@@ -3,6 +3,9 @@
 
 ## Model performance metrics used in Pepsi Challenge paper --------------------
 
+# Sum of squares function
+sumsq <- function(x) sum(x^2)
+
 #' Create a data.frame for BAM validation
 #' 
 #' @param fit A stanfit object, as returned from \code{bam_estimate()}
@@ -75,7 +78,7 @@ SDRR <- function(pred, meas)
 #' @importFrom stats var
 #' @export
 NSE <- function(pred, meas)
-  1 - var(meas - pred) / var(meas)
+  1 - sumsq(meas - pred) / sumsq(meas)
 
 #' Normalized root-mean-square error
 #' 
@@ -119,6 +122,6 @@ Ej <- function(pred, meas, j = 1, bench = mean(meas))
 #' @param meas vector of measurements
 #' @export
 logNSE <- function(pred, meas)
-  1 - var(log(meas / pred)) / var(log(meas / mean(meas)))
+  1 - sumsq(log(meas / pred)) / sumsq(log(meas / mean(meas)))
 
 
