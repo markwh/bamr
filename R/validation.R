@@ -78,7 +78,7 @@ SDRR <- function(pred, meas)
 #' @importFrom stats var
 #' @export
 NSE <- function(pred, meas)
-  1 - sumsq(meas - pred) / sumsq(meas)
+  1 - sumsq(meas - pred) / sumsq(meas - mean(meas))
 
 #' Normalized root-mean-square error
 #' 
@@ -121,7 +121,10 @@ Ej <- function(pred, meas, j = 1, bench = mean(meas))
 #' @param pred vector of predictions
 #' @param meas vector of measurements
 #' @export
-logNSE <- function(pred, meas)
-  1 - sumsq(log(meas / pred)) / sumsq(log(meas / mean(meas)))
+logNSE <- function(pred, meas) {
+  resid <- log(meas) - log(pred)
+  devs <- log(meas) - mean(log(meas))
+  1 - sumsq(resid) / sumsq(devs)
+}
 
 
