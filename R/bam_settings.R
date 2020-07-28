@@ -58,7 +58,7 @@ bam_settings <- settings::options_manager(
   
   logQ_sd = sqrt(log(1^2 + 1)), # CV of Q equals 1
   logQc_sd = sqrt(log(1^2 + 1)), # CV of Q equals 1; UPDATE THIS
-  logWc_sd = sqrt(log(0.01)^2 + 1),
+  logWc_sd = sqrt(log(0.01^2 + 1)),
   b_sd = 0.05, # UPDATE THIS
   logA0_sd = 0.5,
   logn_sd = 0.25,
