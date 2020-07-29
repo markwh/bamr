@@ -1,4 +1,14 @@
 
+#' Convert coefficient of variation to sigma parameter of lognormal diistribution
+#' 
+#' @param cv Coefficient of variation
+#' @export
+
+cv2sigma <- function (cv) {
+  sqrt(log(cv^2 + 1))
+}
+
+
 #' Options manager for BAM defaults
 #' 
 #' @param ... (Optional) named settings to query or set. 
@@ -56,9 +66,9 @@ bam_settings <- settings::options_manager(
   logA0_hat = rlang::quo(estimate_logA0(Wobs)),
   logn_hat = -3.5,
   
-  logQ_sd = sqrt(log(1^2 + 1)), # CV of Q equals 1
-  logQc_sd = sqrt(log(1^2 + 1)), # CV of Q equals 1; UPDATE THIS
-  logWc_sd = sqrt(log(0.01^2 + 1)),
+  logQ_sd = cv2sigma(1), # CV of Q equals 1
+  logQc_sd = cv2sigma(1), # CV of Q equals 1; UPDATE THIS
+  logWc_sd = cv2sigma(0.01),
   b_sd = 0.05, # UPDATE THIS
   logA0_sd = 0.5,
   logn_sd = 0.25,

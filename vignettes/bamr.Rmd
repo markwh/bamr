@@ -12,7 +12,7 @@ vignette: >
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(fig.width = 7)
 options("mc.cores" = 2)
-knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(eval = TRUE, warning = FALSE, message = FALSE)
 ```
 
 
@@ -130,17 +130,17 @@ Sac_priors_mod2 <- bam_priors(bamdata = Sac_data,
 Once data and priors have been established, we are ready to make BAM estimates using `bam_estimate`. Although this has been optimized as much as possible, it is still computationally intensive and may take on the order of several minutes to run, depending on the dataset. For the included `Sacramento` dataset it should be relatively quick (less than 30 seconds) assuming you are on a multicore machine.
 
 ```{r}
-# Sac_man_amhg <- bam_estimate(bamdata = Sac_data,
-#                        variant = "manning_amhg")
+Sac_man_amhg <- bam_estimate(bamdata = Sac_data,
+                       variant = "manning_amhg")
 ```
 
 Note that in this example I haven't touched the `bam_priors` function. The default behavior for `bam_estimate` is to use `bampriors = bam_priors(bamdata)`, which uses the default priors as discussed above. An estimate using different priors (and using AMHG-only for estimation) could be performed using 
 
 ```{r}
-# Sac_amhg <- bam_estimate(bamdata = Sac_data, 
-#                   bampriors = bam_priors(bamdata = Sac_data, 
-#                                          upperbound_logQ = log(5000)),
-#                   variant = "amhg")
+Sac_amhg <- bam_estimate(bamdata = Sac_data,
+                  bampriors = bam_priors(bamdata = Sac_data,
+                                         upperbound_logQ = log(5000)),
+                  variant = "amhg")
 ```
 
 or by passing a predefined `bampriors` object.
@@ -152,8 +152,8 @@ The third option for `variant` is "`manning`", which uses Manning's equation onl
 Once a BAM estimate has been computed, a hydrograph can be generated using `bam_hydrograph`. 
 
 ```{r}
-# bam_hydrograph(fit = Sac_man_amhg)
-# bam_hydrograph(fit = Sac_amhg)
+bam_hydrograph(fit = Sac_man_amhg)
+bam_hydrograph(fit = Sac_amhg)
 ```
 
 This displays posterior mean and 95% (by default; this can be adjusted) credible interval flows for all chains. 
@@ -161,7 +161,7 @@ This displays posterior mean and 95% (by default; this can be adjusted) credible
 If you have observed flow (as we do for the Sacramento), you can plot this alongside using the optional `qobs` argument.
 
 ```{r}
-# bam_hydrograph(fit = Sac_man_amhg, qobs = Sac_Qobs)
+bam_hydrograph(fit = Sac_man_amhg, qobs = Sac_Qobs)
 ```
 
 `bam_estimate` uses the `rstan` package to perform the Monte Carlo estimation, and returns an object of class `stanfit`. The `rstan` package contains additional functions for exploring the results, for example to see parameter convergence. See `vignette("stanfit-objects")` (from the `rstan` package) for more info on what you can do with these.
@@ -171,7 +171,7 @@ If you have observed flow (as we do for the Sacramento), you can plot this along
 `bamr` currently has some basic functionality for validating flow estimates, in addition to the hydrographs already mentioned. 
 
 ```{r}
-# val_manning_amhg <- bam_validate(fit = Sac_man_amhg, qobs = Sac_Qobs)
+val_manning_amhg <- bam_validate(fit = Sac_man_amhg, qobs = Sac_Qobs)
 
 # prediction vs. observation
 bam_plot(val_manning_amhg)

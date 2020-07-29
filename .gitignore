@@ -18,3 +18,5 @@ cache
 inst/doc
 inst/notebook
 *.tar.gz
+doc
+Meta

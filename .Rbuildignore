@@ -8,3 +8,5 @@ cleanup*
 ^codecov\.yml$
 ^appveyor\.yml$
 vignettes/rsconnect
+^doc$
+^Meta$
