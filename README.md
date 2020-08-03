@@ -12,22 +12,7 @@ The bamr package facilitates Bayesian AMHG + Manning discharge estimation using 
 
 ## Installation
 
-As of version 0.1.6, the recommended installation method is to use the **drat** package, which facilitates using `install.packages()` to get the latest release of **bamr**. Windows users get the added benefit of having a pre-compiled binary installation, saving a significant amount of compilation time and memory overhead. 
-
-The following commands will get the **drat** package, give R access to the repository containing **bamr**, and install the **bamr** package from that repository.
-
-```
-install.packages("drat") # Get the drat package
-drat::addRepo("markwh") # Add the repository containing the bamr package
-install.packages("bamr")
-```
-
-More information about **drat** is available [here](https://eddelbuettel.github.io/drat/DratForPackageUsers.html).
-
-
-### Installation from github
-
-The old way of installing **bamr** from github still works. To do that, run the following. 
+**bamr** can be installed from github as follows:
 
 ```
 # First get devtools package
